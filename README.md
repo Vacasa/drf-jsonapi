@@ -1,7 +1,7 @@
 # JSON API with Django Rest Framework
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/16dbdd6d5abd5795e602/maintainability)](https://codeclimate.com/repos/5b19bd02e4d5fd02930028c5/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/16dbdd6d5abd5795e602/test_coverage)](https://codeclimate.com/repos/5b19bd02e4d5fd02930028c5/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c2d2715defce75b1dbd8/maintainability)](https://codeclimate.com/github/Vacasa/drf-jsonapi/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c2d2715defce75b1dbd8/test_coverage)](https://codeclimate.com/github/Vacasa/drf-jsonapi/test_coverage)
 
 ## What is this?
 
