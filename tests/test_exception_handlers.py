@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied, ValidationError as DjangoVa
 
 from drf_jsonapi.exception_handlers import jsonapi_exception_handler
 from drf_jsonapi.objects import Error
+from drf_jsonapi.response import CONTENT_TYPE
 
 
 class ExceptionHandlersTestCase(TestCase):
@@ -23,6 +24,7 @@ class ExceptionHandlersTestCase(TestCase):
         )
 
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertDictEqual(response.data, {
             "errors": [
                 {
@@ -44,6 +46,7 @@ class ExceptionHandlersTestCase(TestCase):
         """
         error = ValidationError({'foo': 'foo is invalid'})
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertDictEqual(response.data, {
             "errors": [
                 {
@@ -63,6 +66,7 @@ class ExceptionHandlersTestCase(TestCase):
         """
         error = DjangoValidationError('"ocelot" is an invalid UUID')
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertIn("errors", response.data)
         self.assertEqual(response.data['errors'][0]['detail'], '[\'"ocelot" is an invalid UUID\']')
         self.assertEqual(response.data['errors'][0]['status'], '400')
@@ -70,6 +74,7 @@ class ExceptionHandlersTestCase(TestCase):
     def test_apiexception(self):
         error = NotFound("Not Found.")
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertDictEqual(response.data, {
             "errors": [
                 {
@@ -82,6 +87,7 @@ class ExceptionHandlersTestCase(TestCase):
     def test_pagination_exceptions(self):
         error = EmptyPage("Test")
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertDictEqual(response.data, {
             "errors": [
                 {
@@ -97,4 +103,5 @@ class ExceptionHandlersTestCase(TestCase):
     def test_default_handler(self):
         error = PermissionDenied()
         response = jsonapi_exception_handler(error, {})
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEqual(response.data["errors"][0]["status"], "403")
