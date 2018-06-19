@@ -17,9 +17,8 @@ class Response(BaseResponse):
 
     def __init__(self, *args, **kwargs):
         kwargs['content_type'] = 'application/vnd.api+json'
-        # kwargs.setdefault('headers', {}).update({'Content-Type': 'application/vnd.api+json'})
         super().__init__(*args, **kwargs)
-        # self.content_type = 'application/vnd.api+json'
+
 
 class ExceptionHandler(object):
     """
