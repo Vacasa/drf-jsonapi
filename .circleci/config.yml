@@ -4,7 +4,7 @@ defaults: &defaults
 
 version: 2
 jobs:
-#  coverage:
+  coverage:
 #    <<: *defaults
 #    steps:
 #      - checkout
