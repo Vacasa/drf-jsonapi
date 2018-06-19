@@ -5,18 +5,18 @@ defaults: &defaults
 version: 2
 jobs:
   coverage:
-#    <<: *defaults
-#    steps:
-#      - checkout
-#      - run:
-#          name: Prepare Tests
-#          command: cc-test-reporter before-build
-#
-#      - run:
-#          name: Run Tests
-#          command: |
-#            docker-compose run coverage
-#
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Prepare Tests
+          command: cc-test-reporter before-build
+
+      - run:
+          name: Run Tests
+          command: |
+            coverage run runtests.py
+
 #      - run:
 #          name: Aggregate Code Coverage
 #          command: |
