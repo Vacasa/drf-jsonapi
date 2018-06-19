@@ -18,13 +18,8 @@ jobs:
 
       - run:
           name: Run Tests
-          command: |
-            coverage run runtests.py
+          command: coverage run runtests.py
 
       - run:
           name: Aggregate Code Coverage
-          command: |
-#            docker cp app_coverage_run_1:/opt/coverage.xml .
-#            sed -ie 's/\/opt/src/g' coverage.xml
-            cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
-
+          command: cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
