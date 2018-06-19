@@ -286,7 +286,7 @@ class ResourceSerializer(serializers.Serializer):
         Support sorting simple lists by a query
         param that looks like `sort=foo,-bar`
 
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param str sort_param: A comma-separated list of properties to sort by
         :param collection: The collection of items to sort
         :return: The sorted collection
@@ -311,7 +311,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         Retrieve an object or list of objects from an ID
 
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param data: A list of resource IDs or a single resource ID
         :param many: If data is a list
         :return: A model object
@@ -330,7 +330,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         Validate if a JSON-API resource has a type
 
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param data: A JSON-API data object
         :raises ParseError: if type not found or not specified
         """
@@ -345,7 +345,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         Retrieve a single object from an ID
 
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param data: A single JSON-API data object
         :return: An object, retrieved by ID
         """
@@ -358,7 +358,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         Retrieve an object by ID
 
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param id: An ID string
         :raises NotImplementedError: This method is not implemented
         """
@@ -369,7 +369,7 @@ class ResourceSerializer(serializers.Serializer):
     def many_init(cls, *args, **kwargs):
         """
         Retrieve a Resource Identifier representing a requested relationship
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A Resource Identifier object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A Resource Identifier object
         :return: A ResourceIdentifer object
         :rtype: ResourceIdentifier
         """

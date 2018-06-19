@@ -10,7 +10,7 @@ class RelationshipRouter(NestedSimpleRouter):
         """
         Adds a patch element to route mapping
 
-        :param jsonapi.routers.RelationshipRouter self: This object
+        :param drf_jsonapi.routers.RelationshipRouter self: This object
         """
 
         self.routes[0].mapping['patch'] = 'patch'

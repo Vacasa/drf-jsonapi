@@ -16,19 +16,19 @@ handle requests and responses according to the JSONAPI spec.
 
 ## What's included?
 
-### jsonapi.serializers
+### drf_jsonapi.serializers
 - **DocumentSerializer**: For top-level JSONAPI documents
 - **ErrorSerializer**: For JSONAPI errors
 - **ResourceListSerializer**: sub-class of ListSerializer
 - **ResourceSerializer**: For serializing/deserializing JSONAPI resource objects
 
-### jsonapi.filters
+### drf_jsonapi.filters
 - **FilterSet**: subclass of django_filters.FilterSet that parses and validates 
 query params like `filter[is_active]=true` (suitable for filtering QuerySets)
 - **GenericFilterSet**: a filter class that parses and validates query params but works with any
 collection of objects, not just QuerySets)
 
-### jsonapi.viewsets
+### drf_jsonapi.viewsets
 - **ViewSet**: Base ViewSet with validation of params, request body, and serialization according to the jsonAPI spec.
 - **RelationshipViewSet**: Base ViewSet for endpoints that deal with relationships between resources
 - **ReadOnlyViewSet**: Convenience class that includes mixins.ListMixin, mixins.RetrieveMixin, and ViewSet
@@ -36,7 +36,7 @@ collection of objects, not just QuerySets)
 - **ReadOnlyRelationshipViewSet**: Convenience class that includes mixins.RelationshipListMixin, mixins.RelationshipRetrieveMixin, and RelationshipViewSet
 - **ReadWriteRelationshipViewSet**: Convenience class that includes mixins.RelationshipListMixin, mixins.RelationshipCreateMixin, mixins.RelationshipPatchMixin, mixins.RelationshipRetrieveMixin, mixins.RelationshipDestroyMixin, and RelationshipViewSet
 
-### jsonapi.mixins
+### drf_jsonapi.mixins
 - **ListMixin**: Default behavior resource listing with sorting, filtering, paging, sparse fieldsets, and included relationships
 - **CreateMixin**: Default behavior for creating a resource (POST)
 - **RetrieveMixin**: Default behavior for fetching a single resource by ID
@@ -52,11 +52,11 @@ collection of objects, not just QuerySets)
 
 This guide assumes you have a resource (we'll assume the resource is a Django Model but it could be any object) and you want to expose API endpoints for users to interact (CRUD + relationship management) with the resources.
 
-NOTE: This guide does NOT include any authentication or access control. That is outside of the scope of this document but since the jsonapi package is built on Django Rest Framework all of the same methods apply.
+NOTE: This guide does NOT include any authentication or access control. That is outside of the scope of this document but since the drf_jsonapi package is built on Django Rest Framework all of the same methods apply.
 
 ## Serializers
 
-The first step is to create a Serializer class for your resource. If your resource is a Django model you can sub-class `jsonapi.serializers.ResourceModelSerializer`. Otherwise, you'll want to sub-class `jsonapi.serializers.ResourceSerializer`. The big difference between the two is that `ResourceModelSerializer` can automatically create the serializer fields based on the model definition. If you use `ResourceSerializer` you'll have to define the fields manually.
+The first step is to create a Serializer class for your resource. If your resource is a Django model you can sub-class `jsonapi.serializers.ResourceModelSerializer`. Otherwise, you'll want to sub-class `drf_jsonapi.serializers.ResourceSerializer`. The big difference between the two is that `ResourceModelSerializer` can automatically create the serializer fields based on the model definition. If you use `ResourceSerializer` you'll have to define the fields manually.
 
 ### Serializer Meta options
 
@@ -96,5 +96,5 @@ For your custom ViewSet to work properly you'll need to define some class-level 
 
 To support filtering of data via query params like `filter[field]=value` you can define custom FilterSet classes and attach them to your view via the `filter_class` attribute. These FilterSet classes are based on the `django_filters` FilterSets but have custom validation and translation of the query params to support the syntax.
 
-There are two base classes for FilterSets, `jsonapi.filters.FilterSet` and `jsonapi.filters.GenericFilterSet`. The one you extend depends on whether or not the underlying resource is a Django model. For Django models use `FilterSet` this is simply a sub-class of `django_filters.FilterSet` with additional validation and translation. It assumes that the filter is working with a queryset. For non-model filtering use `GenericFilterSet`. This class is optimized for working with lists of resources.
+There are two base classes for FilterSets, `drf_jsonapi.filters.FilterSet` and `drf_jsonapi.filters.GenericFilterSet`. The one you extend depends on whether or not the underlying resource is a Django model. For Django models use `FilterSet` this is simply a sub-class of `django_filters.FilterSet` with additional validation and translation. It assumes that the filter is working with a queryset. For non-model filtering use `GenericFilterSet`. This class is optimized for working with lists of resources.
 
