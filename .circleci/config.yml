@@ -1,3 +1,0 @@
-defaults: &defaults
-  docker:
-    - image: circleci/python:3.6.4
