@@ -16,7 +16,7 @@ def jsonapi_exception_handler(exc, context):
 class Response(BaseResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['content_type'] = 'application/vnd.api+json'
+        # kwargs['content_type'] = 'application/vnd.api+json'
         super().__init__(*args, **kwargs)
 
 
