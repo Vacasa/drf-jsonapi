@@ -3,7 +3,7 @@ from django.core.exceptions import FieldError, ValidationError as DjangoValidati
 
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import APIException
-from rest_framework.response import Response
+from rest_framework.response import Response as BaseResponse
 
 from .objects import Document, Error
 from .serializers import DocumentSerializer, ErrorSerializer
@@ -13,12 +13,19 @@ def jsonapi_exception_handler(exc, context):
     return ExceptionHandler.handle(exc, context)
 
 
+class Response(BaseResponse):
+
+    def __init__(self, *args, **kwargs):
+        # kwargs['content_type'] = 'application/vnd.api+json'
+        super().__init__(*args, **kwargs)
+
+
 class ExceptionHandler(object):
     """
     Converts various Exception types into JSON-API error reponses.
     This functionality requires an entry to the REST_FRAMEWORK settings
     dictionary in settings.py:
-    'EXCEPTION_HANDLER': 'jsonapi.exception_handlers.jsonapi_exception_handler'
+    'EXCEPTION_HANDLER': 'drf_jsonapi.exception_handlers.jsonapi_exception_handler'
     """
 
     @classmethod

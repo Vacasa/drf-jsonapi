@@ -5,6 +5,7 @@ from rest_framework.test import APIRequestFactory
 from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet
 from drf_jsonapi.response import Response
 from drf_jsonapi.objects import Error
+from drf_jsonapi.response import CONTENT_TYPE
 
 
 class TestViewSet(ViewSet):
@@ -46,6 +47,7 @@ class ViewSetTestCase(TestCase):
         request = factory.get('/tests/')
         view = TestViewSet.as_view({'get': 'list'})
         response = view(request)
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertTrue(hasattr(response.renderer_context['view'], 'document'))
         self.assertTrue(hasattr(response.renderer_context['view'], 'errors'))
         self.assertEqual('OK', response.data)
@@ -60,6 +62,7 @@ class ViewSetTestCase(TestCase):
         for bogusBody in bogusBodies:
             request = factory.post('/tests/', bogusBody, format='json')
             view = TestViewSet.as_view({'post': 'create'})
+            self.assertEqual(response.content_type, CONTENT_TYPE)
             response = view(request)
             self.assertEqual(response.status_code, 400)
 
@@ -86,6 +89,7 @@ class ViewSetTestCase(TestCase):
         request = factory.post('/tests/', data={'data': {}}, format='json')
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEqual(response.data, {
             "errors": [
                 {
@@ -100,6 +104,7 @@ class ViewSetTestCase(TestCase):
         request = factory.get('/tests?page[size]=25')
         view = TestViewSet.as_view({'get': 'paged_list'})
         response = view(request)
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEqual(response.data['meta']['count'], 100)
         self.assertEqual(response.data['meta']['has_next'], True)
         self.assertEqual(response.data['meta']['has_previous'], False)
@@ -116,6 +121,7 @@ class ViewSetTestCase(TestCase):
         request = factory.get('/tests?page[size]=25&page[number]=2')
         view = TestViewSet.as_view({'get': 'paged_list'})
         response = view(request)
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEqual(response.data['meta']['count'], 100)
         self.assertEqual(response.data['meta']['has_next'], True)
         self.assertEqual(response.data['meta']['has_previous'], True)
@@ -132,6 +138,7 @@ class ViewSetTestCase(TestCase):
         request = factory.get('/tests?page[size]=100&page[number]=1')
         view = TestViewSet.as_view({'get': 'paged_list'})
         response = view(request)
+        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEqual(response.data['meta']['has_next'], False)
         self.assertEqual(response.data['links']['next'], None)
 

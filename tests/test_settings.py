@@ -14,6 +14,7 @@ DATABASES = {
         'NAME': os.path.join(PROJECT_PATH, 'drf_jsonapi.sqlite'),
     }
 }
+REST_FRAMEWORK = {'EXCEPTION_HANDLER': 'drf_jsonapi.exception_handlers.jsonapi_exception_handler'}
 DEFAULT_PAGE_SIZE = 10
 BASE_URL = 'junk'
 ROOT_URLCONF = 'tests.urls'
