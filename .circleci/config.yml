@@ -1,0 +1,44 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/opt
+    docker:
+      - image: circleci/python:3.6.5
+    steps:
+      - checkout
+      - run:
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements-dev.txt
+
+      - run:
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: Prepare Tests
+          command: |
+            . venv/bin/activate
+            ./cc-test-reporter before-build
+
+      - run:
+          name: Run Tests
+          command: |
+            . venv/bin/activate
+            coverage run runtests.py
+
+      - run:
+          name: Aggregate Code Coverage
+          command: |
+            . venv/bin/activate
+            coverage xml
+            ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
+
+workflows:
+  version: 2
+  builds:
+    jobs:
+      - build

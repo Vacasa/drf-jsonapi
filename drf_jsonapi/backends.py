@@ -8,7 +8,7 @@ class DjangoFilterBackend(BaseClass):
     Supports field filtering.
     This functionality requires an entry to the REST_FRAMEWORK settings
     dictionary in settings.py:
-    'DEFAULT_FILTER_BACKENDS': ('jsonapi.backends.DjangoFilterBackend')
+    'DEFAULT_FILTER_BACKENDS': ('drf_jsonapi.backends.DjangoFilterBackend')
     """
 
     def get_schema_fields(self, view):
