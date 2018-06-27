@@ -343,18 +343,12 @@ class RelationshipListMixinTestCase(TestCase):
         def get_resource(self, *args, **kwargs):
             return True
 
-        def get_related(self, *args, **kwargs):
-            return [TestModel()]
-
     class TestOneView(mixins.RelationshipListMixin, RelationshipViewSet):
         serializer_class = TestModelSerializer
         relationship = 'related_thing'
 
         def get_resource(self, *args, **kwargs):
             return True
-
-        def get_related(self, *args, **kwargs):
-            return TestModel()
 
     def test_list_mixin_one(self):
         factory = APIRequestFactory()

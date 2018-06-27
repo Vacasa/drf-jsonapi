@@ -65,6 +65,14 @@ class TestOneRelationshipHandler(RelationshipHandler):
     def set_related(self, instance, related):
         return True
 
+    def get_related(self, instance):
+        return TestResource(
+            pk=5,
+            name="Related Thing 1",
+            count=5,
+            created_at=timezone.now()
+        )
+
 
 class TestResourceSerializer(ResourceSerializer):
     name = serializers.CharField()

@@ -231,7 +231,7 @@ class RelationshipListMixin(object):
 
         related = kwargs.pop('related', None)
         if related is None:
-            related = self.get_related(request, resource)
+            related = handler.get_related(resource)
 
         # Sorting
         if handler.many:
