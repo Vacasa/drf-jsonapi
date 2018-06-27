@@ -21,7 +21,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Generate an OpenAPI schema from an event serializer
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :param api.resources.events.serializers.EventSerializer serializer: An event serializer
         :return: An OpenAPI schema
         :rtype: drf_yasg.openapi.Schema
@@ -48,7 +48,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Build a request body schema from an API resource serializer
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :param serializer: An API resource serializer
         :return: An OpenAPI schema
         :rtype: drf_yasg.openapi.Schema
@@ -68,7 +68,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Create an OpenAPI response schema from a response serializer
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :param collections.OrderedDict response_serializers: A response serializer
         :return: An OpenAPI response schema
         :rtype: collections.OrderedDict
@@ -93,7 +93,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Get the default responses determined for this view from the request serializer and request method.
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :type: dict[str, openapi.Schema]
         :return: A default OpenAPI response
         :rtype: collections.OrderedDict
@@ -122,7 +122,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Retrieve a list of query parameters
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: A list of query parameters
         :rtype: list
         """
@@ -141,7 +141,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Determines if this is a GET list view, and returns a boolean
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :returns: true if this is a list
         :rtype: boolean
         """
@@ -155,7 +155,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Determine if pagination should apply to this schema
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: A boolean indicating if this schema should include pagination
         :rtype: boolean
         """
@@ -166,7 +166,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Get sort fields added to the view
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: A list of OpenAPI parameters
         :rtype: list[openapi.Parameter]
         """
@@ -188,7 +188,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Get sparse fieldset parameters added to the view
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: JSON-API "fields" parameter
         :rtype: list[openapi.Parameter]
         """
@@ -224,7 +224,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Get include parameters added to the view
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: JSON-API "include" parameter
         :rtype: list[openapi.Parameter]
         """
@@ -246,7 +246,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         """
         Return the parameters added to the view by its paginator.
 
-        :param jsonapi.inspectors.SwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :return: Pagination parameters
         :rtype: list[openapi.Parameter]
         """
@@ -290,7 +290,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         but it's an effort to reduce the length of the operation IDs for
         relationship endpoints.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :param list operation_keys: operation ID
         :return: shorted operation ID string
         :rtype: string
@@ -307,8 +307,8 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Retrieve a resource object schema from a resource identifier serializer.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier serializer:
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier serializer:
         A resource identifier serializer
         :return: Adjusted schema
         :rtype: drf_yasg.openapi.Schema
@@ -331,7 +331,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Create an ordered dictionary describing default success responses.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: Ordered dictionary describing default response
         :rtype: Ordered dictionary
         """
@@ -357,8 +357,8 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         Add an array of data objects to data node in schema - if relationship
         handler has many objects.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
-        :param jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier serializer:
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier serializer:
         A resource identifier serializer
         :return: Adjusted schema
         :rtype: drf_yasg.openapi.Schema
@@ -377,7 +377,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         Retrieve a list of sort parameters - or an empty list if the method is
         not GET or not a list.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: List of sort parameters
         :rtype: list
         """
@@ -391,7 +391,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Determine if results should paginate - false if method not GET and not a list.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: Boolean indicating if results should paginate
         :rtype: boolean
         """
@@ -403,7 +403,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Determine if response body is a list.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: Boolean indicating if results are a list
         :rtype: boolean
         """
@@ -414,7 +414,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Retrieve list of sparse fieldset parameters.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: list of fieldset parameters
         :rtype: list
         """
@@ -425,7 +425,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
         Retrieve list of include parameters.
 
-        :param jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
+        :param drf_jsonapi.inspectors.RelationshipSwaggerAutoSchema self: This object
         :return: list of include parameters
         :rtype: list
         """

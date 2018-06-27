@@ -32,7 +32,7 @@ class Document(object):
         """
         Set local variables from keyword arguments
 
-        :param jsonapi.objects.Document self: This object
+        :param drf_jsonapi.objects.Document self: This object
         :param dict|list data: The document's "primary data"
         :param list errors: a list of `error objects <http://jsonapi.org/format/#errors>`
         :param dict meta: a `meta object <http://jsonapi.org/format/#document-meta>`
@@ -60,7 +60,7 @@ class Error(APIException):
         """
         Builds an error node of a JSON-API response
 
-        :param jsonapi.objects.Error self: This object
+        :param drf_jsonapi.objects.Error self: This object
         :param string detail: An error message
         :param dict id: a unique identifier for this particular occurrence of the problem.
         :param dict links: An error message's links dictionary <http://jsonapi.org/format/#document-links>

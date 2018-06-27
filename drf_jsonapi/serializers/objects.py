@@ -22,8 +22,8 @@ class DocumentSerializer(serializers.Serializer):
         Create an ordered dictionary from a top-level JSON-API object,
         removing data node if errors exist.
 
-        :param jsonapi.serializers.objects.DocumentSerializer self: This object instance
-        :param jsonapi.objects.Document instance: An object containing top-level JSON-API nodes
+        :param drf_jsonapi.serializers.objects.DocumentSerializer self: This object instance
+        :param drf_jsonapi.objects.Document instance: An object containing top-level JSON-API nodes
         :return: An ordered dictionary created from instance data
         :rtype: collections.OrderedDict
         """
@@ -60,8 +60,8 @@ class ErrorSerializer(serializers.Serializer):
         """
         Create an ordered dictionary from a JSON-API error object.
 
-        :param jsonapi.serializers.objects.ErrorSerializer self: This object instance
-        :param jsonapi.objects.Document instance: An object containing JSON-API error nodes
+        :param drf_jsonapi.serializers.objects.ErrorSerializer self: This object instance
+        :param drf_jsonapi.objects.Document instance: An object containing JSON-API error nodes
         :return: An ordered dictionary created from the instance data
         :rtype: OrderedDict
         """
