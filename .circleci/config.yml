@@ -1,13 +1,26 @@
-defaults: &defaults
-  docker:
-    - image: circleci/python:3.6
-
 version: 2
+
+defaults: &defaults
+  working_directory: ~/opt
+  docker:
+    - image: circleci/python:3.6.5
+
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
+      - run:
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements-dev.txt
+
+      - run:
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > /usr/local/bin/cc-test-reporter
+            chmod +x /usr/local/bin/cc-test-reporter
+
   coverage:
     <<: *defaults
     steps:
@@ -22,4 +35,15 @@ jobs:
 
       - run:
           name: Aggregate Code Coverage
-          command: cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
+          command: |
+            coverage xml
+            cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
+
+workflows:
+  version: 2
+  builds:
+    jobs:
+      - build
+      - coverage:
+          requires:
+            - build
