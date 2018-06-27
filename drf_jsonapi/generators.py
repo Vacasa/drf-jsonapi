@@ -14,7 +14,7 @@ class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):
         """
         Iterate over all the registered endpoints in the API and return a fake view with the right parameters.
 
-        :param jsonapi.generators.OpenAPISchemaGenerator self: This object
+        :param drf_jsonapi.generators.OpenAPISchemaGenerator self: This object
         :param rest_framework.request.Request request: request to bind to the endpoint views
         :return: {path: (view_class, list[(http_method, view_instance)])
         :rtype: dict

@@ -7,8 +7,8 @@ class JSONRenderer(renderers.JSONRenderer):
     This functionality requires an entry to the REST_FRAMEWORK settings
     dictionary in settings.py:
     'DEFAULT_RENDERER_CLASSES': (
-        'jsonapi.renderers.JSONRenderer',
-        'jsonapi.renderers.BrowsableAPIRenderer'
+        'drf_jsonapi.renderers.JSONRenderer',
+        'drf_jsonapi.renderers.BrowsableAPIRenderer'
     ),
     """
 

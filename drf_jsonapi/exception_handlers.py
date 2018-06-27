@@ -33,7 +33,7 @@ class ExceptionHandler(object):
         """
         Retrieves a 500 error Response from a standard Exception
 
-        :param jsonapi.exception_handlers.ExceptionHandler cls: This class instance
+        :param drf_jsonapi.exception_handlers.ExceptionHandler cls: This class instance
         :param Exception exc: An Exception object
         :param dict context: The stack trace associated with the exception
         :return: A 500 error Response
@@ -71,9 +71,9 @@ class ExceptionHandler(object):
         """
         Retrieves a 400 error Response from an Error exception
 
-        :param jsonapi.exception_handlers.ExceptionHandler cls: This class instance
-        :param jsonapi.objects.Error exc: An Exception object
-        :param jsonapi.objects.Error context: The stack trace associated with the exception
+        :param drf_jsonapi.exception_handlers.ExceptionHandler cls: This class instance
+        :param drf_jsonapi.objects.Error exc: An Exception object
+        :param drf_jsonapi.objects.Error context: The stack trace associated with the exception
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
@@ -90,7 +90,7 @@ class ExceptionHandler(object):
         """
         Retrieves a 400 error Response from an APIException exception
 
-        :param jsonapi.exception_handlers.ExceptionHandler cls: This class instance
+        :param drf_jsonapi.exception_handlers.ExceptionHandler cls: This class instance
         :param rest_framework.exceptions.APIException exc: An Exception object
         :param dict context: The stack trace associated with the exception
         :return: A 400 error Response
@@ -124,7 +124,7 @@ class ExceptionHandler(object):
         """
         Retrieves a 400 error Response from an APIException exception
 
-        :param jsonapi.exception_handlers.ExceptionHandler cls: This class instance
+        :param drf_jsonapi.exception_handlers.ExceptionHandler cls: This class instance
         :param django.core.exceptions.ValidationError exc: An Exception object
         :param django.core.exceptions.ValidationError context: The stack trace associated with the exception
         :return: A 400 error Response
