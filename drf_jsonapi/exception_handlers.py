@@ -4,7 +4,7 @@ from django.core.exceptions import FieldError, ValidationError as DjangoValidati
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
-from django.http import Http404
+from django.http import Http404, HttpResponseNotFound
 
 from .objects import Document, Error
 from .serializers import DocumentSerializer, ErrorSerializer
@@ -12,17 +12,12 @@ from .response import CONTENT_TYPE
 
 
 def jsonapi_exception_handler(exc, context):
-    logger.error('jsonapi_exception_handler')
     return ExceptionHandler.handle(exc, context)
-
-from django.http import HttpResponseNotFound
-import logging, traceback
-logger = logging.getLogger('django.db.backends')
 
 
 def handleDjangoErrors(request, exception):
-    logger.error(exception.__class__.__name__)
     return ExceptionHandler.handle(exception, None)
+
 
 class ExceptionHandler(object):
     """
@@ -178,13 +173,11 @@ class ExceptionHandler(object):
         :return: A 404 error Response
         :rtype: django.http.HttpResponseNotFound
         """
-        logger.error('handling 404 heredd')
         doc = DocumentSerializer(Document())
         error = Error(
             detail="Endpoint '{}' not found".format(exc.args[0]['path']),
             status_code=404
         )
-        logger.error(ErrorSerializer(error).data)
         doc.instance.errors = ErrorSerializer(error).data
 
         return HttpResponseNotFound(doc, content_type=CONTENT_TYPE)
