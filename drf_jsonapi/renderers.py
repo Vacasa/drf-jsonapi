@@ -1,4 +1,5 @@
 from rest_framework import renderers
+from . import response
 
 
 class JSONRenderer(renderers.JSONRenderer):
@@ -12,8 +13,8 @@ class JSONRenderer(renderers.JSONRenderer):
     ),
     """
 
-    media_type = 'application/vnd.api+json'
-    format = 'vnd.api+json'
+    media_type = response.CONTENT_TYPE
+    format = response.FORMAT
 
 
 class BrowsableAPIRenderer(renderers.BrowsableAPIRenderer):
