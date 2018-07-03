@@ -67,7 +67,8 @@ class ExceptionHandler(object):
             doc.instance.errors = [ErrorSerializer(error).data]
             return Response(
                 doc.data,
-                status=getattr(response, 'status_code', 500)
+                status=getattr(response, 'status_code', 500),
+                content_type=CONTENT_TYPE
             )
 
     @classmethod
@@ -86,7 +87,8 @@ class ExceptionHandler(object):
         doc.instance.errors = [ErrorSerializer(exc).data]
         return Response(
             doc.data,
-            status=getattr(exc, 'status_code', 400)
+            status=getattr(exc, 'status_code', 400),
+            content_type=CONTENT_TYPE
         )
 
     @classmethod
@@ -113,14 +115,16 @@ class ExceptionHandler(object):
             doc.instance.errors = ErrorSerializer(errors, many=True).data
             return Response(
                 doc.data,
-                status=getattr(exc, 'status_code', 400)
+                status=getattr(exc, 'status_code', 400),
+                content_type=CONTENT_TYPE
             )
         else:
             error = Error(detail=detail, status_code=status_code)
             doc.instance.errors = [ErrorSerializer(error).data]
             return Response(
                 doc.data,
-                status=status_code
+                status=status_code,
+                content_type=CONTENT_TYPE
             )
 
     @classmethod
@@ -157,7 +161,8 @@ class ExceptionHandler(object):
         doc.instance.errors = [ErrorSerializer(error).data]
         return Response(
             doc.data,
-            status=getattr(exc, 'status_code', 400)
+            status=getattr(exc, 'status_code', 400),
+            content_type=CONTENT_TYPE
         )
 
     @classmethod
@@ -173,13 +178,13 @@ class ExceptionHandler(object):
         :return: A 404 error Response
         :rtype: django.http.HttpResponseNotFound
         """
-        logger.error('handling 404 here')
+        logger.error('handling 404 heredd')
         doc = DocumentSerializer(Document())
         error = Error(
             detail="Endpoint '{}' not found".format(exc.args[0]['path']),
             status_code=404
         )
+        logger.error(ErrorSerializer(error).data)
         doc.instance.errors = ErrorSerializer(error).data
-        response = HttpResponseNotFound(doc, content_type=CONTENT_TYPE)
 
-        return response
+        return HttpResponseNotFound(doc, content_type=CONTENT_TYPE)

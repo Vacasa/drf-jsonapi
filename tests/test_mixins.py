@@ -6,7 +6,6 @@ from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError
 from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet
 from drf_jsonapi.filters import FilterSet
 from drf_jsonapi import mixins
-from drf_jsonapi.response import CONTENT_TYPE
 
 from .mocks import TestModel, TestModelSerializer
 
@@ -38,7 +37,6 @@ class MixinsTestCase(TestCase):
         request = factory.get('/test_resources')
         view = TestViewSet.as_view({'get': 'list'})
         response = view(request)
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_retrieve_mixin(self):
@@ -46,7 +44,6 @@ class MixinsTestCase(TestCase):
         request = factory.get('/test_resources/1')
         view = TestViewSet.as_view({'get': 'retrieve'})
         response = view(request, pk=1)
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_create_mixin(self):
@@ -62,7 +59,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_create_mixin_with_relationships(self):
@@ -92,7 +88,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_create_mixin_invalid_relationship(self):
@@ -116,7 +111,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 400)
 
     def test_create_mixin_invalid(self):
@@ -132,7 +126,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 400)
 
     def test_partial_update_mixin(self):
@@ -149,7 +142,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'patch': 'partial_update'})
         response = view(request, pk=1)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_partial_update_mixin_with_relationships(self):
@@ -176,7 +168,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'patch': 'partial_update'})
         response = view(request, pk=1)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_partial_update_mixin_invalid(self):
@@ -193,7 +184,6 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'patch': 'partial_update'})
         response = view(request, pk=1)
         response.render()
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 400)
 
     def test_destroy_mixin(self):
@@ -201,7 +191,6 @@ class MixinsTestCase(TestCase):
         request = factory.delete('/test_resources/1')
         view = TestViewSet.as_view({'delete': 'destroy'})
         response = view(request, pk=1)
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 204)
 
 
@@ -372,7 +361,6 @@ class RelationshipListMixinTestCase(TestCase):
         request = factory.get('/test_resources/relationships/related_thing')
         view = self.TestOneView.as_view({'get': 'list'})
         response = view(request)
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
 
     def test_list_mixin_many(self):
@@ -380,5 +368,4 @@ class RelationshipListMixinTestCase(TestCase):
         request = factory.get('/test_resources/relationships/related_thing')
         view = self.TestManyView.as_view({'get': 'list'})
         response = view(request)
-        self.assertEqual(response.content_type, CONTENT_TYPE)
         self.assertEquals(response.status_code, 200)
