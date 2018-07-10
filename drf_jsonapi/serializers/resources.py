@@ -216,7 +216,7 @@ class ResourceSerializer(serializers.Serializer):
         related = handler.get_related(instance)
 
         if related is None:
-            return
+            return data
 
         if handler.many:
             related, data['meta'] = handler.apply_pagination(related, self.page_size)
