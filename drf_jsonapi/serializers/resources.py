@@ -56,10 +56,8 @@ class ResourceSerializer(serializers.Serializer):
 
         # Validate Includes
         self.include = list(filter(None, kwargs.pop('include', [])))
-
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
-
         if invalid_includes:
             raise Error(
                 detail="Invalid relationship(s): {}".format(", ".join(invalid_includes)),
@@ -140,7 +138,6 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Relationships
         relationships = self.get_relationships(instance)
-
         if relationships:
             resource['relationships'] = relationships
 
@@ -182,7 +179,6 @@ class ResourceSerializer(serializers.Serializer):
 
         for relation, handler in self.relationships.items():
             data = self.get_relationship_data(relation, handler, instance)
-
             if data:
                 relationships[relation] = data
 

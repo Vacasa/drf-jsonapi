@@ -1,0 +1,732 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+APIException	../drf_jsonapi/exception_handlers.py	/^from rest_framework.exceptions import APIException$/;"	kind:namespace	line:5
+APIException	../drf_jsonapi/objects.py	/^from rest_framework.exceptions import APIException$/;"	kind:namespace	line:1
+APIException	../tests/test_exception_handlers.py	/^from rest_framework.exceptions import APIException, ValidationError, NotFound$/;"	kind:namespace	line:3
+APIRequestFactory	../tests/test_filters.py	/^from rest_framework.test import APIRequestFactory$/;"	kind:namespace	line:4
+APIRequestFactory	../tests/test_inspectors.py	/^from rest_framework.test import APIRequestFactory$/;"	kind:namespace	line:3
+APIRequestFactory	../tests/test_mixins.py	/^from rest_framework.test import APIRequestFactory$/;"	kind:namespace	line:3
+APIRequestFactory	../tests/test_viewsets.py	/^from rest_framework.test import APIRequestFactory$/;"	kind:namespace	line:3
+APIView	../tests/test_inspectors.py	/^from rest_framework.views import APIView$/;"	kind:namespace	line:4
+BASE_URL	../tests/test_settings.py	/^BASE_URL = 'junk'$/;"	kind:variable	line:18
+BaseClass	../drf_jsonapi/backends.py	/^from django_filters.rest_framework.backends import DjangoFilterBackend as BaseClass$/;"	kind:namespace	line:1
+BaseFilterSet	../drf_jsonapi/filters.py	/^from django_filters.filterset import BaseFilterSet, FilterSetMetaclass$/;"	kind:namespace	line:5
+BaseResponse	../drf_jsonapi/response.py	/^from rest_framework.response import Response as BaseResponse$/;"	kind:namespace	line:1
+BrowsableAPIRenderer	../drf_jsonapi/renderers.py	/^class BrowsableAPIRenderer(renderers.BrowsableAPIRenderer):$/;"	kind:class	line:19
+BrowsableAPIRenderer	../tests/test_renderers.py	/^from drf_jsonapi.renderers import BrowsableAPIRenderer$/;"	kind:namespace	line:3
+BrowsableAPIRendererTestCase	../tests/test_renderers.py	/^class BrowsableAPIRendererTestCase(TestCase):$/;"	kind:class	line:6
+CreateMixin	../drf_jsonapi/mixins.py	/^class CreateMixin(ProcessRelationshipsMixin):$/;"	kind:class	line:81
+DATABASES	../tests/test_settings.py	/^DATABASES = {$/;"	kind:variable	line:11
+DEFAULT_PAGE_SIZE	../tests/test_settings.py	/^DEFAULT_PAGE_SIZE = 10$/;"	kind:variable	line:17
+DestroyMixin	../drf_jsonapi/mixins.py	/^class DestroyMixin(object):$/;"	kind:class	line:191
+DjangoFilterBackend	../drf_jsonapi/backends.py	/^class DjangoFilterBackend(BaseClass):$/;"	kind:class	line:6
+DjangoFilterBackend	../tests/test_backends.py	/^from drf_jsonapi.backends import DjangoFilterBackend$/;"	kind:namespace	line:3
+DjangoFilterBackendTestCase	../tests/test_backends.py	/^class DjangoFilterBackendTestCase(TestCase):$/;"	kind:class	line:19
+DjangoURLValidator	../drf_jsonapi/validator.py	/^from django.core.validators import URLValidator as DjangoURLValidator$/;"	kind:namespace	line:2
+DjangoValidationError	../drf_jsonapi/exception_handlers.py	/^from django.core.exceptions import FieldError, ValidationError as DjangoValidationError$/;"	kind:namespace	line:2
+DjangoValidationError	../tests/test_exception_handlers.py	/^from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError$/;"	kind:namespace	line:5
+Document	../drf_jsonapi/exception_handlers.py	/^from .objects import Document, Error$/;"	kind:namespace	line:8
+Document	../drf_jsonapi/objects.py	/^class Document(object):$/;"	kind:class	line:4
+Document	../drf_jsonapi/viewsets.py	/^from .objects import Document$/;"	kind:namespace	line:13
+Document	../tests/test_objects.py	/^from drf_jsonapi.objects import Document, Error$/;"	kind:namespace	line:3
+DocumentSerializer	../drf_jsonapi/exception_handlers.py	/^from .serializers import DocumentSerializer, ErrorSerializer$/;"	kind:namespace	line:9
+DocumentSerializer	../drf_jsonapi/serializers/objects.py	/^class DocumentSerializer(serializers.Serializer):$/;"	kind:class	line:11
+DocumentSerializer	../drf_jsonapi/viewsets.py	/^from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier$/;"	kind:namespace	line:14
+DocumentSerializerTestCase	../tests/test_serializers.py	/^class DocumentSerializerTestCase(TestCase):$/;"	kind:class	line:33
+DocumentTestCase	../tests/test_objects.py	/^class DocumentTestCase(TestCase):$/;"	kind:class	line:6
+EmptyPage	../drf_jsonapi/exception_handlers.py	/^from django.core.paginator import EmptyPage, PageNotAnInteger$/;"	kind:namespace	line:1
+EmptyPage	../tests/test_exception_handlers.py	/^from django.core.paginator import EmptyPage, PageNotAnInteger$/;"	kind:namespace	line:4
+EntitySwaggerAutoSchema	../drf_jsonapi/inspectors.py	/^class EntitySwaggerAutoSchema(SwaggerAutoSchema):$/;"	kind:class	line:14
+Error	../drf_jsonapi/exception_handlers.py	/^from .objects import Document, Error$/;"	kind:namespace	line:8
+Error	../drf_jsonapi/filters.py	/^from .objects import Error$/;"	kind:namespace	line:7
+Error	../drf_jsonapi/mixins.py	/^from .objects import Error$/;"	kind:namespace	line:10
+Error	../drf_jsonapi/objects.py	/^class Error(APIException):$/;"	kind:class	line:54
+Error	../drf_jsonapi/serializers/objects.py	/^from ..objects import Error$/;"	kind:namespace	line:8
+Error	../drf_jsonapi/serializers/resources.py	/^from ..objects import Error$/;"	kind:namespace	line:14
+Error	../tests/test_exception_handlers.py	/^from drf_jsonapi.objects import Error$/;"	kind:namespace	line:8
+Error	../tests/test_filters.py	/^from drf_jsonapi.objects import Error$/;"	kind:namespace	line:6
+Error	../tests/test_objects.py	/^from drf_jsonapi.objects import Document, Error$/;"	kind:namespace	line:3
+Error	../tests/test_viewsets.py	/^from drf_jsonapi.objects import Error$/;"	kind:namespace	line:7
+ErrorSerializer	../drf_jsonapi/exception_handlers.py	/^from .serializers import DocumentSerializer, ErrorSerializer$/;"	kind:namespace	line:9
+ErrorSerializer	../drf_jsonapi/serializers/objects.py	/^class ErrorSerializer(serializers.Serializer):$/;"	kind:class	line:51
+ErrorSerializer	../drf_jsonapi/viewsets.py	/^from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier$/;"	kind:namespace	line:14
+ErrorSerializerTestCase	../tests/test_serializers.py	/^class ErrorSerializerTestCase(TestCase):$/;"	kind:class	line:88
+ErrorTestCase	../tests/test_objects.py	/^class ErrorTestCase(TestCase):$/;"	kind:class	line:30
+ExceptionHandler	../drf_jsonapi/exception_handlers.py	/^class ExceptionHandler(object):$/;"	kind:class	line:16
+ExceptionHandlersTestCase	../tests/test_exception_handlers.py	/^class ExceptionHandlersTestCase(TestCase):$/;"	kind:class	line:11
+FIELD_PATTERN	../drf_jsonapi/viewsets.py	/^FIELD_PATTERN = re.compile("fields\\[(.+)\\]")$/;"	kind:variable	line:18
+FILTER_PATTERN	../drf_jsonapi/filters.py	/^FILTER_PATTERN = re.compile("^filter\\[([\\w_-]+)\\]\\[?([\\w_-]+)?\\]?$")$/;"	kind:variable	line:10
+FakeView	../tests/test_backends.py	/^        class FakeView(object):$/;"	kind:class	line:23
+FakeView	../tests/test_backends.py	/^        class FakeView(object):$/;"	kind:class	line:42
+FakeView	../tests/test_inspectors.py	/^class FakeView(APIView):$/;"	kind:class	line:18
+FieldError	../drf_jsonapi/exception_handlers.py	/^from django.core.exceptions import FieldError, ValidationError as DjangoValidationError$/;"	kind:namespace	line:2
+FieldError	../drf_jsonapi/serializers/resources.py	/^from django.core.exceptions import FieldError$/;"	kind:namespace	line:4
+Filter	../drf_jsonapi/filters.py	/^from django_filters.filters import Filter$/;"	kind:namespace	line:6
+FilterParseError	../drf_jsonapi/filters.py	/^class FilterParseError(Exception):$/;"	kind:class	line:13
+FilterSet	../drf_jsonapi/filters.py	/^class FilterSet(ParseFiltersMixin, django_filters.FilterSet):$/;"	kind:class	line:62
+FilterSet	../tests/test_backends.py	/^from drf_jsonapi.filters import FilterSet$/;"	kind:namespace	line:4
+FilterSet	../tests/test_filters.py	/^from drf_jsonapi.filters import FilterSet, GenericFilterSet$/;"	kind:namespace	line:7
+FilterSet	../tests/test_inspectors.py	/^from drf_jsonapi.filters import FilterSet$/;"	kind:namespace	line:13
+FilterSet	../tests/test_mixins.py	/^from drf_jsonapi.filters import FilterSet$/;"	kind:namespace	line:7
+FilterSetMetaclass	../drf_jsonapi/filters.py	/^from django_filters.filterset import BaseFilterSet, FilterSetMetaclass$/;"	kind:namespace	line:5
+FilterSetTestCase	../tests/test_filters.py	/^class FilterSetTestCase(TestCase):$/;"	kind:class	line:22
+GenericFilterSet	../drf_jsonapi/filters.py	/^class GenericFilterSet(ParseFiltersMixin, BaseFilterSet, metaclass=FilterSetMetaclass):$/;"	kind:class	line:124
+GenericFilterSet	../tests/test_filters.py	/^from drf_jsonapi.filters import FilterSet, GenericFilterSet$/;"	kind:namespace	line:7
+GenericFilterSetTestCase	../tests/test_filters.py	/^class GenericFilterSetTestCase(TestCase):$/;"	kind:class	line:67
+GenericViewSet	../drf_jsonapi/viewsets.py	/^from rest_framework.viewsets import GenericViewSet$/;"	kind:namespace	line:8
+INSTALLED_APPS	../tests/test_settings.py	/^INSTALLED_APPS = [$/;"	kind:variable	line:6
+JSONAPIParser	../drf_jsonapi/parsers.py	/^class JSONAPIParser(JSONParser):$/;"	kind:class	line:4
+JSONParser	../drf_jsonapi/parsers.py	/^from rest_framework.parsers import JSONParser$/;"	kind:namespace	line:1
+JSONRenderer	../drf_jsonapi/renderers.py	/^class JSONRenderer(renderers.JSONRenderer):$/;"	kind:class	line:4
+JsonApiResponse	../tests/test_validator.py	/^from drf_jsonapi.response import Response as JsonApiResponse$/;"	kind:namespace	line:5
+JsonApiValidator	../drf_jsonapi/validator.py	/^class JsonApiValidator(object):$/;"	kind:class	line:44
+JsonApiValidator	../tests/test_validator.py	/^from drf_jsonapi.validator import JsonApiValidator$/;"	kind:namespace	line:4
+LIST_SERIALIZER_KWARGS	../drf_jsonapi/serializers/resources.py	/^from rest_framework.serializers import LIST_SERIALIZER_KWARGS$/;"	kind:namespace	line:9
+LOOKUP_TYPES	../drf_jsonapi/backends.py	/^from django_filters.filters import LOOKUP_TYPES$/;"	kind:namespace	line:2
+ListMixin	../drf_jsonapi/mixins.py	/^class ListMixin(object):$/;"	kind:class	line:13
+Meta	../drf_jsonapi/filters.py	/^    class Meta:$/;"	kind:class	line:129
+Meta	../tests/mocks.py	/^    class Meta:$/;"	kind:class	line:142
+Meta	../tests/mocks.py	/^    class Meta:$/;"	kind:class	line:154
+Meta	../tests/mocks.py	/^    class Meta:$/;"	kind:class	line:82
+Meta	../tests/test_backends.py	/^    class Meta:$/;"	kind:class	line:10
+Meta	../tests/test_filters.py	/^    class Meta:$/;"	kind:class	line:13
+Meta	../tests/test_filters.py	/^    class Meta:$/;"	kind:class	line:54
+Meta	../tests/test_mixins.py	/^    class Meta:$/;"	kind:class	line:14
+MethodNotAllowed	../drf_jsonapi/mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:3
+MethodNotAllowed	../tests/test_mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:4
+MixinsTestCase	../tests/test_mixins.py	/^class MixinsTestCase(TestCase):$/;"	kind:class	line:33
+NestedSimpleRouter	../drf_jsonapi/routers.py	/^from rest_framework_nested.routers import NestedSimpleRouter$/;"	kind:namespace	line:1
+NotFound	../drf_jsonapi/mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:3
+NotFound	../tests/test_exception_handlers.py	/^from rest_framework.exceptions import APIException, ValidationError, NotFound$/;"	kind:namespace	line:3
+NotFound	../tests/test_mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:4
+OpenAPISchemaGenerator	../drf_jsonapi/generators.py	/^class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):$/;"	kind:class	line:8
+OpenAPISchemaGenerator	../tests/test_inspectors.py	/^from drf_jsonapi.generators import OpenAPISchemaGenerator$/;"	kind:namespace	line:11
+OpenAPISchemaGenerator	../tests/test_inspectors.py	/^from drf_yasg.generators import OpenAPISchemaGenerator$/;"	kind:namespace	line:6
+OrderedDict	../drf_jsonapi/filters.py	/^from collections import OrderedDict$/;"	kind:namespace	line:2
+OrderedDict	../drf_jsonapi/inspectors.py	/^from collections import OrderedDict$/;"	kind:namespace	line:3
+OrderedDict	../drf_jsonapi/serializers/objects.py	/^from collections import OrderedDict$/;"	kind:namespace	line:2
+PROJECT_PATH	../tests/test_settings.py	/^PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))$/;"	kind:variable	line:5
+PageNotAnInteger	../drf_jsonapi/exception_handlers.py	/^from django.core.paginator import EmptyPage, PageNotAnInteger$/;"	kind:namespace	line:1
+PageNotAnInteger	../tests/test_exception_handlers.py	/^from django.core.paginator import EmptyPage, PageNotAnInteger$/;"	kind:namespace	line:4
+Paginator	../drf_jsonapi/relationships.py	/^from django.core.paginator import Paginator$/;"	kind:namespace	line:5
+Paginator	../drf_jsonapi/viewsets.py	/^from django.core.paginator import Paginator$/;"	kind:namespace	line:6
+ParseError	../drf_jsonapi/mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:3
+ParseError	../drf_jsonapi/relationships.py	/^from rest_framework.exceptions import ParseError$/;"	kind:namespace	line:7
+ParseError	../drf_jsonapi/serializers/objects.py	/^from rest_framework.exceptions import ParseError$/;"	kind:namespace	line:5
+ParseError	../drf_jsonapi/serializers/resources.py	/^from rest_framework.exceptions import ParseError$/;"	kind:namespace	line:10
+ParseError	../drf_jsonapi/viewsets.py	/^from rest_framework.exceptions import ParseError$/;"	kind:namespace	line:9
+ParseError	../tests/test_mixins.py	/^from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError$/;"	kind:namespace	line:4
+ParseError	../tests/test_serializers.py	/^from rest_framework.exceptions import ParseError$/;"	kind:namespace	line:7
+ParseFiltersMixin	../drf_jsonapi/filters.py	/^class ParseFiltersMixin(object):$/;"	kind:class	line:17
+PartialUpdateMixin	../drf_jsonapi/mixins.py	/^class PartialUpdateMixin(ProcessRelationshipsMixin):$/;"	kind:class	line:149
+PermissionDenied	../tests/test_exception_handlers.py	/^from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError$/;"	kind:namespace	line:5
+ProcessRelationshipsMixin	../drf_jsonapi/mixins.py	/^class ProcessRelationshipsMixin(object):$/;"	kind:class	line:57
+QuerySet	../drf_jsonapi/viewsets.py	/^from django.db.models.query import QuerySet$/;"	kind:namespace	line:5
+ROOT_URLCONF	../tests/test_settings.py	/^ROOT_URLCONF = 'tests.urls'$/;"	kind:variable	line:19
+ReadOnlyToManyRelationshipViewSet	../drf_jsonapi/viewsets.py	/^                                        RelationshipViewSet):$/;"	kind:class	line:317
+ReadOnlyToOneRelationshipViewSet	../drf_jsonapi/viewsets.py	/^                                       RelationshipViewSet):$/;"	kind:class	line:326
+ReadOnlyViewSet	../drf_jsonapi/viewsets.py	/^                      ViewSet):$/;"	kind:class	line:267
+ReadWriteViewSet	../drf_jsonapi/viewsets.py	/^                       ViewSet):$/;"	kind:class	line:280
+ReadWriteViewSet	../tests/test_inspectors.py	/^from drf_jsonapi.viewsets import ReadWriteViewSet$/;"	kind:namespace	line:12
+RelationshipCreateMixin	../drf_jsonapi/mixins.py	/^class RelationshipCreateMixin(object):$/;"	kind:class	line:255
+RelationshipCreateMixinTestCase	../tests/test_mixins.py	/^class RelationshipCreateMixinTestCase(TestCase):$/;"	kind:class	line:197
+RelationshipDeleteMixin	../drf_jsonapi/mixins.py	/^class RelationshipDeleteMixin(object):$/;"	kind:class	line:331
+RelationshipDeleteMixinTestCase	../tests/test_mixins.py	/^class RelationshipDeleteMixinTestCase(TestCase):$/;"	kind:class	line:289
+RelationshipHandler	../drf_jsonapi/relationships.py	/^class RelationshipHandler(object):$/;"	kind:class	line:10
+RelationshipHandler	../tests/mocks.py	/^from drf_jsonapi.relationships import RelationshipHandler$/;"	kind:namespace	line:5
+RelationshipHandler	../tests/test_relationships.py	/^from drf_jsonapi.relationships import RelationshipHandler$/;"	kind:namespace	line:3
+RelationshipHandlerTestCase	../tests/test_relationships.py	/^class RelationshipHandlerTestCase(TestCase):$/;"	kind:class	line:6
+RelationshipListMixin	../drf_jsonapi/mixins.py	/^class RelationshipListMixin(object):$/;"	kind:class	line:211
+RelationshipListMixinTestCase	../tests/test_mixins.py	/^class RelationshipListMixinTestCase(TestCase):$/;"	kind:class	line:337
+RelationshipPatchMixin	../drf_jsonapi/mixins.py	/^class RelationshipPatchMixin(object):$/;"	kind:class	line:297
+RelationshipPatchMixinTestCase	../tests/test_mixins.py	/^class RelationshipPatchMixinTestCase(TestCase):$/;"	kind:class	line:253
+RelationshipRouter	../drf_jsonapi/routers.py	/^class RelationshipRouter(NestedSimpleRouter):$/;"	kind:class	line:4
+RelationshipSwaggerAutoSchema	../drf_jsonapi/inspectors.py	/^class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):$/;"	kind:class	line:274
+RelationshipViewSet	../drf_jsonapi/viewsets.py	/^class RelationshipViewSet(ViewSet):$/;"	kind:class	line:287
+RelationshipViewSet	../tests/test_mixins.py	/^from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet$/;"	kind:namespace	line:6
+RelationshipViewSet	../tests/test_viewsets.py	/^from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet$/;"	kind:namespace	line:5
+RelationshipViewSetTestCase	../tests/test_viewsets.py	/^class RelationshipViewSetTestCase(TestCase):$/;"	kind:class	line:139
+Resolver404	../drf_jsonapi/relationships.py	/^from django.urls import resolve, Resolver404$/;"	kind:namespace	line:4
+Resolver404	../drf_jsonapi/serializers/resources.py	/^from django.urls import resolve, Resolver404$/;"	kind:namespace	line:5
+ResourceIdentifier	../drf_jsonapi/serializers/utils.py	/^    class ResourceIdentifier(ResourceIdentifierSerializer, serializer_class):$/;"	kind:class	line:24
+ResourceIdentifierSerializer	../drf_jsonapi/serializers/utils.py	/^class ResourceIdentifierSerializer(object):$/;"	kind:class	line:4
+ResourceIdentifierTestCase	../tests/test_serializers.py	/^class ResourceIdentifierTestCase(TestCase):$/;"	kind:class	line:433
+ResourceListSerializer	../drf_jsonapi/serializers/resources.py	/^class ResourceListSerializer(serializers.ListSerializer):$/;"	kind:class	line:18
+ResourceListSerializerTestCase	../tests/test_serializers.py	/^class ResourceListSerializerTestCase(TestCase):$/;"	kind:class	line:123
+ResourceModelSerializer	../drf_jsonapi/serializers/resources.py	/^class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):$/;"	kind:class	line:391
+ResourceModelSerializerTestCase	../tests/test_serializers.py	/^class ResourceModelSerializerTestCase(TestCase):$/;"	kind:class	line:383
+ResourceSerializer	../drf_jsonapi/serializers/resources.py	/^class ResourceSerializer(serializers.Serializer):$/;"	kind:class	line:37
+ResourceSerializerTestCase	../tests/test_serializers.py	/^class ResourceSerializerTestCase(TestCase):$/;"	kind:class	line:164
+Response	../drf_jsonapi/exception_handlers.py	/^from rest_framework.response import Response$/;"	kind:namespace	line:6
+Response	../drf_jsonapi/mixins.py	/^from .response import Response$/;"	kind:namespace	line:7
+Response	../drf_jsonapi/response.py	/^class Response(BaseResponse):$/;"	kind:class	line:4
+Response	../drf_jsonapi/validator.py	/^from rest_framework.response import Response$/;"	kind:namespace	line:5
+Response	../drf_jsonapi/viewsets.py	/^from .response import Response$/;"	kind:namespace	line:12
+Response	../tests/test_validator.py	/^class Response(JsonApiResponse):$/;"	kind:class	line:8
+Response	../tests/test_viewsets.py	/^from drf_jsonapi.response import Response$/;"	kind:namespace	line:6
+RetrieveMixin	../drf_jsonapi/mixins.py	/^class RetrieveMixin(object):$/;"	kind:class	line:119
+SECRET_KEY	../tests/test_settings.py	/^SECRET_KEY = os.getenv('SECRET_KEY', '!INSECURE!')$/;"	kind:variable	line:3
+SwaggerAutoSchema	../drf_jsonapi/inspectors.py	/^from drf_yasg.inspectors.view import SwaggerAutoSchema$/;"	kind:namespace	line:7
+SwaggerAutoSchema	../tests/test_inspectors.py	/^from drf_jsonapi.inspectors import SwaggerAutoSchema$/;"	kind:namespace	line:10
+SwaggerAutoSchemaTestCase	../tests/test_inspectors.py	/^class SwaggerAutoSchemaTestCase(TestCase):$/;"	kind:class	line:23
+TIME_ZONE	../tests/test_settings.py	/^TIME_ZONE = 'UTC'$/;"	kind:variable	line:20
+TestCase	../tests/test_backends.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_exception_handlers.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_filters.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_inspectors.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_mixins.py	/^from django.test import TestCase, override_settings$/;"	kind:namespace	line:1
+TestCase	../tests/test_objects.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_relationships.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_renderers.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_serializers.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestCase	../tests/test_viewsets.py	/^from django.test import TestCase$/;"	kind:namespace	line:1
+TestFilterSet	../tests/test_backends.py	/^class TestFilterSet(FilterSet):$/;"	kind:class	line:9
+TestFilterSet	../tests/test_filters.py	/^class TestFilterSet(FilterSet):$/;"	kind:class	line:12
+TestFilterSet	../tests/test_mixins.py	/^class TestFilterSet(FilterSet):$/;"	kind:class	line:13
+TestGenericFilterSet	../tests/test_filters.py	/^class TestGenericFilterSet(GenericFilterSet):$/;"	kind:class	line:53
+TestJsonApiValidator	../tests/test_validator.py	/^class TestJsonApiValidator(unittest.TestCase):$/;"	kind:class	line:14
+TestManyRelationshipHandler	../tests/mocks.py	/^class TestManyRelationshipHandler(RelationshipHandler):$/;"	kind:class	line:21
+TestManyView	../tests/test_mixins.py	/^    class TestManyView(mixins.RelationshipCreateMixin, RelationshipViewSet):$/;"	kind:class	line:199
+TestManyView	../tests/test_mixins.py	/^    class TestManyView(mixins.RelationshipDeleteMixin, RelationshipViewSet):$/;"	kind:class	line:291
+TestManyView	../tests/test_mixins.py	/^    class TestManyView(mixins.RelationshipListMixin, RelationshipViewSet):$/;"	kind:class	line:339
+TestManyView	../tests/test_mixins.py	/^    class TestManyView(mixins.RelationshipPatchMixin, RelationshipViewSet):$/;"	kind:class	line:255
+TestModel	../tests/mocks.py	/^class TestModel(models.Model):$/;"	kind:class	line:131
+TestModel	../tests/test_backends.py	/^from .mocks import TestModel$/;"	kind:namespace	line:6
+TestModel	../tests/test_filters.py	/^from .mocks import TestModel$/;"	kind:namespace	line:9
+TestModel	../tests/test_mixins.py	/^from .mocks import TestModel, TestModelSerializer$/;"	kind:namespace	line:10
+TestModelManager	../tests/mocks.py	/^class TestModelManager(models.Manager):$/;"	kind:class	line:123
+TestModelQuerySet	../tests/mocks.py	/^class TestModelQuerySet(models.QuerySet):$/;"	kind:class	line:112
+TestModelSerializer	../tests/mocks.py	/^class TestModelSerializer(ResourceModelSerializer):$/;"	kind:class	line:152
+TestModelSerializer	../tests/test_inspectors.py	/^from .mocks import TestModelSerializer$/;"	kind:namespace	line:15
+TestModelSerializer	../tests/test_mixins.py	/^from .mocks import TestModel, TestModelSerializer$/;"	kind:namespace	line:10
+TestOneRelationshipHandler	../tests/mocks.py	/^class TestOneRelationshipHandler(RelationshipHandler):$/;"	kind:class	line:59
+TestOneView	../tests/test_mixins.py	/^    class TestOneView(mixins.RelationshipCreateMixin, RelationshipViewSet):$/;"	kind:class	line:206
+TestOneView	../tests/test_mixins.py	/^    class TestOneView(mixins.RelationshipDeleteMixin, RelationshipViewSet):$/;"	kind:class	line:298
+TestOneView	../tests/test_mixins.py	/^    class TestOneView(mixins.RelationshipListMixin, RelationshipViewSet):$/;"	kind:class	line:346
+TestOneView	../tests/test_mixins.py	/^    class TestOneView(mixins.RelationshipPatchMixin, RelationshipViewSet):$/;"	kind:class	line:262
+TestResource	../tests/mocks.py	/^class TestResource(object):$/;"	kind:class	line:14
+TestResourceSerializer	../tests/mocks.py	/^class TestResourceSerializer(ResourceSerializer):$/;"	kind:class	line:77
+TestRunner	../runtests.py	/^    TestRunner = get_runner(settings)$/;"	kind:variable	line:12
+TestViewSet	../tests/test_mixins.py	/^                  mixins.PartialUpdateMixin, mixins.DestroyMixin, ViewSet):$/;"	kind:class	line:24
+TestViewSet	../tests/test_viewsets.py	/^class TestViewSet(ViewSet):$/;"	kind:class	line:10
+ToManyRelationshipViewSet	../drf_jsonapi/viewsets.py	/^                                RelationshipViewSet):$/;"	kind:class	line:338
+ToOneRelationshipViewSet	../drf_jsonapi/viewsets.py	/^                               RelationshipViewSet):$/;"	kind:class	line:348
+URLValidator	../drf_jsonapi/validator.py	/^class URLValidator(DjangoURLValidator):$/;"	kind:class	line:8
+VALID_HEADER	../drf_jsonapi/validator.py	/^    VALID_HEADER = 'application\/vnd.api+json'$/;"	kind:variable	line:78
+ValidationError	../drf_jsonapi/validator.py	/^from django.core.exceptions import ValidationError$/;"	kind:namespace	line:4
+ValidationError	../tests/test_exception_handlers.py	/^from rest_framework.exceptions import APIException, ValidationError, NotFound$/;"	kind:namespace	line:3
+ViewSet	../drf_jsonapi/viewsets.py	/^class ViewSet(GenericViewSet):$/;"	kind:class	line:21
+ViewSet	../tests/test_mixins.py	/^from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet$/;"	kind:namespace	line:6
+ViewSet	../tests/test_viewsets.py	/^from drf_jsonapi.viewsets import ViewSet, RelationshipViewSet$/;"	kind:namespace	line:5
+ViewSetTestCase	../tests/test_viewsets.py	/^class ViewSetTestCase(TestCase):$/;"	kind:class	line:29
+_	../drf_jsonapi/validator.py	/^from django.core.validators import _lazy_re_compile, _$/;"	kind:namespace	line:3
+_OpenAPISchemaGenerator	../drf_jsonapi/generators.py	/^from drf_yasg.generators import OpenAPISchemaGenerator as _OpenAPISchemaGenerator$/;"	kind:namespace	line:3
+__init__	../drf_jsonapi/filters.py	/^    def __init__(self, data=None, *args, **kwargs):$/;"	kind:member	line:76
+__init__	../drf_jsonapi/filters.py	/^    def __init__(self, data=None, collection=None):$/;"	kind:member	line:132
+__init__	../drf_jsonapi/objects.py	/^    def __init__(self, **kwargs):$/;"	kind:member	line:31
+__init__	../drf_jsonapi/objects.py	/^    def __init__(self, detail, **kwargs):$/;"	kind:member	line:59
+__init__	../drf_jsonapi/routers.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:9
+__init__	../drf_jsonapi/serializers/resources.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:43
+__init__	../drf_jsonapi/validator.py	/^    def __init__(self):$/;"	kind:member	line:80
+__init__	../tests/mocks.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:16
+__init__.py	../drf_jsonapi/__init__.py	1;"	kind:file	line:1
+__init__.py	../drf_jsonapi/serializers/__init__.py	1;"	kind:file	line:1
+__init__.py	../tests/__init__.py	1;"	kind:file	line:1
+_lazy_re_compile	../drf_jsonapi/validator.py	/^from django.core.validators import _lazy_re_compile, _$/;"	kind:namespace	line:3
+_validate_error_object	../drf_jsonapi/validator.py	/^    def _validate_error_object(self, data_dict):$/;"	kind:member	line:789
+_validate_errors_object	../drf_jsonapi/validator.py	/^    def _validate_errors_object(self, data_list):$/;"	kind:member	line:772
+_validate_headers	../drf_jsonapi/validator.py	/^    def _validate_headers(self, response):$/;"	kind:member	line:129
+_validate_jsonapi_object	../drf_jsonapi/validator.py	/^    def _validate_jsonapi_object(self, data_dict):$/;"	kind:member	line:743
+_validate_link_object	../drf_jsonapi/validator.py	/^    def _validate_link_object(self, data):$/;"	kind:member	line:706
+_validate_links_object	../drf_jsonapi/validator.py	/^    def _validate_links_object(self, data_dict, links_exist=False):$/;"	kind:member	line:661
+_validate_member_names	../drf_jsonapi/validator.py	/^    def _validate_member_names(self, data_dict):$/;"	kind:member	line:843
+_validate_meta	../drf_jsonapi/validator.py	/^    def _validate_meta(self, data_dict):$/;"	kind:member	line:627
+_validate_primary_data_element	../drf_jsonapi/validator.py	/^    def _validate_primary_data_element(self, data_element):$/;"	kind:member	line:273
+_validate_resource_identifier_object	../drf_jsonapi/validator.py	/^    def _validate_resource_identifier_object(self, data_dict):$/;"	kind:member	line:612
+_validate_resource_identifier_objects	../drf_jsonapi/validator.py	/^    def _validate_resource_identifier_objects(self, data_list):$/;"	kind:member	line:588
+_validate_resource_linkage	../drf_jsonapi/validator.py	/^    def _validate_resource_linkage(self, data_dict):$/;"	kind:member	line:536
+_validate_resource_object	../drf_jsonapi/validator.py	/^    def _validate_resource_object(self, data_dict):$/;"	kind:member	line:369
+_validate_resource_object_attributes	../drf_jsonapi/validator.py	/^    def _validate_resource_object_attributes(self, data_dict):$/;"	kind:member	line:447
+_validate_resource_object_relationship	../drf_jsonapi/validator.py	/^    def _validate_resource_object_relationship(self, data_dict):$/;"	kind:member	line:516
+_validate_resource_object_relationships	../drf_jsonapi/validator.py	/^    def _validate_resource_object_relationships(self, data_dict):$/;"	kind:member	line:477
+_validate_resource_objects	../drf_jsonapi/validator.py	/^    def _validate_resource_objects(self, data_list):$/;"	kind:member	line:352
+_validate_section	../drf_jsonapi/validator.py	/^    def _validate_section(self,  # NOSONAR$/;"	kind:member	line:148
+_validate_top_level	../drf_jsonapi/validator.py	/^    def _validate_top_level(self, data_dict):$/;"	kind:member	line:197
+_validate_top_level_links_object	../drf_jsonapi/validator.py	/^    def _validate_top_level_links_object(self, data_dict):$/;"	kind:member	line:331
+_validate_url	../drf_jsonapi/validator.py	/^    def _validate_url(self, url):$/;"	kind:member	line:725
+add_related	../drf_jsonapi/relationships.py	/^    def add_related(self, resource, related):$/;"	kind:member	line:135
+add_related	../tests/mocks.py	/^    def add_related(self, resource, related):$/;"	kind:member	line:43
+apply_pagination	../drf_jsonapi/relationships.py	/^    def apply_pagination(self, related, page_size):$/;"	kind:member	line:109
+apply_pagination	../drf_jsonapi/viewsets.py	/^    def apply_pagination(self, collection):$/;"	kind:member	line:189
+apply_sparse_fieldset	../drf_jsonapi/serializers/resources.py	/^    def apply_sparse_fieldset(self, fields=None):$/;"	kind:member	line:74
+authentication_classes	../tests/test_mixins.py	/^    authentication_classes = []$/;"	kind:variable	line:25
+authentication_classes	../tests/test_viewsets.py	/^    authentication_classes = []$/;"	kind:variable	line:11
+backends.py	../drf_jsonapi/backends.py	1;"	kind:file	line:1
+base_path	../tests/mocks.py	/^        base_path = "\/test_resources"$/;"	kind:variable	line:157
+base_path	../tests/mocks.py	/^        base_path = "\/test_resources"$/;"	kind:variable	line:84
+build_relationship_links	../drf_jsonapi/relationships.py	/^    def build_relationship_links(self, base_serializer, relation, resource):$/;"	kind:member	line:36
+collection	../drf_jsonapi/filters.py	/^    def collection(self):$/;"	kind:member	line:120
+collection	../drf_jsonapi/filters.py	/^    def collection(self):$/;"	kind:member	line:145
+collection	../tests/test_inspectors.py	/^    collection = []$/;"	kind:variable	line:20
+collection	../tests/test_mixins.py	/^    collection = TestModel.objects.none()$/;"	kind:variable	line:30
+collection	../tests/test_viewsets.py	/^    collection = ['foobar']$/;"	kind:variable	line:13
+collections	../drf_jsonapi/serializers/resources.py	/^import collections$/;"	kind:namespace	line:2
+compat	../drf_jsonapi/backends.py	/^from django_filters import compat$/;"	kind:namespace	line:3
+count	../tests/mocks.py	/^    count = models.IntegerField(null=True)$/;"	kind:variable	line:133
+count	../tests/mocks.py	/^    count = serializers.IntegerField()$/;"	kind:variable	line:79
+create	../drf_jsonapi/mixins.py	/^    def create(self, request):$/;"	kind:member	line:86
+create	../drf_jsonapi/mixins.py	/^    def create(self, request, *args, **kwargs):$/;"	kind:member	line:260
+create	../tests/mocks.py	/^    def create(self, validated_data):$/;"	kind:member	line:94
+create	../tests/test_viewsets.py	/^    def create(self, request):$/;"	kind:member	line:23
+created_at	../tests/mocks.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	kind:variable	line:135
+created_at	../tests/mocks.py	/^    created_at = serializers.DateTimeField()$/;"	kind:variable	line:80
+dateparse	../tests/test_serializers.py	/^from django.utils import dateparse, timezone$/;"	kind:namespace	line:3
+defaultdict	../drf_jsonapi/generators.py	/^from collections import defaultdict$/;"	kind:namespace	line:2
+defaultdict	../drf_jsonapi/viewsets.py	/^from collections import defaultdict$/;"	kind:namespace	line:2
+delete	../drf_jsonapi/mixins.py	/^    def delete(self, request, *args, **kwargs):$/;"	kind:member	line:336
+delete	../tests/mocks.py	/^    def delete(self, *args, **kwargs):$/;"	kind:member	line:148
+destroy	../drf_jsonapi/mixins.py	/^    def destroy(self, request, *args, **kwargs):$/;"	kind:member	line:195
+dispatch	../drf_jsonapi/filters.py	/^    def dispatch(self, item):$/;"	kind:member	line:148
+django	../runtests.py	/^import django$/;"	kind:namespace	line:5
+django_filters	../drf_jsonapi/filters.py	/^import django_filters$/;"	kind:namespace	line:4
+domain_re	../drf_jsonapi/validator.py	/^    domain_re = r'(?:\\.(?!-)[a-z' + ul + r'0-9-]{1,63}(?<!-))*'$/;"	kind:variable	line:22
+error_response	../drf_jsonapi/viewsets.py	/^    def error_response(self, errors, status=400):$/;"	kind:member	line:173
+exception_handler	../drf_jsonapi/exception_handlers.py	/^from rest_framework.views import exception_handler$/;"	kind:namespace	line:4
+exception_handlers.py	../drf_jsonapi/exception_handlers.py	1;"	kind:file	line:1
+failures	../runtests.py	/^    failures = test_runner.run_tests(["tests"])$/;"	kind:variable	line:14
+fields	../tests/mocks.py	/^        fields = ($/;"	kind:variable	line:158
+fields	../tests/mocks.py	/^        fields = ($/;"	kind:variable	line:85
+fields	../tests/test_backends.py	/^        fields = {$/;"	kind:variable	line:12
+fields	../tests/test_filters.py	/^        fields = {$/;"	kind:variable	line:15
+fields	../tests/test_filters.py	/^        fields = {$/;"	kind:variable	line:55
+fields	../tests/test_mixins.py	/^        fields = {$/;"	kind:variable	line:16
+filter_class	../drf_jsonapi/viewsets.py	/^    filter_class = None$/;"	kind:variable	line:37
+filter_class	../tests/test_backends.py	/^            filter_class = TestFilterSet$/;"	kind:variable	line:24
+filter_class	../tests/test_mixins.py	/^    filter_class = TestFilterSet$/;"	kind:variable	line:29
+filter_id	../tests/test_filters.py	/^    def filter_id(self, item, value):$/;"	kind:member	line:60
+filter_name	../tests/test_filters.py	/^    def filter_name(self, item, value):$/;"	kind:member	line:63
+filters.py	../drf_jsonapi/filters.py	1;"	kind:file	line:1
+find_packages	../setup.py	/^from setuptools import find_packages, setup$/;"	kind:namespace	line:1
+format	../drf_jsonapi/renderers.py	/^    format = 'vnd.api+json'$/;"	kind:variable	line:16
+from_identity	../drf_jsonapi/serializers/resources.py	/^    def from_identity(cls, data, many=False):$/;"	kind:member	line:310
+generators.py	../drf_jsonapi/generators.py	1;"	kind:file	line:1
+get	../tests/mocks.py	/^    def get(self, pk, **kwargs):$/;"	kind:member	line:113
+get	../tests/mocks.py	/^    def get(self, pk, **kwargs):$/;"	kind:member	line:127
+get_collection	../drf_jsonapi/viewsets.py	/^    def get_collection(self, request=None):$/;"	kind:member	line:51
+get_default_responses	../drf_jsonapi/inspectors.py	/^    def get_default_responses(self):$/;"	kind:member	line:330
+get_default_responses	../drf_jsonapi/inspectors.py	/^    def get_default_responses(self):$/;"	kind:member	line:92
+get_endpoints	../drf_jsonapi/generators.py	/^    def get_endpoints(self, request):$/;"	kind:member	line:13
+get_filters	../drf_jsonapi/filters.py	/^    def get_filters(cls):$/;"	kind:member	line:168
+get_id	../drf_jsonapi/serializers/resources.py	/^    def get_id(self, instance):$/;"	kind:member	line:230
+get_include_parameters	../drf_jsonapi/inspectors.py	/^    def get_include_parameters(self):$/;"	kind:member	line:223
+get_include_parameters	../drf_jsonapi/inspectors.py	/^    def get_include_parameters(self):$/;"	kind:member	line:424
+get_links	../drf_jsonapi/relationships.py	/^    def get_links(self, resource, links):$/;"	kind:member	line:86
+get_links	../drf_jsonapi/serializers/resources.py	/^    def get_links(self, instance):$/;"	kind:member	line:255
+get_links	../tests/mocks.py	/^    def get_links(self, instance):$/;"	kind:member	line:102
+get_links	../tests/mocks.py	/^    def get_links(self, instance, links):$/;"	kind:member	line:52
+get_meta	../drf_jsonapi/serializers/resources.py	/^    def get_meta(self, instance):$/;"	kind:member	line:243
+get_meta	../tests/mocks.py	/^    def get_meta(self, instance):$/;"	kind:member	line:97
+get_object_by_id	../drf_jsonapi/serializers/resources.py	/^    def get_object_by_id(cls, id):$/;"	kind:member	line:357
+get_object_by_id	../drf_jsonapi/serializers/resources.py	/^    def get_object_by_id(cls, id):$/;"	kind:member	line:394
+get_object_by_id	../tests/mocks.py	/^    def get_object_by_id(cls, id):$/;"	kind:member	line:108
+get_object_from_identity	../drf_jsonapi/serializers/resources.py	/^    def get_object_from_identity(cls, data):$/;"	kind:member	line:344
+get_object_or_404	../drf_jsonapi/viewsets.py	/^from rest_framework.generics import get_object_or_404$/;"	kind:namespace	line:10
+get_operation_id	../drf_jsonapi/inspectors.py	/^    def get_operation_id(self, operation_keys):$/;"	kind:member	line:284
+get_pagination_parameters	../drf_jsonapi/inspectors.py	/^    def get_pagination_parameters(self):$/;"	kind:member	line:245
+get_query_parameters	../drf_jsonapi/inspectors.py	/^    def get_query_parameters(self):$/;"	kind:member	line:121
+get_queryset	../drf_jsonapi/viewsets.py	/^    def get_queryset(self):$/;"	kind:member	line:40
+get_queryset	../tests/mocks.py	/^    def get_queryset(self):$/;"	kind:member	line:124
+get_raw_data_form	../drf_jsonapi/renderers.py	/^    def get_raw_data_form(self, data, view, method, request):$/;"	kind:member	line:21
+get_related	../drf_jsonapi/relationships.py	/^    def get_related(self, resource):$/;"	kind:member	line:99
+get_related	../drf_jsonapi/viewsets.py	/^    def get_related(self, request, resource):$/;"	kind:member	line:307
+get_related	../tests/mocks.py	/^    def get_related(self, instance):$/;"	kind:member	line:27
+get_related	../tests/mocks.py	/^    def get_related(self, instance):$/;"	kind:member	line:68
+get_relationship_data	../drf_jsonapi/serializers/resources.py	/^    def get_relationship_data(self, relation, handler, instance):$/;"	kind:member	line:186
+get_relationship_handler	../drf_jsonapi/viewsets.py	/^    def get_relationship_handler(self, relation):$/;"	kind:member	line:248
+get_relationships	../drf_jsonapi/serializers/resources.py	/^    def get_relationships(self, instance):$/;"	kind:member	line:167
+get_relationships	../drf_jsonapi/viewsets.py	/^    def get_relationships(self):$/;"	kind:member	line:238
+get_request_body_schema	../drf_jsonapi/inspectors.py	/^    def get_request_body_schema(self, serializer):$/;"	kind:member	line:355
+get_request_body_schema	../drf_jsonapi/inspectors.py	/^    def get_request_body_schema(self, serializer):$/;"	kind:member	line:47
+get_resource	../drf_jsonapi/viewsets.py	/^    def get_resource(self, request, **kwargs):$/;"	kind:member	line:67
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:203
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:210
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:259
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:266
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:295
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:302
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:343
+get_resource	../tests/test_mixins.py	/^        def get_resource(self, *args, **kwargs):$/;"	kind:member	line:350
+get_response_schemas	../drf_jsonapi/inspectors.py	/^    def get_response_schemas(self, response_serializers):$/;"	kind:member	line:67
+get_runner	../runtests.py	/^from django.test.utils import get_runner$/;"	kind:namespace	line:7
+get_schema_fields	../drf_jsonapi/backends.py	/^    def get_schema_fields(self, view):$/;"	kind:member	line:14
+get_serializer_class	../drf_jsonapi/relationships.py	/^    def get_serializer_class(self):$/;"	kind:member	line:76
+get_serializer_class	../drf_jsonapi/viewsets.py	/^    def get_serializer_class(self):$/;"	kind:member	line:295
+get_serializer_class	../tests/mocks.py	/^    def get_serializer_class(self):$/;"	kind:member	line:24
+get_serializer_class	../tests/mocks.py	/^    def get_serializer_class(self):$/;"	kind:member	line:62
+get_sort_parameters	../drf_jsonapi/inspectors.py	/^    def get_sort_parameters(self):$/;"	kind:member	line:165
+get_sort_parameters	../drf_jsonapi/inspectors.py	/^    def get_sort_parameters(self):$/;"	kind:member	line:375
+get_sparse_fieldset_parameters	../drf_jsonapi/inspectors.py	/^    def get_sparse_fieldset_parameters(self):$/;"	kind:member	line:187
+get_sparse_fieldset_parameters	../drf_jsonapi/inspectors.py	/^    def get_sparse_fieldset_parameters(self):$/;"	kind:member	line:413
+get_view_name	../drf_jsonapi/viewsets.py	/^    def get_view_name(self):$/;"	kind:member	line:80
+guess_response_status	../drf_jsonapi/inspectors.py	/^from drf_yasg.utils import is_list_view, guess_response_status$/;"	kind:namespace	line:9
+handle	../drf_jsonapi/exception_handlers.py	/^    def handle(cls, exc, context):$/;"	kind:member	line:25
+handle_APIException	../drf_jsonapi/exception_handlers.py	/^    def handle_APIException(cls, exc, context):  # NOSONAR$/;"	kind:member	line:82
+handle_Error	../drf_jsonapi/exception_handlers.py	/^    def handle_Error(cls, exc, context):  # NOSONAR$/;"	kind:member	line:63
+handle_InvalidPage	../drf_jsonapi/exception_handlers.py	/^    def handle_InvalidPage(cls, exc, context):  # NOSONAR$/;"	kind:member	line:130
+handle_ValidationError	../drf_jsonapi/exception_handlers.py	/^    def handle_ValidationError(cls, exc, context):  # NOSONAR$/;"	kind:member	line:116
+host_re	../drf_jsonapi/validator.py	/^    host_re = '(' + hostname_re + domain_re + tld_re + '|localhost|testserver)'$/;"	kind:variable	line:31
+hostname_re	../drf_jsonapi/validator.py	/^    hostname_re = r'[a-z' + ul + r'0-9](?:[a-z' + ul + r'0-9-]{0,61}[a-z' + ul + r'0-9])?'$/;"	kind:variable	line:20
+implicit_body_methods	../drf_jsonapi/inspectors.py	/^    implicit_body_methods = ('POST', 'PATCH', 'DELETE')$/;"	kind:variable	line:282
+included	../drf_jsonapi/serializers/resources.py	/^    def included(self):$/;"	kind:member	line:25
+initial	../drf_jsonapi/viewsets.py	/^    def initial(self, *args, **kwargs):$/;"	kind:member	line:94
+inspectors	../drf_jsonapi/viewsets.py	/^from . import inspectors$/;"	kind:namespace	line:16
+inspectors.py	../drf_jsonapi/inspectors.py	1;"	kind:file	line:1
+ipv4_re	../drf_jsonapi/validator.py	/^    ipv4_re = r'(?:25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}'$/;"	kind:variable	line:16
+ipv6_re	../drf_jsonapi/validator.py	/^    ipv6_re = r'\\[[0-9a-f:\\.]+\\]'  # (simple regex, validated later)$/;"	kind:variable	line:17
+is_active	../tests/mocks.py	/^    is_active = models.BooleanField(default=True)$/;"	kind:variable	line:134
+is_list	../drf_jsonapi/inspectors.py	/^    def is_list(self):$/;"	kind:member	line:140
+is_list	../drf_jsonapi/inspectors.py	/^    def is_list(self):$/;"	kind:member	line:402
+is_list_view	../drf_jsonapi/inspectors.py	/^from drf_yasg.utils import is_list_view, guess_response_status$/;"	kind:namespace	line:9
+is_valid	../drf_jsonapi/validator.py	/^    def is_valid(self, response):$/;"	kind:member	line:84
+itertools	../drf_jsonapi/inspectors.py	/^import itertools$/;"	kind:namespace	line:1
+json	../tests/test_validator.py	/^    def json(self):$/;"	kind:member	line:10
+jsonapi_exception_handler	../drf_jsonapi/exception_handlers.py	/^def jsonapi_exception_handler(exc, context):$/;"	kind:function	line:12
+jsonapi_exception_handler	../tests/test_exception_handlers.py	/^from drf_jsonapi.exception_handlers import jsonapi_exception_handler$/;"	kind:namespace	line:7
+list	../drf_jsonapi/mixins.py	/^    def list(self, request, *args, **kwargs):$/;"	kind:member	line:18
+list	../drf_jsonapi/mixins.py	/^    def list(self, request, *args, **kwargs):$/;"	kind:member	line:216
+list	../tests/test_viewsets.py	/^    def list(self, request):$/;"	kind:member	line:15
+list_route	../drf_jsonapi/mixins.py	/^from rest_framework.decorators import list_route$/;"	kind:namespace	line:4
+listify	../drf_jsonapi/mixins.py	/^from .utils import listify$/;"	kind:namespace	line:9
+listify	../drf_jsonapi/serializers/objects.py	/^from ..utils import listify$/;"	kind:namespace	line:7
+listify	../drf_jsonapi/serializers/resources.py	/^from ..utils import listify$/;"	kind:namespace	line:15
+listify	../drf_jsonapi/utils.py	/^def listify(item_or_list):$/;"	kind:function	line:2
+locate	../drf_jsonapi/relationships.py	/^from pydoc import locate$/;"	kind:namespace	line:1
+locate	../drf_jsonapi/serializers/objects.py	/^from pydoc import locate$/;"	kind:namespace	line:1
+locate	../drf_jsonapi/serializers/resources.py	/^from pydoc import locate$/;"	kind:namespace	line:1
+locate	../drf_jsonapi/serializers/utils.py	/^from pydoc import locate$/;"	kind:namespace	line:1
+lookup_field	../drf_jsonapi/viewsets.py	/^    lookup_field = "pk"$/;"	kind:variable	line:36
+many	../tests/mocks.py	/^    many = False$/;"	kind:variable	line:60
+many	../tests/mocks.py	/^    many = True$/;"	kind:variable	line:22
+many_init	../drf_jsonapi/serializers/resources.py	/^    def many_init(cls, *args, **kwargs):$/;"	kind:member	line:369
+media_type	../drf_jsonapi/parsers.py	/^    media_type = 'application\/vnd.api+json'$/;"	kind:variable	line:8
+media_type	../drf_jsonapi/renderers.py	/^    media_type = 'application\/vnd.api+json'$/;"	kind:variable	line:15
+message	../drf_jsonapi/validator.py	/^    message = _('Enter a valid URL.')$/;"	kind:variable	line:40
+mixins	../drf_jsonapi/viewsets.py	/^from . import mixins$/;"	kind:namespace	line:15
+mixins	../tests/test_mixins.py	/^from drf_jsonapi import mixins$/;"	kind:namespace	line:8
+mixins.py	../drf_jsonapi/mixins.py	1;"	kind:file	line:1
+mocks	../tests/test_serializers.py	/^from . import mocks$/;"	kind:namespace	line:23
+mocks.py	../tests/mocks.py	1;"	kind:file	line:1
+model	../tests/mocks.py	/^        model = TestModel$/;"	kind:variable	line:155
+model	../tests/test_backends.py	/^        model = TestModel$/;"	kind:variable	line:11
+model	../tests/test_filters.py	/^        model = TestModel$/;"	kind:variable	line:14
+model	../tests/test_mixins.py	/^        model = TestModel$/;"	kind:variable	line:15
+models	../tests/mocks.py	/^from django.db import models$/;"	kind:namespace	line:2
+models	../tests/test_filters.py	/^from django.db import models$/;"	kind:namespace	line:2
+name	../tests/mocks.py	/^    name = models.CharField(max_length=128, null=True)$/;"	kind:variable	line:132
+name	../tests/mocks.py	/^    name = serializers.CharField()$/;"	kind:variable	line:78
+objects	../tests/mocks.py	/^    objects = TestModelManager()$/;"	kind:variable	line:140
+objects.py	../drf_jsonapi/objects.py	1;"	kind:file	line:1
+objects.py	../drf_jsonapi/serializers/objects.py	1;"	kind:file	line:1
+openapi	../drf_jsonapi/inspectors.py	/^from drf_yasg import openapi$/;"	kind:namespace	line:8
+openapi	../tests/test_inspectors.py	/^from drf_yasg import openapi$/;"	kind:namespace	line:8
+ordering	../tests/mocks.py	/^        ordering = ['id']$/;"	kind:variable	line:143
+os	../runtests.py	/^import os$/;"	kind:namespace	line:2
+os	../tests/test_settings.py	/^import os$/;"	kind:namespace	line:1
+override_settings	../tests/test_mixins.py	/^from django.test import TestCase, override_settings$/;"	kind:namespace	line:1
+override_settings	../tests/test_serializers.py	/^from django.test.utils import override_settings$/;"	kind:namespace	line:2
+page_not_found	../tests/test_serializers.py	/^from django.views.defaults import page_not_found$/;"	kind:namespace	line:5
+paged_list	../tests/test_viewsets.py	/^    def paged_list(self, request):$/;"	kind:member	line:18
+parse_filter_field	../drf_jsonapi/filters.py	/^    def parse_filter_field(cls, param):$/;"	kind:member	line:42
+parse_filters	../drf_jsonapi/filters.py	/^    def parse_filters(cls, data):$/;"	kind:member	line:24
+parse_include	../drf_jsonapi/viewsets.py	/^    def parse_include(self, request):$/;"	kind:member	line:126
+parse_sparse_fieldset	../drf_jsonapi/viewsets.py	/^    def parse_sparse_fieldset(self, request):$/;"	kind:member	line:137
+parse_validation_errors	../drf_jsonapi/objects.py	/^    def parse_validation_errors(error_dict):$/;"	kind:member	line:86
+parsers.py	../drf_jsonapi/parsers.py	1;"	kind:file	line:1
+partial_update	../drf_jsonapi/mixins.py	/^    def partial_update(self, request, *args, **kwargs):$/;"	kind:member	line:154
+patch	../drf_jsonapi/mixins.py	/^    def patch(self, request, *args, **kwargs):$/;"	kind:member	line:302
+path	../tests/test_serializers.py	/^from django.urls import path$/;"	kind:namespace	line:4
+path	../tests/urls.py	/^from django.urls import path$/;"	kind:namespace	line:1
+path_pattern	../drf_jsonapi/generators.py	/^path_pattern = re.compile(r"{\\w+}")$/;"	kind:variable	line:5
+path_pattern	../drf_jsonapi/inspectors.py	/^path_pattern = re.compile(r"{\\w+}")$/;"	kind:variable	line:11
+permission_classes	../tests/test_mixins.py	/^    permission_classes = []$/;"	kind:variable	line:26
+permission_classes	../tests/test_viewsets.py	/^    permission_classes = []$/;"	kind:variable	line:12
+process_relationships	../drf_jsonapi/mixins.py	/^    def process_relationships(self, relationship_data, resource):$/;"	kind:member	line:59
+re	../drf_jsonapi/filters.py	/^import re$/;"	kind:namespace	line:1
+re	../drf_jsonapi/generators.py	/^import re$/;"	kind:namespace	line:1
+re	../drf_jsonapi/inspectors.py	/^import re$/;"	kind:namespace	line:2
+re	../drf_jsonapi/validator.py	/^import re$/;"	kind:namespace	line:1
+re	../drf_jsonapi/viewsets.py	/^import re$/;"	kind:namespace	line:1
+readme	../setup.py	/^def readme():$/;"	kind:function	line:4
+regex	../drf_jsonapi/validator.py	/^    regex = _lazy_re_compile($/;"	kind:variable	line:33
+related_things	../tests/mocks.py	/^    related_things = models.ForeignKey('self', on_delete=models.CASCADE)$/;"	kind:variable	line:137
+relationship	../tests/test_mixins.py	/^        relationship = 'related_thing'$/;"	kind:variable	line:208
+relationship	../tests/test_mixins.py	/^        relationship = 'related_thing'$/;"	kind:variable	line:264
+relationship	../tests/test_mixins.py	/^        relationship = 'related_thing'$/;"	kind:variable	line:300
+relationship	../tests/test_mixins.py	/^        relationship = 'related_thing'$/;"	kind:variable	line:348
+relationship	../tests/test_mixins.py	/^        relationship = 'related_things'$/;"	kind:variable	line:201
+relationship	../tests/test_mixins.py	/^        relationship = 'related_things'$/;"	kind:variable	line:257
+relationship	../tests/test_mixins.py	/^        relationship = 'related_things'$/;"	kind:variable	line:293
+relationship	../tests/test_mixins.py	/^        relationship = 'related_things'$/;"	kind:variable	line:341
+relationships	../drf_jsonapi/serializers/resources.py	/^    def relationships(self):$/;"	kind:member	line:156
+relationships	../tests/mocks.py	/^        relationships = {$/;"	kind:variable	line:164
+relationships	../tests/mocks.py	/^        relationships = {$/;"	kind:variable	line:90
+relationships.py	../drf_jsonapi/relationships.py	1;"	kind:file	line:1
+remove_related	../drf_jsonapi/relationships.py	/^    def remove_related(self, resource, related):$/;"	kind:member	line:161
+remove_related	../tests/mocks.py	/^    def remove_related(self, resource, related):$/;"	kind:member	line:46
+renderers	../drf_jsonapi/renderers.py	/^from rest_framework import renderers$/;"	kind:namespace	line:1
+renderers.py	../drf_jsonapi/renderers.py	1;"	kind:file	line:1
+resolve	../drf_jsonapi/relationships.py	/^from django.urls import resolve, Resolver404$/;"	kind:namespace	line:4
+resolve	../drf_jsonapi/serializers/resources.py	/^from django.urls import resolve, Resolver404$/;"	kind:namespace	line:5
+resource_identifier	../drf_jsonapi/mixins.py	/^from .serializers.utils import resource_identifier$/;"	kind:namespace	line:8
+resource_identifier	../drf_jsonapi/serializers/resources.py	/^from .utils import resource_identifier$/;"	kind:namespace	line:12
+resource_identifier	../drf_jsonapi/serializers/utils.py	/^def resource_identifier(serializer_class):$/;"	kind:function	line:8
+resource_identifier	../drf_jsonapi/viewsets.py	/^from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier$/;"	kind:namespace	line:14
+resources.py	../drf_jsonapi/serializers/resources.py	1;"	kind:file	line:1
+response.py	../drf_jsonapi/response.py	1;"	kind:file	line:1
+retrieve	../drf_jsonapi/mixins.py	/^    def retrieve(self, request, *args, **kwargs):$/;"	kind:member	line:124
+routers.py	../drf_jsonapi/routers.py	1;"	kind:file	line:1
+run_validation	../drf_jsonapi/serializers/resources.py	/^    def run_validation(self, data):$/;"	kind:member	line:98
+runtests.py	../runtests.py	1;"	kind:file	line:1
+save	../tests/mocks.py	/^    def save(self, *args, **kwargs):$/;"	kind:member	line:145
+schemes	../drf_jsonapi/validator.py	/^    schemes = ['http', 'https', 'ftp', 'ftps']$/;"	kind:variable	line:41
+serializer_class	../tests/test_inspectors.py	/^    serializer_class = TestModelSerializer$/;"	kind:variable	line:19
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:200
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:207
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:256
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:263
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:292
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:299
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:340
+serializer_class	../tests/test_mixins.py	/^        serializer_class = TestModelSerializer$/;"	kind:variable	line:347
+serializer_class	../tests/test_mixins.py	/^    serializer_class = TestModelSerializer$/;"	kind:variable	line:28
+serializer_class	../tests/test_serializers.py	/^    serializer_class = mocks.TestResourceSerializer$/;"	kind:variable	line:125
+serializer_class	../tests/test_serializers.py	/^    serializer_class = mocks.TestResourceSerializer$/;"	kind:variable	line:166
+serializer_to_schema	../drf_jsonapi/inspectors.py	/^    def serializer_to_schema(self, serializer):$/;"	kind:member	line:20
+serializer_to_schema	../drf_jsonapi/inspectors.py	/^    def serializer_to_schema(self, serializer):$/;"	kind:member	line:306
+serializers	../drf_jsonapi/serializers/objects.py	/^from rest_framework import serializers$/;"	kind:namespace	line:4
+serializers	../drf_jsonapi/serializers/resources.py	/^from rest_framework import serializers$/;"	kind:namespace	line:8
+serializers	../tests/mocks.py	/^from rest_framework import serializers$/;"	kind:namespace	line:3
+serializers	../tests/test_serializers.py	/^from rest_framework import serializers$/;"	kind:namespace	line:8
+setUp	../tests/test_filters.py	/^    def setUp(self):$/;"	kind:member	line:69
+setUp	../tests/test_inspectors.py	/^    def setUp(self):$/;"	kind:member	line:25
+setUp	../tests/test_serializers.py	/^    def setUp(self):$/;"	kind:member	line:127
+setUp	../tests/test_serializers.py	/^    def setUp(self):$/;"	kind:member	line:168
+setUp	../tests/test_serializers.py	/^    def setUp(self):$/;"	kind:member	line:35
+setUp	../tests/test_serializers.py	/^    def setUp(self):$/;"	kind:member	line:90
+setUp	../tests/test_validator.py	/^    def setUp(self, *args, **kwargs):$/;"	kind:member	line:16
+set_related	../drf_jsonapi/relationships.py	/^    def set_related(self, resource, related):$/;"	kind:member	line:148
+set_related	../tests/mocks.py	/^    def set_related(self, instance, related):$/;"	kind:member	line:49
+set_related	../tests/mocks.py	/^    def set_related(self, instance, related):$/;"	kind:member	line:65
+settings	../drf_jsonapi/inspectors.py	/^from django.conf import settings$/;"	kind:namespace	line:5
+settings	../drf_jsonapi/mixins.py	/^from django.conf import settings$/;"	kind:namespace	line:1
+settings	../drf_jsonapi/relationships.py	/^from django.conf import settings$/;"	kind:namespace	line:3
+settings	../drf_jsonapi/serializers/resources.py	/^from django.conf import settings$/;"	kind:namespace	line:6
+settings	../drf_jsonapi/viewsets.py	/^from django.conf import settings$/;"	kind:namespace	line:4
+settings	../runtests.py	/^from django.conf import settings$/;"	kind:namespace	line:6
+setup	../setup.py	/^from setuptools import find_packages, setup$/;"	kind:namespace	line:1
+setup.py	../setup.py	1;"	kind:file	line:1
+should_page	../drf_jsonapi/inspectors.py	/^    def should_page(self):$/;"	kind:member	line:154
+should_page	../drf_jsonapi/inspectors.py	/^    def should_page(self):$/;"	kind:member	line:390
+sort	../drf_jsonapi/serializers/resources.py	/^    def sort(cls, sort_param, collection):$/;"	kind:member	line:284
+sort	../drf_jsonapi/serializers/resources.py	/^    def sort(cls, sort_param=None, queryset=None):$/;"	kind:member	line:414
+status	../drf_jsonapi/mixins.py	/^from rest_framework import status$/;"	kind:namespace	line:5
+swagger_schema	../drf_jsonapi/viewsets.py	/^    swagger_schema = inspectors.EntitySwaggerAutoSchema$/;"	kind:variable	line:34
+swagger_schema	../drf_jsonapi/viewsets.py	/^    swagger_schema = inspectors.RelationshipSwaggerAutoSchema$/;"	kind:variable	line:292
+swagger_settings	../tests/test_inspectors.py	/^from drf_yasg.app_settings import swagger_settings$/;"	kind:namespace	line:7
+sys	../runtests.py	/^import sys$/;"	kind:namespace	line:3
+tag	../tests/test_validator.py	/^from django.test import tag$/;"	kind:namespace	line:3
+test_add_related	../tests/test_relationships.py	/^    def test_add_related(self):$/;"	kind:member	line:20
+test_apiexception	../tests/test_exception_handlers.py	/^    def test_apiexception(self):$/;"	kind:member	line:70
+test_apply_pagination	../tests/test_viewsets.py	/^    def test_apply_pagination(self):$/;"	kind:member	line:98
+test_apply_pagination_one_page	../tests/test_viewsets.py	/^    def test_apply_pagination_one_page(self):$/;"	kind:member	line:130
+test_apply_pagination_page_2	../tests/test_viewsets.py	/^    def test_apply_pagination_page_2(self):$/;"	kind:member	line:114
+test_apply_sparse_fielset	../tests/test_serializers.py	/^    def test_apply_sparse_fielset(self):$/;"	kind:member	line:322
+test_apply_sparse_fielset_invalid_fields	../tests/test_serializers.py	/^    def test_apply_sparse_fielset_invalid_fields(self):$/;"	kind:member	line:345
+test_backends.py	../tests/test_backends.py	1;"	kind:file	line:1
+test_collection	../tests/test_filters.py	/^    def test_collection(self):$/;"	kind:member	line:46
+test_create_mixin	../tests/test_mixins.py	/^    def test_create_mixin(self):$/;"	kind:member	line:49
+test_create_mixin_invalid	../tests/test_mixins.py	/^    def test_create_mixin_invalid(self):$/;"	kind:member	line:116
+test_create_mixin_invalid_relationship	../tests/test_mixins.py	/^    def test_create_mixin_invalid_relationship(self):$/;"	kind:member	line:93
+test_create_mixin_with_relationships	../tests/test_mixins.py	/^    def test_create_mixin_with_relationships(self):$/;"	kind:member	line:64
+test_create_to_many_invalid	../tests/test_mixins.py	/^    def test_create_to_many_invalid(self):$/;"	kind:member	line:222
+test_create_to_many_with_dict_invalid	../tests/test_mixins.py	/^    def test_create_to_many_with_dict_invalid(self):$/;"	kind:member	line:232
+test_create_to_one_invalid	../tests/test_mixins.py	/^    def test_create_to_one_invalid(self):$/;"	kind:member	line:242
+test_create_valid	../tests/test_mixins.py	/^    def test_create_valid(self):$/;"	kind:member	line:213
+test_default_handler	../tests/test_exception_handlers.py	/^    def test_default_handler(self):$/;"	kind:member	line:97
+test_default_object_creation	../tests/test_objects.py	/^    def test_default_object_creation(self):$/;"	kind:member	line:32
+test_default_object_creation	../tests/test_objects.py	/^    def test_default_object_creation(self):$/;"	kind:member	line:8
+test_destroy_mixin	../tests/test_mixins.py	/^    def test_destroy_mixin(self):$/;"	kind:member	line:189
+test_destroy_to_many_valid	../tests/test_mixins.py	/^    def test_destroy_to_many_valid(self):$/;"	kind:member	line:321
+test_destroy_to_one_invalid	../tests/test_mixins.py	/^    def test_destroy_to_one_invalid(self):$/;"	kind:member	line:305
+test_empty_relationship	../tests/test_serializers.py	/^    def test_empty_relationship(self):$/;"	kind:member	line:256
+test_error_response	../tests/test_viewsets.py	/^    def test_error_response(self):$/;"	kind:member	line:84
+test_exception_handlers.py	../tests/test_exception_handlers.py	1;"	kind:file	line:1
+test_filters.py	../tests/test_filters.py	1;"	kind:file	line:1
+test_from_identity	../tests/test_serializers.py	/^    def test_from_identity(self):$/;"	kind:member	line:385
+test_from_identity_does_not_exist	../tests/test_serializers.py	/^    def test_from_identity_does_not_exist(self):$/;"	kind:member	line:412
+test_from_identity_many	../tests/test_serializers.py	/^    def test_from_identity_many(self):$/;"	kind:member	line:394
+test_generate_schema	../tests/test_inspectors.py	/^    def test_generate_schema(self):$/;"	kind:member	line:37
+test_get_id	../tests/test_serializers.py	/^    def test_get_id(self):$/;"	kind:member	line:361
+test_get_links	../tests/test_relationships.py	/^    def test_get_links(self):$/;"	kind:member	line:12
+test_get_links	../tests/test_serializers.py	/^    def test_get_links(self):$/;"	kind:member	line:355
+test_get_meta	../tests/test_serializers.py	/^    def test_get_meta(self):$/;"	kind:member	line:349
+test_get_object_by_id	../tests/test_serializers.py	/^    def test_get_object_by_id(self):$/;"	kind:member	line:365
+test_get_queryset	../tests/test_viewsets.py	/^    def test_get_queryset(self):$/;"	kind:member	line:40
+test_get_raw_data_form	../tests/test_renderers.py	/^    def test_get_raw_data_form(self):$/;"	kind:member	line:8
+test_get_related	../tests/test_relationships.py	/^    def test_get_related(self):$/;"	kind:member	line:16
+test_get_related	../tests/test_viewsets.py	/^    def test_get_related(self):$/;"	kind:member	line:141
+test_get_relationships	../tests/test_serializers.py	/^    def test_get_relationships(self):$/;"	kind:member	line:260
+test_get_schema_fields	../tests/test_backends.py	/^    def test_get_schema_fields(self):$/;"	kind:member	line:21
+test_get_schema_fields_no_filter_class	../tests/test_backends.py	/^    def test_get_schema_fields_no_filter_class(self):$/;"	kind:member	line:40
+test_get_serializer_class	../tests/test_relationships.py	/^    def test_get_serializer_class(self):$/;"	kind:member	line:8
+test_get_view_name	../tests/test_viewsets.py	/^    def test_get_view_name(self):$/;"	kind:member	line:31
+test_include	../tests/test_serializers.py	/^    def test_include(self):$/;"	kind:member	line:155
+test_included_list	../tests/test_serializers.py	/^    def test_included_list(self):$/;"	kind:member	line:299
+test_included_single	../tests/test_serializers.py	/^    def test_included_single(self):$/;"	kind:member	line:288
+test_init	../tests/test_filters.py	/^    def test_init(self):$/;"	kind:member	line:24
+test_init	../tests/test_filters.py	/^    def test_init(self):$/;"	kind:member	line:85
+test_initial	../tests/test_viewsets.py	/^    def test_initial(self):$/;"	kind:member	line:44
+test_inspectors.py	../tests/test_inspectors.py	1;"	kind:file	line:1
+test_invalid_chars	../tests/test_validator.py	/^    def test_invalid_chars(self):$/;"	kind:member	line:629
+test_invalid_filter	../tests/test_filters.py	/^    def test_invalid_filter(self):$/;"	kind:member	line:29
+test_invalid_relationship	../tests/test_serializers.py	/^    def test_invalid_relationship(self):$/;"	kind:member	line:252
+test_is_valid_fails_with_bad_character	../tests/test_validator.py	/^    def test_is_valid_fails_with_bad_character(self):$/;"	kind:member	line:63
+test_is_valid_fails_with_empty_data_without_204_response_code	../tests/test_validator.py	/^    def test_is_valid_fails_with_empty_data_without_204_response_code(self):$/;"	kind:member	line:76
+test_is_valid_fails_with_no_headers	../tests/test_validator.py	/^    def test_is_valid_fails_with_no_headers(self):$/;"	kind:member	line:38
+test_is_valid_fails_with_non_response	../tests/test_validator.py	/^    def test_is_valid_fails_with_non_response(self):$/;"	kind:member	line:33
+test_is_valid_fails_with_wrong_content_type_header	../tests/test_validator.py	/^    def test_is_valid_fails_with_wrong_content_type_header(self):$/;"	kind:member	line:52
+test_is_valid_fails_with_wrong_headers	../tests/test_validator.py	/^    def test_is_valid_fails_with_wrong_headers(self):$/;"	kind:member	line:45
+test_is_valid_passes	../tests/test_validator.py	/^    def test_is_valid_passes(self):$/;"	kind:member	line:26
+test_is_valid_passes_with_empty_data_with_204_response_code	../tests/test_validator.py	/^    def test_is_valid_passes_with_empty_data_with_204_response_code(self):$/;"	kind:member	line:70
+test_is_valid_passes_with_empty_top_level	../tests/test_validator.py	/^    def test_is_valid_passes_with_empty_top_level(self):$/;"	kind:member	line:57
+test_jsonapi_error_handling	../tests/test_exception_handlers.py	/^    def test_jsonapi_error_handling(self):$/;"	kind:member	line:13
+test_list_mixin	../tests/test_mixins.py	/^    def test_list_mixin(self):$/;"	kind:member	line:35
+test_list_mixin_many	../tests/test_mixins.py	/^    def test_list_mixin_many(self):$/;"	kind:member	line:360
+test_list_mixin_one	../tests/test_mixins.py	/^    def test_list_mixin_one(self):$/;"	kind:member	line:353
+test_mixins.py	../tests/test_mixins.py	1;"	kind:file	line:1
+test_objects.py	../tests/test_objects.py	1;"	kind:file	line:1
+test_one	../tests/test_validator.py	/^    def test_one(self):$/;"	kind:member	line:510
+test_operation_ids_are_unique	../tests/test_inspectors.py	/^    def test_operation_ids_are_unique(self):$/;"	kind:member	line:45
+test_pagination_exceptions	../tests/test_exception_handlers.py	/^    def test_pagination_exceptions(self):$/;"	kind:member	line:82
+test_parse_validation_errors	../tests/test_objects.py	/^    def test_parse_validation_errors(self):$/;"	kind:member	line:39
+test_partial_update_mixin	../tests/test_mixins.py	/^    def test_partial_update_mixin(self):$/;"	kind:member	line:131
+test_partial_update_mixin_invalid	../tests/test_mixins.py	/^    def test_partial_update_mixin_invalid(self):$/;"	kind:member	line:173
+test_partial_update_mixin_with_relationships	../tests/test_mixins.py	/^    def test_partial_update_mixin_with_relationships(self):$/;"	kind:member	line:147
+test_patch_one_invalid	../tests/test_mixins.py	/^    def test_patch_one_invalid(self):$/;"	kind:member	line:278
+test_patch_one_valid	../tests/test_mixins.py	/^    def test_patch_one_valid(self):$/;"	kind:member	line:269
+test_relationships.py	../tests/test_relationships.py	1;"	kind:file	line:1
+test_remove_related	../tests/test_relationships.py	/^    def test_remove_related(self):$/;"	kind:member	line:28
+test_renderers.py	../tests/test_renderers.py	1;"	kind:file	line:1
+test_resource_identifier	../tests/test_serializers.py	/^    def test_resource_identifier(self):$/;"	kind:member	line:435
+test_resource_indentifier_locate	../tests/test_serializers.py	/^    def test_resource_indentifier_locate(self):$/;"	kind:member	line:439
+test_retrieve_mixin	../tests/test_mixins.py	/^    def test_retrieve_mixin(self):$/;"	kind:member	line:42
+test_run_validation_fails_with_wrong_type	../tests/test_serializers.py	/^    def test_run_validation_fails_with_wrong_type(self):$/;"	kind:member	line:211
+test_run_validation_fails_without_attributes	../tests/test_serializers.py	/^    def test_run_validation_fails_without_attributes(self):$/;"	kind:member	line:197
+test_run_validation_fails_without_type	../tests/test_serializers.py	/^    def test_run_validation_fails_without_type(self):$/;"	kind:member	line:204
+test_runner	../runtests.py	/^    test_runner = TestRunner()$/;"	kind:variable	line:13
+test_save	../tests/test_serializers.py	/^    def test_save(self):$/;"	kind:member	line:184
+test_self_link_is_valid_link	../tests/test_validator.py	/^    def test_self_link_is_valid_link(self):$/;"	kind:member	line:223
+test_serializers.py	../tests/test_serializers.py	1;"	kind:file	line:1
+test_set_related	../tests/test_relationships.py	/^    def test_set_related(self):$/;"	kind:member	line:24
+test_settings.py	../tests/test_settings.py	1;"	kind:file	line:1
+test_sort	../tests/test_serializers.py	/^    def test_sort(self):$/;"	kind:member	line:369
+test_sort	../tests/test_serializers.py	/^    def test_sort(self):$/;"	kind:member	line:420
+test_sort_default	../tests/test_serializers.py	/^    def test_sort_default(self):$/;"	kind:member	line:424
+test_sort_invalid_field	../tests/test_serializers.py	/^    def test_sort_invalid_field(self):$/;"	kind:member	line:428
+test_sparse_fieldset_parsing	../tests/test_viewsets.py	/^    def test_sparse_fieldset_parsing(self):$/;"	kind:member	line:66
+test_sparse_fieldset_parsing_trailing_comma	../tests/test_viewsets.py	/^    def test_sparse_fieldset_parsing_trailing_comma(self):$/;"	kind:member	line:73
+test_to_representation	../tests/test_serializers.py	/^    def test_to_representation(self):$/;"	kind:member	line:109
+test_to_representation	../tests/test_serializers.py	/^    def test_to_representation(self):$/;"	kind:member	line:218
+test_to_representation	../tests/test_serializers.py	/^    def test_to_representation(self):$/;"	kind:member	line:62
+test_to_representation_identity	../tests/test_serializers.py	/^    def test_to_representation_identity(self):$/;"	kind:member	line:245
+test_to_representation_with_errors	../tests/test_serializers.py	/^    def test_to_representation_with_errors(self):$/;"	kind:member	line:72
+test_top_level_errors_as_dict_fails	../tests/test_validator.py	/^    def test_top_level_errors_as_dict_fails(self):$/;"	kind:member	line:141
+test_top_level_included_as_dict_fails_keys	../tests/test_validator.py	/^    def test_top_level_included_as_dict_fails_keys(self):$/;"	kind:member	line:170
+test_top_level_included_must_contain_resource_objects	../tests/test_validator.py	/^    def test_top_level_included_must_contain_resource_objects(self):$/;"	kind:member	line:182
+test_top_level_included_without_data_fails	../tests/test_validator.py	/^    def test_top_level_included_without_data_fails(self):$/;"	kind:member	line:177
+test_top_level_links_invalid_keys	../tests/test_validator.py	/^    def test_top_level_links_invalid_keys(self):$/;"	kind:member	line:209
+test_top_level_links_invalid_keys_2	../tests/test_validator.py	/^    def test_top_level_links_invalid_keys_2(self):$/;"	kind:member	line:231
+test_top_level_links_valid_keys	../tests/test_validator.py	/^    def test_top_level_links_valid_keys(self):$/;"	kind:member	line:196
+test_top_level_with_data_and_errors_false	../tests/test_validator.py	/^    def test_top_level_with_data_and_errors_false(self):$/;"	kind:member	line:146
+test_top_level_with_data_empty_list_true	../tests/test_validator.py	/^    def test_top_level_with_data_empty_list_true(self):$/;"	kind:member	line:121
+test_top_level_with_data_true	../tests/test_validator.py	/^    def test_top_level_with_data_true(self):$/;"	kind:member	line:116
+test_top_level_with_errors_true	../tests/test_validator.py	/^    def test_top_level_with_errors_true(self):$/;"	kind:member	line:136
+test_top_level_with_invalid_keys	../tests/test_validator.py	/^    def test_top_level_with_invalid_keys(self):$/;"	kind:member	line:165
+test_top_level_with_meta_as_dict_fails	../tests/test_validator.py	/^    def test_top_level_with_meta_as_dict_fails(self):$/;"	kind:member	line:131
+test_top_level_with_meta_true	../tests/test_validator.py	/^    def test_top_level_with_meta_true(self):$/;"	kind:member	line:126
+test_top_level_with_other_valid_keys	../tests/test_validator.py	/^    def test_top_level_with_other_valid_keys(self):$/;"	kind:member	line:160
+test_validate_boolean_value	../tests/test_filters.py	/^    def test_validate_boolean_value(self):$/;"	kind:member	line:35
+test_validate_errors_object	../tests/test_validator.py	/^    def test_validate_errors_object(self):$/;"	kind:member	line:506
+test_validate_headers_fails_with_wrong_content_type_header	../tests/test_validator.py	/^    def test_validate_headers_fails_with_wrong_content_type_header(self):$/;"	kind:member	line:94
+test_validate_headers_fails_without_content_type_header	../tests/test_validator.py	/^    def test_validate_headers_fails_without_content_type_header(self):$/;"	kind:member	line:82
+test_validate_headers_passes_with_correct_content_type_header	../tests/test_validator.py	/^    def test_validate_headers_passes_with_correct_content_type_header(self):$/;"	kind:member	line:99
+test_validate_headers_passes_without_content_type_header_with_204	../tests/test_validator.py	/^    def test_validate_headers_passes_without_content_type_header_with_204(self):$/;"	kind:member	line:88
+test_validate_invalid_boolean_value	../tests/test_filters.py	/^    def test_validate_invalid_boolean_value(self):$/;"	kind:member	line:40
+test_validate_link_object_with_dict	../tests/test_validator.py	/^    def test_validate_link_object_with_dict(self):$/;"	kind:member	line:490
+test_validate_member_names	../tests/test_validator.py	/^    def test_validate_member_names(self):$/;"	kind:member	line:532
+test_validate_member_names_fails_with_disallowed_boundary_character	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_disallowed_boundary_character(self):$/;"	kind:member	line:621
+test_validate_member_names_fails_with_disallowed_first_character	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_disallowed_first_character(self):$/;"	kind:member	line:613
+test_validate_member_names_fails_with_disallowed_last_character	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_disallowed_last_character(self):$/;"	kind:member	line:617
+test_validate_member_names_fails_with_empty_string	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_empty_string(self):$/;"	kind:member	line:609
+test_validate_member_names_fails_with_plus_sign	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_plus_sign(self):$/;"	kind:member	line:625
+test_validate_member_names_fails_with_sub_element	../tests/test_validator.py	/^    def test_validate_member_names_fails_with_sub_element(self):$/;"	kind:member	line:605
+test_validate_primary_data_element_fails_with_empty_dict	../tests/test_validator.py	/^    def test_validate_primary_data_element_fails_with_empty_dict(self):$/;"	kind:member	line:239
+test_validate_relationship_object_fails_without_links_or_data_or_meta	../tests/test_validator.py	/^    def test_validate_relationship_object_fails_without_links_or_data_or_meta(self):$/;"	kind:member	line:476
+test_validate_relationship_object_passes_with_list_of_relationship_objects	../tests/test_validator.py	/^    def test_validate_relationship_object_passes_with_list_of_relationship_objects(self):$/;"	kind:member	line:454
+test_validate_relationship_object_passes_with_only_data	../tests/test_validator.py	/^    def test_validate_relationship_object_passes_with_only_data(self):$/;"	kind:member	line:466
+test_validate_relationship_object_passes_with_only_links	../tests/test_validator.py	/^    def test_validate_relationship_object_passes_with_only_links(self):$/;"	kind:member	line:461
+test_validate_relationship_object_passes_with_only_meta	../tests/test_validator.py	/^    def test_validate_relationship_object_passes_with_only_meta(self):$/;"	kind:member	line:471
+test_validate_relationship_object_passes_with_single_relationship_object	../tests/test_validator.py	/^    def test_validate_relationship_object_passes_with_single_relationship_object(self):$/;"	kind:member	line:447
+test_validate_resource_identifier_object	../tests/test_validator.py	/^    def test_validate_resource_identifier_object(self):$/;"	kind:member	line:325
+test_validate_resource_identifier_object_with_random_key_fails	../tests/test_validator.py	/^    def test_validate_resource_identifier_object_with_random_key_fails(self):$/;"	kind:member	line:360
+test_validate_resource_identifier_object_without_id_fails	../tests/test_validator.py	/^    def test_validate_resource_identifier_object_without_id_fails(self):$/;"	kind:member	line:349
+test_validate_resource_identifier_object_without_meta_passes	../tests/test_validator.py	/^    def test_validate_resource_identifier_object_without_meta_passes(self):$/;"	kind:member	line:355
+test_validate_resource_identifier_object_without_type_fails	../tests/test_validator.py	/^    def test_validate_resource_identifier_object_without_type_fails(self):$/;"	kind:member	line:343
+test_validate_resource_linkage_passes_with_empty_list	../tests/test_validator.py	/^    def test_validate_resource_linkage_passes_with_empty_list(self):$/;"	kind:member	line:486
+test_validate_resource_linkage_passes_with_none	../tests/test_validator.py	/^    def test_validate_resource_linkage_passes_with_none(self):$/;"	kind:member	line:482
+test_validate_resource_object	../tests/test_validator.py	/^    def test_validate_resource_object(self):$/;"	kind:member	line:250
+test_validate_resource_object_attributes	../tests/test_validator.py	/^    def test_validate_resource_object_attributes(self):$/;"	kind:member	line:366
+test_validate_resource_object_attributes_with_links_fails	../tests/test_validator.py	/^    def test_validate_resource_object_attributes_with_links_fails(self):$/;"	kind:member	line:396
+test_validate_resource_object_attributes_with_relationships_fails	../tests/test_validator.py	/^    def test_validate_resource_object_attributes_with_relationships_fails(self):$/;"	kind:member	line:390
+test_validate_resource_object_fails_with_bad_attributes	../tests/test_validator.py	/^    def test_validate_resource_object_fails_with_bad_attributes(self):$/;"	kind:member	line:302
+test_validate_resource_object_fails_with_bad_relationships	../tests/test_validator.py	/^    def test_validate_resource_object_fails_with_bad_relationships(self):$/;"	kind:member	line:313
+test_validate_resource_object_fails_without_id	../tests/test_validator.py	/^    def test_validate_resource_object_fails_without_id(self):$/;"	kind:member	line:282
+test_validate_resource_object_fails_without_type	../tests/test_validator.py	/^    def test_validate_resource_object_fails_without_type(self):$/;"	kind:member	line:292
+test_validate_resource_object_relationships_no_valid_keys	../tests/test_validator.py	/^    def test_validate_resource_object_relationships_no_valid_keys(self):$/;"	kind:member	line:438
+test_validate_resource_object_relationships_valid	../tests/test_validator.py	/^    def test_validate_resource_object_relationships_valid(self):$/;"	kind:member	line:428
+test_validate_url_fails_with_bad_url	../tests/test_validator.py	/^    def test_validate_url_fails_with_bad_url(self):$/;"	kind:member	line:502
+test_validate_url_passes_with_good_url	../tests/test_validator.py	/^    def test_validate_url_passes_with_good_url(self):$/;"	kind:member	line:498
+test_validationerror_with_dict_detail	../tests/test_exception_handlers.py	/^    def test_validationerror_with_dict_detail(self):$/;"	kind:member	line:41
+test_validationerror_without_dict_detail	../tests/test_exception_handlers.py	/^    def test_validationerror_without_dict_detail(self):$/;"	kind:member	line:59
+test_validator.py	../tests/test_validator.py	1;"	kind:file	line:1
+test_viewsets.py	../tests/test_viewsets.py	1;"	kind:file	line:1
+timezone	../tests/mocks.py	/^from django.utils import timezone$/;"	kind:namespace	line:1
+timezone	../tests/test_serializers.py	/^from django.utils import dateparse, timezone$/;"	kind:namespace	line:3
+tld_re	../drf_jsonapi/validator.py	/^    tld_re = ($/;"	kind:variable	line:23
+to_representation	../drf_jsonapi/serializers/objects.py	/^    def to_representation(self, instance):$/;"	kind:member	line:20
+to_representation	../drf_jsonapi/serializers/objects.py	/^    def to_representation(self, instance):$/;"	kind:member	line:59
+to_representation	../drf_jsonapi/serializers/resources.py	/^    def to_representation(self, instance):$/;"	kind:member	line:119
+to_representation	../drf_jsonapi/serializers/utils.py	/^        def to_representation(self, instance):$/;"	kind:member	line:29
+type	../tests/mocks.py	/^        type = "test_model_resource"$/;"	kind:variable	line:156
+type	../tests/mocks.py	/^        type = "test_resource"$/;"	kind:variable	line:83
+ul	../drf_jsonapi/validator.py	/^    ul = '\\u00a1-\\uffff'  # unicode letters range (must not be a raw string)$/;"	kind:variable	line:13
+unittest	../tests/test_validator.py	/^import unittest$/;"	kind:namespace	line:1
+urlpatterns	../tests/test_serializers.py	/^urlpatterns = [$/;"	kind:variable	line:25
+urlpatterns	../tests/urls.py	/^urlpatterns = [$/;"	kind:variable	line:4
+urls.py	../tests/urls.py	1;"	kind:file	line:1
+utils.py	../drf_jsonapi/serializers/utils.py	1;"	kind:file	line:1
+utils.py	../drf_jsonapi/utils.py	1;"	kind:file	line:1
+validate	../drf_jsonapi/relationships.py	/^    def validate(self, data):$/;"	kind:member	line:16
+validate_http_methods	../drf_jsonapi/viewsets.py	/^    validate_http_methods = ['POST', 'PUT', 'PATCH', 'DELETE']$/;"	kind:variable	line:293
+validate_http_methods	../drf_jsonapi/viewsets.py	/^    validate_http_methods = ['POST', 'PUT', 'PATCH']$/;"	kind:variable	line:38
+validate_request_body	../drf_jsonapi/viewsets.py	/^    def validate_request_body(self, request_data):$/;"	kind:member	line:152
+validate_resource_type	../drf_jsonapi/serializers/resources.py	/^    def validate_resource_type(cls, data):$/;"	kind:member	line:329
+validate_value	../drf_jsonapi/filters.py	/^    def validate_value(self, field, value):$/;"	kind:member	line:97
+validator.py	../drf_jsonapi/validator.py	1;"	kind:file	line:1
+view_name_prefix	../tests/test_mixins.py	/^    view_name_prefix = 'Test'$/;"	kind:variable	line:27
+views	../tests/urls.py	/^from rest_framework import views$/;"	kind:namespace	line:2
+viewsets.py	../drf_jsonapi/viewsets.py	1;"	kind:file	line:1
