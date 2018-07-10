@@ -1,8 +1,6 @@
 from pydoc import locate
 import collections
 
-import logging
-
 from django.core.exceptions import FieldError
 from django.urls import resolve, Resolver404
 from django.conf import settings
@@ -57,10 +55,6 @@ class ResourceSerializer(serializers.Serializer):
 
         # Validate Includes
         self.include = list(filter(None, kwargs.pop('include', [])))
-
-        logger = logging.getLogger(__name__)
-
-        logger.info(list(kwargs.pop('include', [])))
 
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
@@ -171,9 +165,6 @@ class ResourceSerializer(serializers.Serializer):
         :rtype: dict
         """
 
-        logging.getLogger(__name__).info('relationships')
-        logging.getLogger(__name__).info(self.Meta)
-
         return getattr(self.Meta, 'relationships', {})
 
     def get_relationships(self, instance):
@@ -186,20 +177,10 @@ class ResourceSerializer(serializers.Serializer):
         :rtype: dict
         """
 
-        logging.getLogger(__name__).info('get_relationships')
-        logging.getLogger(__name__).info(self.Meta)
-
         relationships = {}
-
-        logger = logging.getLogger(__name__)
-
-        logger.info(self.relationships)
 
         for relation, handler in self.relationships.items():
             data = self.get_relationship_data(relation, handler, instance)
-
-            logger.info('data')
-            logger.info(data)
 
             if data:
                 relationships[relation] = data
