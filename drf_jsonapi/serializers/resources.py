@@ -1,6 +1,5 @@
 from pydoc import locate
 import collections
-import logging
 
 from django.core.exceptions import FieldError
 from django.urls import resolve, Resolver404
