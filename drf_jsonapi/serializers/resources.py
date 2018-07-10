@@ -1,5 +1,6 @@
 from pydoc import locate
 import collections
+import logging
 
 from django.core.exceptions import FieldError
 from django.urls import resolve, Resolver404
@@ -215,22 +216,20 @@ class ResourceSerializer(serializers.Serializer):
         serializer_class = handler.get_serializer_class()
         related = handler.get_related(instance)
 
-        if related is None:
-            return data
+        if related is not None:
+            if handler.many:
+                related, data['meta'] = handler.apply_pagination(related, self.page_size)
 
-        if handler.many:
-            related, data['meta'] = handler.apply_pagination(related, self.page_size)
+            data['data'] = resource_identifier(serializer_class)(
+                related,
+                many=handler.many
+            ).data
 
-        data['data'] = resource_identifier(serializer_class)(
-            related,
-            many=handler.many
-        ).data
-
-        self.included += listify(serializer_class(
-            related,
-            many=handler.many,
-            only_fields=self.only_fields
-        ).data)
+            self.included += listify(serializer_class(
+                related,
+                many=handler.many,
+                only_fields=self.only_fields
+            ).data)
 
         return data
 
