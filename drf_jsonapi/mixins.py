@@ -233,21 +233,20 @@ class RelationshipListMixin(object):
         if related is None:
             related = handler.get_related(resource)
 
-        # Sorting
-        if handler.many:
-            related = self.serializer_class.sort(request.GET.get('sort'), related)
+        if related:
+            # Sorting
+            if handler.many:
+                related = self.serializer_class.sort(request.GET.get('sort'), related)
+                related = self.apply_pagination(related)
 
-        # Paging
-        if handler.many:
-            related = self.apply_pagination(related)
+            serializer = resource_identifier(serializer_class)(
+                related,
+                many=handler.many
+            )
 
-        serializer = resource_identifier(serializer_class)(
-            related,
-            many=handler.many
-        )
-
-        self.document.instance.data = serializer.data
-        self.document.instance.included = serializer.included
+            self.document.instance.data = serializer.data
+        else:
+            self.document.instance.data = [] if handler.many else None
 
         return Response(self.document.data)
 

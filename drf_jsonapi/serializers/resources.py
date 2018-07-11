@@ -95,6 +95,9 @@ class ResourceSerializer(serializers.Serializer):
         for field_name in existing - allowed:
             self.fields.pop(field_name)
 
+    def get_initial(self):
+        return {}
+
     def run_validation(self, data):
         """
         Validates the resource object according to JSON API spec.
@@ -125,7 +128,6 @@ class ResourceSerializer(serializers.Serializer):
         :return: A dictionary representing a JSON-API resource object
         :rtype: dict
         """
-
         resource = {
             'type': self.Meta.type,
             'id': self.get_id(instance)
@@ -211,7 +213,7 @@ class ResourceSerializer(serializers.Serializer):
         serializer_class = handler.get_serializer_class()
         related = handler.get_related(instance)
 
-        if related is not None:
+        if related:
             if handler.many:
                 related, data['meta'] = handler.apply_pagination(related, self.page_size)
 
@@ -225,6 +227,8 @@ class ResourceSerializer(serializers.Serializer):
                 many=handler.many,
                 only_fields=self.only_fields
             ).data)
+        else:
+            data['data'] = [] if handler.many else None
 
         return data
 
