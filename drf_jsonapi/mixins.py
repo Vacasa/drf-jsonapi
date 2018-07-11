@@ -56,6 +56,50 @@ class ListMixin(object):
 
 class ProcessRelationshipsMixin(object):
 
+    def process_to_one_relationships(self, relationship_data, resource):
+        """
+        Validate and populate related To-One relationship resources
+
+        :param viewset self: This object
+        :param dict relationship_data: A dictionary of relationships
+        :param resource:
+        """
+
+        to_one_relationship_data = {}
+
+        for relation, data in relationship_data.items():
+
+            handler = self.get_relationship_handler(relation)
+            if not handler.many:
+                to_one_relationship_data[relation] = data
+
+        if to_one_relationship_data:
+            resource = self.process_relationships(to_one_relationship_data, resource)
+
+        return(resource)
+
+    def process_to_many_relationships(self, relationship_data, resource):
+        """
+        Validate and populate related To-Many relationship resources
+
+        :param viewset self: This object
+        :param dict relationship_data: A dictionary of relationships
+        :param resource:
+        """
+
+        to_one_relationship_data = {}
+
+        for relation, data in relationship_data.items():
+
+            handler = self.get_relationship_handler(relation)
+            if handler.many:
+                to_one_relationship_data[relation] = data
+
+        if to_one_relationship_data:
+            resource = self.process_relationships(to_one_relationship_data, resource)
+
+        return(resource)
+
     def process_relationships(self, relationship_data, resource):
         """
         Validate and populate related resources
@@ -69,13 +113,14 @@ class ProcessRelationshipsMixin(object):
 
             handler = self.get_relationship_handler(relation)
 
-            # Validate
             data = handler.validate(data['data'])
             related_resources = handler.get_serializer_class().from_identity(
                 data, many=handler.many
             )
 
             handler.set_related(resource, related_resources)
+
+        return(resource)
 
 
 class CreateMixin(ProcessRelationshipsMixin):
@@ -105,12 +150,18 @@ class CreateMixin(ProcessRelationshipsMixin):
                 Error.parse_validation_errors(serializer.errors)
             )
 
-        resource = serializer.save()
+        resource = serializer.Meta.model(**serializer.validated_data)
 
         # Check for relationships and process them
         if 'relationships' in request.data['data']:
-            self.process_relationships(request.data['data']['relationships'], resource)
+            resource = self.process_to_one_relationships(request.data['data']['relationships'], resource)
 
+        resource.save()
+
+        if 'relationships' in request.data['data']:
+            resource = self.process_to_many_relationships(request.data['data']['relationships'], resource)
+
+        serializer.instance = resource
         self.document.instance.data = serializer.data
 
         return Response(self.document.data)
@@ -192,6 +243,7 @@ class DestroyMixin(object):
     """
     Override base view behavior for delete endpoints
     """
+
     def destroy(self, request, *args, **kwargs):
         """
         Build a response for a delete endpoint
