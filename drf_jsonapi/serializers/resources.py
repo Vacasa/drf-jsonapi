@@ -117,7 +117,13 @@ class ResourceSerializer(serializers.Serializer):
             attributes = data['attributes']
         except KeyError:
             raise ParseError("Missing `attributes` in resource object")
-        return super().run_validation(attributes)
+
+        data_to_validate = data['attributes']
+
+        if 'id' in data:
+            data_to_validate['id'] = data['id']
+
+        return super().run_validation(data_to_validate)
 
     def to_representation(self, instance):
         """
@@ -135,6 +141,8 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Attributes
         data = super().to_representation(instance)
+        if 'id' in data:
+            del data['id']
         resource['attributes'] = data
 
         # Add Relationships
