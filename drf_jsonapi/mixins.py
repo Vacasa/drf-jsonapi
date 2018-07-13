@@ -164,7 +164,14 @@ class CreateMixin(ProcessRelationshipsMixin):
         serializer.instance = resource
         self.document.instance.data = serializer.data
 
-        return Response(self.document.data)
+        response = Response(
+            self.document.data,
+            status=status.HTTP_201_CREATED,
+            headers={
+                "Location": self.document.data['data']['links']['self']
+            })
+
+        return response
 
 
 class RetrieveMixin(object):
