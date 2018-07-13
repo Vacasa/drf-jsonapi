@@ -257,7 +257,7 @@ class DestroyMixin(object):
         resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
         resource.delete()
 
-        return Response(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RelationshipListMixin(object):
