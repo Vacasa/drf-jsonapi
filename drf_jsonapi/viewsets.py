@@ -15,11 +15,11 @@ from .serializers import DocumentSerializer, ErrorSerializer, resource_identifie
 from . import mixins
 from . import inspectors
 
-FIELD_PATTERN = re.compile("fields\[(.+)\]")
+FIELD_PATTERN = re.compile(r"fields\[(.+)\]")
 
 
 class ViewSet(GenericViewSet):
-    """
+    r"""
     Subclass base Django Rest Framework's GenericViewSet, adding JSON-API specific functionality
 
     Attributes
