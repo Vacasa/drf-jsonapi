@@ -16,6 +16,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 openapi-codec==1.3.2
 pytz==2018.4
+redgreenunittest==0.1.1
 requests==2.18.4
 ruamel.yaml==0.15.37
 six==1.11.0

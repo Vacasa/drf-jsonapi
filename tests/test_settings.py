@@ -18,3 +18,5 @@ DEFAULT_PAGE_SIZE = 10
 BASE_URL = 'junk'
 ROOT_URLCONF = 'tests.urls'
 TIME_ZONE = 'UTC'
+
+TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
