@@ -31,7 +31,7 @@ class ResourceListSerializer(serializers.ListSerializer):
         :rtype: dict_values
         """
 
-        return {(x['type'], x['id']): x for x in self.child.included}.values()
+        return list({(x['type'], x['id']): x for x in self.child.included}.values())
 
 
 class ResourceSerializer(serializers.Serializer):
