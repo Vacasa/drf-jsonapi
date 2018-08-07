@@ -4,13 +4,19 @@ from django.core.exceptions import FieldError, ValidationError as DjangoValidati
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from django.http import Http404, HttpResponseNotFound
 
 from .objects import Document, Error
 from .serializers import DocumentSerializer, ErrorSerializer
+from .response import CONTENT_TYPE
 
 
 def jsonapi_exception_handler(exc, context):
     return ExceptionHandler.handle(exc, context)
+
+
+def handleDjangoErrors(request, exception):
+    return ExceptionHandler.handle(exception, None)
 
 
 class ExceptionHandler(object):
@@ -56,7 +62,8 @@ class ExceptionHandler(object):
             doc.instance.errors = [ErrorSerializer(error).data]
             return Response(
                 doc.data,
-                status=getattr(response, 'status_code', 500)
+                status=getattr(response, 'status_code', 500),
+                content_type=CONTENT_TYPE
             )
 
     @classmethod
@@ -75,7 +82,8 @@ class ExceptionHandler(object):
         doc.instance.errors = [ErrorSerializer(exc).data]
         return Response(
             doc.data,
-            status=getattr(exc, 'status_code', 400)
+            status=getattr(exc, 'status_code', 400),
+            content_type=CONTENT_TYPE
         )
 
     @classmethod
@@ -102,14 +110,16 @@ class ExceptionHandler(object):
             doc.instance.errors = ErrorSerializer(errors, many=True).data
             return Response(
                 doc.data,
-                status=getattr(exc, 'status_code', 400)
+                status=getattr(exc, 'status_code', 400),
+                content_type=CONTENT_TYPE
             )
         else:
             error = Error(detail=detail, status_code=status_code)
             doc.instance.errors = [ErrorSerializer(error).data]
             return Response(
                 doc.data,
-                status=status_code
+                status=status_code,
+                content_type=CONTENT_TYPE
             )
 
     @classmethod
@@ -137,7 +147,6 @@ class ExceptionHandler(object):
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-
         doc = DocumentSerializer(Document())
         error = Error(
             source={'parameter': 'page[number]'},
@@ -147,5 +156,28 @@ class ExceptionHandler(object):
         doc.instance.errors = [ErrorSerializer(error).data]
         return Response(
             doc.data,
-            status=getattr(exc, 'status_code', 400)
+            status=getattr(exc, 'status_code', 400),
+            content_type=CONTENT_TYPE
         )
+
+    @classmethod
+    def handle_Resolver404(cls, exc, context):  # NOSONAR
+        """
+        Retrieves a 404 error Response from an Resolver404 exception
+        This is thrown when there is no match in urls for the path requested
+        It MUST return a django.http.HttpResponseNotFound
+
+        :param cls: This class instance
+        :param exc: An Exception object
+        :param context: The stack trace associated with the exception
+        :return: A 404 error Response
+        :rtype: django.http.HttpResponseNotFound
+        """
+        doc = DocumentSerializer(Document())
+        error = Error(
+            detail="Endpoint '{}' not found".format(exc.args[0]['path']),
+            status_code=404
+        )
+        doc.instance.errors = ErrorSerializer(error).data
+
+        return HttpResponseNotFound(doc, content_type=CONTENT_TYPE)
