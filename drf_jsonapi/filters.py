@@ -7,7 +7,7 @@ from django_filters.filters import Filter
 from .objects import Error
 
 
-FILTER_PATTERN = re.compile("^filter\[([\w_-]+)\]\[?([\w_-]+)?\]?$")
+FILTER_PATTERN = re.compile("^filter\[([\w\._-]+)\]\[?([\w_-]+)?\]?$")
 
 
 class FilterParseError(Exception):
