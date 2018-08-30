@@ -176,7 +176,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
         serializer_class = self.view.get_serializer_class()
         sort_fields = getattr(serializer_class.Meta, 'sort_fields', serializer_class.Meta.fields)
-        
+
         # Replace '__' with '.' to maintain consistency with filter fields
         sort_fields = [field.replace('__', '.') for field in sort_fields]
 
