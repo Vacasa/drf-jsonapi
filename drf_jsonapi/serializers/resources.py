@@ -435,7 +435,7 @@ class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
         sort_fields = list(filter(None, sort_param.split(',')))
 
         # validate the sort fields actually exist in the model
-        field_names = [field.name for field in queryset.model._meta.get_fields()]
+        field_names = getattr(cls.Meta, 'sort_fields', cls.Meta.fields)
         test_fields = [field[1:] if field[0] in ('-', '+') else field for field in sort_fields]
         invalid_fields = set(test_fields).difference(field_names)
 
