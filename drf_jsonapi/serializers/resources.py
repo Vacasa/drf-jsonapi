@@ -432,7 +432,7 @@ class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
         if not sort_param:
             return queryset
 
-        sort_fields = list(filter(None, sort_param.split(',')))
+        sort_fields = list(filter(None, sort_param.replace('.', '__').split(',')))
 
         # validate the sort fields actually exist in the model
         field_names = getattr(cls.Meta, 'sort_fields', cls.Meta.fields)
