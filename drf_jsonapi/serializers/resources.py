@@ -436,7 +436,7 @@ class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
 
         # validate the sort fields actually exist in the model
         field_names = getattr(cls.Meta, 'sort_fields', cls.Meta.fields)
-        field_names += ('id')
+        field_names += ('id',)
         test_fields = [field[1:] if field[0] in ('-', '+') else field for field in sort_fields]
         invalid_fields = set(test_fields).difference(field_names)
 
