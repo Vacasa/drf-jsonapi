@@ -54,7 +54,21 @@ class ResourceSerializer(serializers.Serializer):
         self.included = []
 
         # Validate Includes
-        self.include = list(filter(None, kwargs.pop('include', [])))
+        include_tree = {}
+        for include in list(filter(None, kwargs.pop('include', []))):
+            parts = include.split('.')
+            root = parts[0]
+            if root not in include_tree:
+                include_tree[root] = []
+            branches = '.'.join(parts[1:])
+            if branches:
+                include_tree[root].append(branches)
+
+        self.include = list(include_tree.keys())
+        self.include_tree = include_tree
+
+        # raise Exception(self.include_tree)
+
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
         if invalid_includes:
@@ -201,10 +215,8 @@ class ResourceSerializer(serializers.Serializer):
 
         # Build Links
         links = handler.build_relationship_links(self, relation, instance)
-        if not links:
-            return data
-
-        data['links'] = links
+        if links:
+            data['links'] = links
 
         if relation not in self.include:
             return data
@@ -222,11 +234,15 @@ class ResourceSerializer(serializers.Serializer):
                 many=handler.many
             ).data
 
-            self.included += listify(serializer_class(
+            related_serializer = serializer_class(
                 related,
                 many=handler.many,
-                only_fields=self.only_fields
-            ).data)
+                only_fields=self.only_fields,
+                include=self.include_tree.get(relation, [])
+            )
+
+            self.included += listify(related_serializer.data)
+            self.included += related_serializer.included
         else:
             data['data'] = [] if handler.many else None
 
