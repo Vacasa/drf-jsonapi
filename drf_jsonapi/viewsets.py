@@ -133,7 +133,11 @@ class ViewSet(GenericViewSet):
         :param rest_framework.request.Request request: The client request
         """
 
-        request.include = request.GET.get('include', '').split(',')
+        if 'include' not in request.GET:
+            request.include = []
+            return
+
+        request.include = request.GET['include'].split(',')
         
         allowed_includes = getattr(
             self,
@@ -145,6 +149,7 @@ class ViewSet(GenericViewSet):
             ).keys()
         )
         invalid_includes = list(set(request.include) - set(allowed_includes))
+        raise Exception(invalid_includes)
         if invalid_includes:
             raise Error(
                 detail="The following are not valid includes: {}".format(", ".join(invalid_includes)),
