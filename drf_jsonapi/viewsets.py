@@ -14,6 +14,7 @@ from .objects import Document
 from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier
 from . import mixins
 from . import inspectors
+from .objects import Error
 
 FIELD_PATTERN = re.compile("fields\[(.+)\]")
 
@@ -133,6 +134,22 @@ class ViewSet(GenericViewSet):
         """
 
         request.include = request.GET.get('include', '').split(',')
+        
+        allowed_includes = getattr(
+            self,
+            'allowed_includes',
+            getattr(
+                self.serializer_class.Meta,
+                'relationships',
+                {}
+            ).keys()
+        )
+        invalid_includes = list(set(request.include) - set(allowed_includes))
+        if invalid_includes:
+            raise Error(
+                detail="The following are not valid includes: {}".format(", ".join(invalid_includes)),
+                source={'parameter': 'include'}
+            )
 
     def parse_sparse_fieldset(self, request):
         """
