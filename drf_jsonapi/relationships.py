@@ -38,7 +38,7 @@ class RelationshipHandler(object):
 
         return data
 
-    def build_relationship_links(self, base_serializer, relation, resource):
+    def build_relationship_links(self, base_serializer, relation, resource, request=None):
         """
         Builds relationship links for a JSON-API response
 
@@ -93,7 +93,7 @@ class RelationshipHandler(object):
             return self.serializer_class
         raise NotImplementedError("`serializer_class` is missing or `get_serializer_class()` is not implemented in {}".format(self.__class__))
 
-    def get_links(self, resource, links):
+    def get_links(self, resource, links, request=None):
         """
         Retrieve links from given links attribute.
 
@@ -106,7 +106,7 @@ class RelationshipHandler(object):
 
         return links
 
-    def get_related(self, resource):
+    def get_related(self, resource, request=None):
         """
         Retrieve related resources
 
@@ -148,7 +148,7 @@ class RelationshipHandler(object):
 
         return page.object_list, meta
 
-    def add_related(self, resource, related):
+    def add_related(self, resource, related, request=None):
         """
         Add a related resource.
 
@@ -164,7 +164,7 @@ class RelationshipHandler(object):
         getattr(resource, self.related_field).add(*related)
             
 
-    def set_related(self, resource, related):
+    def set_related(self, resource, related, request=None):
         """
         Set a related resource.
 
@@ -181,7 +181,7 @@ class RelationshipHandler(object):
         else:
             setattr(resource, self.related_field, related)
 
-    def remove_related(self, resource, related):
+    def remove_related(self, resource, related, request=None):
         """
         Remove a related resource.
 

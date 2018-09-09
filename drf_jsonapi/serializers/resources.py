@@ -1,7 +1,3 @@
-from pydoc import locate
-import collections
-
-from django.core.exceptions import FieldError
 from django.urls import resolve, Resolver404
 from django.conf import settings
 
@@ -214,7 +210,7 @@ class ResourceSerializer(serializers.Serializer):
         data = {}
 
         # Build Links
-        links = handler.build_relationship_links(self, relation, instance)
+        links = handler.build_relationship_links(self, relation, instance, self._context.get('request', None))
         if links:
             data['links'] = links
 
@@ -223,7 +219,7 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Resource Identifiers for linkage
         serializer_class = handler.get_serializer_class()
-        related = handler.get_related(instance)
+        related = handler.get_related(instance, self._context.get('request', None))
 
         if related:
             if handler.many:

@@ -1,7 +1,6 @@
 from django.conf import settings
 
-from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError
-from rest_framework.decorators import list_route
+from rest_framework.exceptions import NotFound, MethodNotAllowed
 from rest_framework import status
 
 from .response import Response
@@ -45,7 +44,8 @@ class ListMixin(object):
             many=True,
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE)
+            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            context={'request': request}
         )
 
         self.document.instance.data = serializer.data
@@ -56,7 +56,7 @@ class ListMixin(object):
 
 class ProcessRelationshipsMixin(object):
 
-    def process_to_one_relationships(self, relationship_data, resource):
+    def process_to_one_relationships(self, relationship_data, resource, request):
         """
         Validate and populate related To-One relationship resources
 
@@ -74,11 +74,11 @@ class ProcessRelationshipsMixin(object):
                 to_one_relationship_data[relation] = data
 
         if to_one_relationship_data:
-            resource = self.process_relationships(to_one_relationship_data, resource)
+            resource = self.process_relationships(to_one_relationship_data, resource, request)
 
         return(resource)
 
-    def process_to_many_relationships(self, relationship_data, resource):
+    def process_to_many_relationships(self, relationship_data, resource, request):
         """
         Validate and populate related To-Many relationship resources
 
@@ -96,11 +96,11 @@ class ProcessRelationshipsMixin(object):
                 to_one_relationship_data[relation] = data
 
         if to_one_relationship_data:
-            resource = self.process_relationships(to_one_relationship_data, resource)
+            resource = self.process_relationships(to_one_relationship_data, resource, request)
 
         return(resource)
 
-    def process_relationships(self, relationship_data, resource):
+    def process_relationships(self, relationship_data, resource, request):
         """
         Validate and populate related resources
 
@@ -118,7 +118,7 @@ class ProcessRelationshipsMixin(object):
                 data, many=handler.many
             )
 
-            handler.set_related(resource, related_resources)
+            handler.set_related(resource, related_resources, request)
 
         return(resource)
 
@@ -142,7 +142,8 @@ class CreateMixin(ProcessRelationshipsMixin):
             data=request.data['data'],
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE)
+            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            context={'request': request}
         )
 
         if not serializer.is_valid():
@@ -154,12 +155,12 @@ class CreateMixin(ProcessRelationshipsMixin):
 
         # Check for relationships and process them
         if 'relationships' in request.data['data']:
-            resource = self.process_to_one_relationships(request.data['data']['relationships'], resource)
+            resource = self.process_to_one_relationships(request.data['data']['relationships'], resource, request)
 
         resource.save()
 
         if 'relationships' in request.data['data']:
-            resource = self.process_to_many_relationships(request.data['data']['relationships'], resource)
+            resource = self.process_to_many_relationships(request.data['data']['relationships'], resource, request)
 
         serializer.instance = resource
         self.document.instance.data = serializer.data
@@ -188,7 +189,8 @@ class RetrieveMixin(object):
             resource,
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE)
+            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            context={'request': request}
         )
 
         self.document.instance.data = serializer.data
@@ -220,7 +222,8 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
             only_fields=request.fields,
             partial=True,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE)
+            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            context={'request': request}
         )
 
         if not serializer.is_valid():
@@ -232,7 +235,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
 
         # Check for relationships and process them
         if 'relationships' in request.data['data']:
-            self.process_relationships(request.data['data']['relationships'], resource)
+            self.process_relationships(request.data['data']['relationships'], resource, request)
 
         self.document.instance.data = serializer.data
 
@@ -283,7 +286,7 @@ class RelationshipListMixin(object):
 
         related = kwargs.pop('related', None)
         if related is None:
-            related = handler.get_related(resource)
+            related = handler.get_related(resource, request)
 
         if related:
             # Sorting
@@ -340,7 +343,7 @@ class RelationshipCreateMixin(object):
             many=handler.many
         )
 
-        handler.add_related(resource, related)
+        handler.add_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -374,7 +377,7 @@ class RelationshipPatchMixin(object):
             many=handler.many
         )
 
-        handler.set_related(resource, related)
+        handler.set_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -416,6 +419,6 @@ class RelationshipDeleteMixin(object):
             many=handler.many
         )
 
-        handler.remove_related(resource, related)
+        handler.remove_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
