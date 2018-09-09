@@ -175,9 +175,7 @@ class ResourceSerializer(serializers.Serializer):
         relationships = {}
 
         for relation, handler in self.relationships.items():
-            data = self.get_relationship_data(relation, handler, instance)
-            if data:
-                relationships[relation] = data
+            relationships[relation] = self.get_relationship_data(relation, handler, instance)
 
         return relationships
 
