@@ -10,8 +10,13 @@ from rest_framework.exceptions import ParseError
 class RelationshipHandler(object):
     """
     Validates relationship requests, and builds response dictionaries.  This class
-    is meant to be overriden by inheritance.  Some methods are not implemented here.
+    is meant to be overridden by inheritance.  Some methods are not implemented here.
     """
+
+    # These attributes are meant to be overridden by sub-classes
+    many = False
+    serializer_class = None
+    related_field = None
 
     def validate(self, data):
         """
@@ -78,10 +83,15 @@ class RelationshipHandler(object):
         Retrieve a serializer class
 
         :param RelationshipsHandler self: This object
+        :return serializer_class:
+        :rtype: type
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-
-        raise NotImplementedError("`get_serializer_class` is not implemented in {}".format(self.__class__))
+        if isinstance(self.serializer_class, str):
+            return locate(self.serializer_class)
+        if isinstance(self.serializer_class, type):
+            return self.serializer_class
+        raise NotImplementedError("`serializer_class` is missing or `get_serializer_class()` is not implemented in {}".format(self.__class__))
 
     def get_links(self, resource, links):
         """
@@ -101,10 +111,16 @@ class RelationshipHandler(object):
         Retrieve related resources
 
         :param RelationshipsHandler self: This object
+        :return related:
+        :rtype: object
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-
-        raise NotImplementedError("`get_related` is not implemented in {}".format(self.__class__))
+        if self.related_field:
+            related = getattr(resource, self.related_field)
+            if self.many:
+                return related.all()
+            return related
+        raise NotImplementedError("`related_field` is missing or `get_related` is not implemented in {}".format(self.__class__))
 
     def apply_pagination(self, related, page_size):
         """
@@ -142,8 +158,11 @@ class RelationshipHandler(object):
         objects from the database
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-
-        raise NotImplementedError("`add_related` is not implemented in {}".format(self.__class__))
+        assert(self.many)
+        if not self.related_field:
+            raise NotImplementedError("`related_field` is missing or `add_related` is not implemented in {}".format(self.__class__))
+        getattr(resource, self.related_field).add(*related)
+            
 
     def set_related(self, resource, related):
         """
@@ -155,8 +174,12 @@ class RelationshipHandler(object):
         objects from the database
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-
-        raise NotImplementedError("`set_related` is not implemented in {}".format(self.__class__))
+        if not self.related_field:
+            raise NotImplementedError("`set_related` is not implemented in {}".format(self.__class__))
+        if self.many:
+            getattr(resource, self.related_field).set(related)
+        else:
+            setattr(resource, self.related_field, related)
 
     def remove_related(self, resource, related):
         """
@@ -168,5 +191,7 @@ class RelationshipHandler(object):
         objects from the database
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-
-        raise NotImplementedError("`remove_related` is not implemented in {}".format(self.__class__))
+        assert(self.many)
+        if not self.related_field:
+            raise NotImplementedError("`remove_related` is not implemented in {}".format(self.__class__))
+        getattr(resource, self.related_field).remove(*related)          
