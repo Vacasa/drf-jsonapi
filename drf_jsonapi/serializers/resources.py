@@ -203,7 +203,10 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Resource Identifiers for linkage
         serializer_class = handler.get_serializer_class()
-        related = handler.get_related(instance, self._context.get('request', None))
+        try:
+            related = handler.get_related(instance, self._context.get('request', None))
+        except TypeError:
+            related = handler.get_related(instance)
 
         if related:
             if handler.many:
