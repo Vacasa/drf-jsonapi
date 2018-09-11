@@ -118,7 +118,10 @@ class ProcessRelationshipsMixin(object):
                 data, many=handler.many
             )
 
-            handler.set_related(resource, related_resources, request)
+            try:
+                handler.set_related(resource, related_resources, request)
+            except TypeError:
+                handler.set_related(resource, related_resources, request)
 
         return(resource)
 
@@ -286,7 +289,10 @@ class RelationshipListMixin(object):
 
         related = kwargs.pop('related', None)
         if related is None:
-            related = handler.get_related(resource, request)
+            try:
+                related = handler.get_related(resource, request)
+            except TypeError:
+                related = handler.get_related(resource)
 
         if related:
             # Sorting
@@ -343,7 +349,10 @@ class RelationshipCreateMixin(object):
             many=handler.many
         )
 
-        handler.add_related(resource, related, request)
+        try:
+            handler.add_related(resource, related, request)
+        except TypeError:
+            handler.add_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -377,7 +386,10 @@ class RelationshipPatchMixin(object):
             many=handler.many
         )
 
-        handler.set_related(resource, related, request)
+        try:
+            handler.set_related(resource, related, request)
+        except TypeError:
+            handler.set_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -419,6 +431,9 @@ class RelationshipDeleteMixin(object):
             many=handler.many
         )
 
-        handler.remove_related(resource, related, request)
+        try:
+            handler.remove_related(resource, related, request)
+        except TypeError:
+            handler.remove_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
