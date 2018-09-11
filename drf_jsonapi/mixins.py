@@ -121,7 +121,7 @@ class ProcessRelationshipsMixin(object):
             try:
                 handler.set_related(resource, related_resources, request)
             except TypeError:
-                handler.set_related(resource, related_resources, request)
+                handler.set_related(resource, related_resources)
 
         return(resource)
 
@@ -389,7 +389,7 @@ class RelationshipPatchMixin(object):
         try:
             handler.set_related(resource, related, request)
         except TypeError:
-            handler.set_related(resource, related, request)
+            handler.set_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
