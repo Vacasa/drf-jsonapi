@@ -193,4 +193,4 @@ class RelationshipHandler(object):
         assert(self.many)
         if not self.related_field:
             raise NotImplementedError("`remove_related` is not implemented in {}".format(self.__class__))
-        getattr(resource, self.related_field).remove(*related)          
+        getattr(resource, self.related_field).remove(*related)
