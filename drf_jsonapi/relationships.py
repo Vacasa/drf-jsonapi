@@ -163,7 +163,6 @@ class RelationshipHandler(object):
             raise NotImplementedError("`related_field` is missing or `add_related` is not implemented in {}".format(self.__class__))
         getattr(resource, self.related_field).add(*related)
             
-
     def set_related(self, resource, related, request=None):
         """
         Set a related resource.
@@ -180,6 +179,7 @@ class RelationshipHandler(object):
             getattr(resource, self.related_field).set(related)
         else:
             setattr(resource, self.related_field, related)
+            resource.save()
 
     def remove_related(self, resource, related, request=None):
         """
