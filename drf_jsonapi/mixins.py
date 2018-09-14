@@ -240,6 +240,8 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
         if 'relationships' in request.data['data']:
             self.process_relationships(request.data['data']['relationships'], resource, request)
 
+        resource.save()
+
         self.document.instance.data = serializer.data
 
         return Response(self.document.data)
