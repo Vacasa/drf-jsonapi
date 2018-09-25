@@ -201,10 +201,8 @@ class ResourceSerializer(serializers.Serializer):
 
         # Build Links
         links = handler.build_relationship_links(self, relation, instance)
-        if not links:
-            return data
-
-        data['links'] = links
+        if links:
+            data['links'] = links
 
         if relation not in self.include:
             return data
