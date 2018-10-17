@@ -1,11 +1,8 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend as BaseClass
 from django_filters import compat
+from django.db.models import Field
 
-try:
-    from django_filters.filters import LOOKUP_TYPES
-except ImportError:
-    from django.db.models import Field
-    LOOKUP_TYPES = Field.get_lookups().keys()
+LOOKUP_TYPES = Field.get_lookups().keys()
 
 
 class DjangoFilterBackend(BaseClass):
