@@ -22,7 +22,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         Generate an OpenAPI schema from an event serializer
 
         :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
-        :param api.resources.events.serializers.EventSerializer serializer: An event serializer
+        :param drf_jsonapi.serializers.resources.ResourceSerializer serializer: A serializer Class
         :return: An OpenAPI schema
         :rtype: drf_yasg.openapi.Schema
         """
@@ -201,28 +201,27 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             return []
 
         serializer_class = self.view.get_serializer_class()
-        parameters = [openapi.Parameter(
+        parameters = {}
+        parameters[serializer_class.Meta.type] = openapi.Parameter(
             name="fields[{}]".format(serializer_class.Meta.type),
             in_="query",
             type="string",
             enum=serializer_class.Meta.fields,
             description="Multiple values may be separated by commas."
-        )]
+        )
 
-        if not self.is_list():
-            return parameters
+        if self.is_list():
+            relationships = getattr(serializer_class.Meta, 'relationships', {})
+            for serializer_class in [r.get_serializer_class() for r in relationships.values()]:
+                parameters[serializer_class.Meta.type] = openapi.Parameter(
+                    name="fields[{}]".format(serializer_class.Meta.type),
+                    in_="query",
+                    type="string",
+                    enum=serializer_class.Meta.fields,
+                    description="Multiple values may be separated by commas."
+                )
 
-        relationships = getattr(serializer_class.Meta, 'relationships', {})
-        for serializer_class in [r.get_serializer_class() for r in relationships.values()]:
-            parameters.append(openapi.Parameter(
-                name="fields[{}]".format(serializer_class.Meta.type),
-                in_="query",
-                type="string",
-                enum=serializer_class.Meta.fields,
-                description="Multiple values may be separated by commas."
-            ))
-
-        return parameters
+        return list(parameters.values())
 
     def get_include_parameters(self):
         """
@@ -325,9 +324,8 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
             },
             required=['type']
         )
-        if self.method in ('GET', 'PATCH', 'POST', 'DELETE'):
-            schema.properties['id'] = {'type': ['integer', 'string']}
-            schema.required.append('id')
+        schema.properties['id'] = {'type': ['integer', 'string']}
+        schema.required.append('id')
 
         return schema
 
