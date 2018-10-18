@@ -7,6 +7,7 @@ INSTALLED_APPS = [
     'django.contrib',
     'drf_jsonapi',
     'tests',
+    'tests.nested_includes'
 ]
 DATABASES = {
     'default': {

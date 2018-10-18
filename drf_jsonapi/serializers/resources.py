@@ -67,8 +67,6 @@ class ResourceSerializer(serializers.Serializer):
         self.include = list(include_tree.keys())
         self.include_tree = include_tree
 
-        # raise Exception(self.include_tree)
-
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
         if invalid_includes:
