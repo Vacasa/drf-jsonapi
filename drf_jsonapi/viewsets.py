@@ -138,7 +138,7 @@ class ViewSet(GenericViewSet):
             return
 
         request.include = request.GET['include'].split(',')
-        
+
         allowed_includes = getattr(
             self,
             'allowed_includes',
