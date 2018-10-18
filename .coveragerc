@@ -1,0 +1,12 @@
+[run]
+source = drf_jsonapi
+branch = true
+omit =
+  tests/*
+  venv/*
+  runtests.py
+  setup.py
+
+[report]
+show_missing = true
+skip_covered = true
