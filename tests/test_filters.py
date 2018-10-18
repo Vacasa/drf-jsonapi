@@ -5,11 +5,14 @@ from rest_framework.test import APIRequestFactory
 
 from drf_jsonapi.objects import Error
 from drf_jsonapi.filters import FilterSet, GenericFilterSet
+from django_filters.filters import CharFilter
 
 from .mocks import TestModel
 
 
 class TestFilterSet(FilterSet):
+    custom__filter = CharFilter()
+
     class Meta:
         model = TestModel
         fields = {
@@ -35,6 +38,11 @@ class FilterSetTestCase(TestCase):
     def test_validate_boolean_value(self):
         factory = APIRequestFactory()
         request = factory.get('/tests/?filter[is_active]=true')
+        TestFilterSet(request.GET, TestModel.objects.all())
+
+    def test_dot_separated_filter(self):
+        factory = APIRequestFactory()
+        request = factory.get('/tests/?filter[custom.filter]=true')
         TestFilterSet(request.GET, TestModel.objects.all())
 
     def test_validate_invalid_boolean_value(self):
