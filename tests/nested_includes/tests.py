@@ -31,3 +31,7 @@ class NestedIncludesTestCase(TestCase):
             len(response.data['included']),
             2
         )
+
+    def test_invalid_include(self):
+        response = self.client.get('/leaves?include=foo.bar')
+        self.assertEquals(response.status_code, 400)
