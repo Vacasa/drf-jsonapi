@@ -1,3 +1,4 @@
+import warnings
 from django.conf import settings
 
 from rest_framework.exceptions import NotFound, MethodNotAllowed
@@ -119,6 +120,12 @@ class ProcessRelationshipsMixin(object):
             try:
                 handler.set_related(resource, related_resources, request)
             except TypeError:
+                warnings.warn(
+                    """set_related() should except the request 
+                    as a third argument. This warning will be 
+                    replaced with an exception in future versions.""",
+                    DeprecationWarning
+                )
                 handler.set_related(resource, related_resources)
 
         return(resource)
@@ -288,6 +295,12 @@ class RelationshipListMixin(object):
         try:
             related = handler.get_related(resource, request)
         except TypeError:
+            warnings.warn(
+                """get_related() should except the request 
+                as a second argument. This warning will be 
+                replaced with an exception in future versions.""",
+                DeprecationWarning
+            )
             related = handler.get_related(resource)
 
         if related:
@@ -348,6 +361,12 @@ class RelationshipCreateMixin(object):
         try:
             handler.add_related(resource, related, request)
         except TypeError:
+            warnings.warn(
+                """add_related() should except the request 
+                as a third argument. This warning will be 
+                replaced with an exception in future versions.""",
+                DeprecationWarning
+            )
             handler.add_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -385,6 +404,12 @@ class RelationshipPatchMixin(object):
         try:
             handler.set_related(resource, related, request)
         except TypeError:
+            warnings.warn(
+                """set_related() should except the request 
+                as a third argument. This warning will be 
+                replaced with an exception in future versions.""",
+                DeprecationWarning
+            )
             handler.set_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -430,6 +455,12 @@ class RelationshipDeleteMixin(object):
         try:
             handler.remove_related(resource, related, request)
         except TypeError:
+            warnings.warn(
+                """remove_related() should except the request 
+                as a second argument. This warning will be 
+                replaced with an exception in future versions.""",
+                DeprecationWarning
+            )
             handler.remove_related(resource, related)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
