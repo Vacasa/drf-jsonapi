@@ -14,6 +14,12 @@ DATABASES = {
         'NAME': os.path.join(PROJECT_PATH, 'drf_jsonapi.sqlite'),
     }
 }
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "drf_jsonapi.inspectors.EntitySwaggerAutoSchema",
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
+}
 DEFAULT_PAGE_SIZE = 10
 BASE_URL = 'junk'
 ROOT_URLCONF = 'tests.urls'
