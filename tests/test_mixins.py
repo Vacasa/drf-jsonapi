@@ -257,14 +257,14 @@ class RelationshipPatchMixinTestCase(TestCase):
         relationship = 'related_things'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
 
     class TestOneView(mixins.RelationshipPatchMixin, RelationshipViewSet):
         serializer_class = TestModelSerializer
         relationship = 'related_thing'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
 
     def test_patch_one_valid(self):
         factory = APIRequestFactory()
