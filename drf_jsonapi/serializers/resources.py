@@ -53,19 +53,7 @@ class ResourceSerializer(serializers.Serializer):
 
         self.included = []
 
-        # Validate Includes
-        include_tree = {}
-        for include in list(filter(None, kwargs.pop('include', []))):
-            parts = include.split('.')
-            root = parts[0]
-            if root not in include_tree:
-                include_tree[root] = []
-            branches = '.'.join(parts[1:])
-            if branches:
-                include_tree[root].append(branches)
-
-        self.include = list(include_tree.keys())
-        self.include_tree = include_tree
+        self.validate_includes(kwargs.pop('include', []))
 
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
@@ -82,6 +70,21 @@ class ResourceSerializer(serializers.Serializer):
         # We have to this AFTER super().__init__ so that self.fields is populated
         if self.only_fields is not None and self.Meta.type in self.only_fields:
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
+
+    def validate_includes(self, includes):
+        # Validate Includes
+        include_tree = {}
+        for include in list(filter(None, includes)):
+            parts = include.split('.')
+            root = parts[0]
+            if root not in include_tree:
+                include_tree[root] = []
+            branches = '.'.join(parts[1:])
+            if branches:
+                include_tree[root].append(branches)
+
+        self.include = list(include_tree.keys())
+        self.include_tree = include_tree
 
     def apply_sparse_fieldset(self, fields=None):
         """
