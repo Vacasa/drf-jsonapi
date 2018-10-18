@@ -24,9 +24,7 @@ class ListMixin(object):
         :rtype: Response
         """
 
-        collection = kwargs.pop('collection', None)
-        if collection is None:
-            collection = self.get_collection(request, *args, **kwargs)
+        collection = self.get_collection(request, *args, **kwargs)
 
         # Sorting
         collection = self.serializer_class.sort(request.GET.get('sort'), collection)
@@ -145,7 +143,7 @@ class CreateMixin(ProcessRelationshipsMixin):
             data=request.data['data'],
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
             context={'request': request}
         )
 
@@ -192,7 +190,7 @@ class RetrieveMixin(object):
             resource,
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
             context={'request': request}
         )
 
@@ -287,12 +285,10 @@ class RelationshipListMixin(object):
         handler = self.get_relationship_handler(self.relationship)
         serializer_class = handler.get_serializer_class()
 
-        related = kwargs.pop('related', None)
-        if related is None:
-            try:
-                related = handler.get_related(resource, request)
-            except TypeError:
-                related = handler.get_related(resource)
+        try:
+            related = handler.get_related(resource, request)
+        except TypeError:
+            related = handler.get_related(resource)
 
         if related:
             # Sorting

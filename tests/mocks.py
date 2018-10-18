@@ -149,6 +149,16 @@ class TestModel(models.Model):
         return self
 
 
+class EmptyRelationshipHandler(RelationshipHandler):
+    many = False
+
+    def get_serializer_class(self):
+        return TestResourceSerializer
+
+    def get_related(self, instance):
+        return None
+
+
 class TestModelSerializer(ResourceModelSerializer):
 
     class Meta:
@@ -163,5 +173,6 @@ class TestModelSerializer(ResourceModelSerializer):
         )
         relationships = {
             'related_things': TestManyRelationshipHandler(),
-            'related_thing': TestOneRelationshipHandler()
+            'related_thing': TestOneRelationshipHandler(),
+            'empty_thing': EmptyRelationshipHandler()
         }
