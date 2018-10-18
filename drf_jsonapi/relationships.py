@@ -85,11 +85,15 @@ class RelationshipHandler(object):
         :param RelationshipsHandler self: This object
         :return serializer_class:
         :rtype: type
-        :raises NotImplementedError: As this method requires an override in the extending class
+        :raises NotImplementedError
+        :raises ImportError
         """
         if isinstance(self.serializer_class, str):
-            return locate(self.serializer_class)
-        if isinstance(self.serializer_class, type):
+            serializer_class = locate(self.serializer_class)
+            if not serializer_class:
+                raise ImportError("Unable to import serializer class: {}".format(self.serializer_class))
+            return serializer_class
+        elif self.serializer_class:
             return self.serializer_class
         raise NotImplementedError("`serializer_class` is missing or `get_serializer_class()` is not implemented in {}".format(self.__class__))
 
@@ -151,17 +155,21 @@ class RelationshipHandler(object):
     def add_related(self, resource, related):
         """
         Add a related resource.
+        NOTE: This currently only supports Many-to-Many relationships
 
         :param RelationshipsHandler self: This object
         :param model resource: The model for the relationship "parent"
-        :param django.db.models.query.QuerySet related: A collection of related
-        objects from the database
-        :raises NotImplementedError: As this method requires an override in the extending class
+        :param related: A collection of models to add
+        :raises NotImplementedError:
+        :raises TypeError:
         """
         assert(self.many)
         if not self.related_field:
             raise NotImplementedError("`related_field` is missing or `add_related` is not implemented in {}".format(self.__class__))
-        getattr(resource, self.related_field).add(*related)
+        try:
+            getattr(resource, self.related_field).add(*related)
+        except(TypeError):
+            getattr(resource, self.related_field).add(related)
 
     def set_related(self, resource, related):
         """
@@ -193,4 +201,7 @@ class RelationshipHandler(object):
         assert(self.many)
         if not self.related_field:
             raise NotImplementedError("`remove_related` is not implemented in {}".format(self.__class__))
-        getattr(resource, self.related_field).remove(*related)
+        try:
+            getattr(resource, self.related_field).remove(*related)
+        except(TypeError):
+            getattr(resource, self.related_field).remove(related)
