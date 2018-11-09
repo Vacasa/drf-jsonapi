@@ -59,7 +59,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 201)
 
     def test_create_mixin_with_relationships(self):
         factory = APIRequestFactory()
@@ -88,7 +88,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 201)
 
     def test_create_mixin_invalid_relationship(self):
         factory = APIRequestFactory()

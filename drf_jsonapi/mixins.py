@@ -164,7 +164,7 @@ class CreateMixin(ProcessRelationshipsMixin):
         serializer.instance = resource
         self.document.instance.data = serializer.data
 
-        return Response(self.document.data)
+        return Response(self.document.data, status=status.HTTP_201_CREATED)
 
 
 class RetrieveMixin(object):
@@ -257,7 +257,7 @@ class DestroyMixin(object):
         resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
         resource.delete()
 
-        return Response(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RelationshipListMixin(object):
