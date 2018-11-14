@@ -234,6 +234,8 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
         if 'relationships' in request.data['data']:
             self.process_relationships(request.data['data']['relationships'], resource)
 
+        resource.save()
+
         self.document.instance.data = serializer.data
 
         return Response(self.document.data)
@@ -375,6 +377,7 @@ class RelationshipPatchMixin(object):
         )
 
         handler.set_related(resource, related)
+        resource.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
