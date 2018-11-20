@@ -209,10 +209,8 @@ class ResourceSerializer(serializers.Serializer):
 
         # Build Links
         links = handler.build_relationship_links(self, relation, instance)
-        if not links:
-            return data
-
-        data['links'] = links
+        if links:
+            data['links'] = links
 
         if relation not in self.include:
             return data
@@ -440,10 +438,11 @@ class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
         if not sort_param:
             return queryset
 
-        sort_fields = list(filter(None, sort_param.split(',')))
+        sort_fields = list(filter(None, sort_param.replace('.', '__').split(',')))
 
         # validate the sort fields actually exist in the model
-        field_names = [field.name for field in queryset.model._meta.get_fields()]
+        field_names = getattr(cls.Meta, 'sort_fields', cls.Meta.fields)
+        field_names += ('id',)
         test_fields = [field[1:] if field[0] in ('-', '+') else field for field in sort_fields]
         invalid_fields = set(test_fields).difference(field_names)
 
