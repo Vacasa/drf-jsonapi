@@ -1,8 +1,8 @@
 from django.utils import timezone
-from django.db import models
 from rest_framework import serializers
 
 from drf_jsonapi.relationships import RelationshipHandler
+from drf_jsonapi.viewsets import ReadWriteViewSet, ToManyRelationshipViewSet
 
 from drf_jsonapi.serializers import (
     ResourceSerializer,
@@ -10,6 +10,7 @@ from drf_jsonapi.serializers import (
     ResourceListSerializer
 )
 
+from .models import *
 
 class TestResource(object):
 
@@ -109,46 +110,6 @@ class TestResourceSerializer(ResourceSerializer):
         return TestResource(id=id)
 
 
-class TestModelQuerySet(models.QuerySet):
-    def get(self, pk, **kwargs):
-        if pk == 666:
-            raise TestModel.DoesNotExist()
-        return TestModel(
-            pk=pk,
-            name="Test Model",
-            is_active=True
-        )
-
-
-class TestModelManager(models.Manager):
-    def get_queryset(self):
-        return TestModelQuerySet(self.model, using=self._db)
-
-    def get(self, pk, **kwargs):
-        return self.get_queryset().get(pk=pk, **kwargs)
-
-
-class TestModel(models.Model):
-    name = models.CharField(max_length=128, null=True)
-    count = models.IntegerField(null=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    related_things = models.ForeignKey('self', on_delete=models.CASCADE)
-
-    # Override manager so we can mock the methods
-    objects = TestModelManager()
-
-    class Meta:
-        ordering = ['id']
-
-    def save(self, *args, **kwargs):
-        return self
-
-    def delete(self, *args, **kwargs):
-        return self
-
-
 class TestModelSerializer(ResourceModelSerializer):
 
     class Meta:
@@ -165,3 +126,18 @@ class TestModelSerializer(ResourceModelSerializer):
             'related_things': TestManyRelationshipHandler(),
             'related_thing': TestOneRelationshipHandler()
         }
+
+
+class TestView(ReadWriteViewSet):
+    view_name_prefix = "Test Resource"
+    serializer_class = TestModelSerializer
+    collection = []
+
+
+class TestRelationshipViewSet(ToManyRelationshipViewSet):
+    view_name_prefix = "Test Related Things"
+    serializer_class = TestModelSerializer
+    relationship = "related_things"
+
+    def get_resource(self, request, pk):
+        return pk
