@@ -70,7 +70,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 201)
 
     def test_create_mixin_with_relationships_to_many(self):
         factory = APIRequestFactory()
@@ -99,7 +99,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({'post': 'create'})
         response = view(request)
         response.render()
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 201)
 
     def test_create_mixin_with_relationships_to_one(self):
         factory = APIRequestFactory()
@@ -291,14 +291,14 @@ class RelationshipPatchMixinTestCase(TestCase):
         relationship = 'related_things'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
 
     class TestOneView(mixins.RelationshipPatchMixin, RelationshipViewSet):
         serializer_class = TestModelSerializer
         relationship = 'related_thing'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
 
     def test_patch_one_valid(self):
         factory = APIRequestFactory()
