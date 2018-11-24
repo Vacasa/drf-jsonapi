@@ -7,7 +7,7 @@ INSTALLED_APPS = [
     'django.contrib',
     'drf_jsonapi',
     'tests',
-    'tests.nested_includes'
+    'tests.nested_includes',
     'tests.relationship_handlers'
 ]
 DATABASES = {
