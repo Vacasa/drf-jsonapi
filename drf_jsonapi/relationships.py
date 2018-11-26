@@ -46,6 +46,8 @@ class RelationshipHandler(object):
         :param serializer base_serializer: A model serlializer
         :param string relation: The name of a relationship
         :param model resource: The model for the relationship "parent"
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :return: A links dictionary
         :rtype: dict
         """
@@ -116,6 +118,8 @@ class RelationshipHandler(object):
 
         :param RelationshipsHandler self: This object
         :return related:
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :rtype: object
         :raises NotImplementedError: As this method requires an override in the extending class
         """
@@ -160,6 +164,8 @@ class RelationshipHandler(object):
         :param RelationshipsHandler self: This object
         :param model resource: The model for the relationship "parent"
         :param related: A collection of models to add
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError:
         :raises TypeError:
         """
@@ -179,6 +185,8 @@ class RelationshipHandler(object):
         :param model resource: The model for the relationship "parent"
         :param django.db.models.query.QuerySet related: A collection of related
         objects from the database
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError: As this method requires an override in the extending class
         """
         if not self.related_field:
@@ -196,6 +204,8 @@ class RelationshipHandler(object):
         :param model resource: The model for the relationship "parent"
         :param django.db.models.query.QuerySet related: A collection of related
         objects from the database
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError: As this method requires an override in the extending class
         """
         assert(self.many)
