@@ -43,7 +43,7 @@ class ListMixin(object):
             many=True,
             only_fields=request.fields,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
             context={'request': request}
         )
 
@@ -230,7 +230,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
             only_fields=request.fields,
             partial=True,
             include=request.include,
-            page_size=self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
             context={'request': request}
         )
 
