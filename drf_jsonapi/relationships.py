@@ -38,7 +38,7 @@ class RelationshipHandler(object):
 
         return data
 
-    def build_relationship_links(self, base_serializer, relation, resource):
+    def build_relationship_links(self, base_serializer, relation, resource, request=None):
         """
         Builds relationship links for a JSON-API response
 
@@ -46,6 +46,8 @@ class RelationshipHandler(object):
         :param serializer base_serializer: A model serlializer
         :param string relation: The name of a relationship
         :param model resource: The model for the relationship "parent"
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :return: A links dictionary
         :rtype: dict
         """
@@ -97,7 +99,7 @@ class RelationshipHandler(object):
             return self.serializer_class
         raise NotImplementedError("`serializer_class` is missing or `get_serializer_class()` is not implemented in {}".format(self.__class__))
 
-    def get_links(self, resource, links):
+    def get_links(self, resource, links, request=None):
         """
         Retrieve links from given links attribute.
 
@@ -110,12 +112,14 @@ class RelationshipHandler(object):
 
         return links
 
-    def get_related(self, resource):
+    def get_related(self, resource, request=None):
         """
         Retrieve related resources
 
         :param RelationshipsHandler self: This object
         :return related:
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :rtype: object
         :raises NotImplementedError: As this method requires an override in the extending class
         """
@@ -152,7 +156,7 @@ class RelationshipHandler(object):
 
         return page.object_list, meta
 
-    def add_related(self, resource, related):
+    def add_related(self, resource, related, request=None):
         """
         Add a related resource.
         NOTE: This currently only supports Many-to-Many relationships
@@ -160,6 +164,8 @@ class RelationshipHandler(object):
         :param RelationshipsHandler self: This object
         :param model resource: The model for the relationship "parent"
         :param related: A collection of models to add
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError:
         :raises TypeError:
         """
@@ -171,7 +177,7 @@ class RelationshipHandler(object):
         except(TypeError):
             getattr(resource, self.related_field).add(related)
 
-    def set_related(self, resource, related):
+    def set_related(self, resource, related, request=None):
         """
         Set a related resource.
 
@@ -179,6 +185,8 @@ class RelationshipHandler(object):
         :param model resource: The model for the relationship "parent"
         :param django.db.models.query.QuerySet related: A collection of related
         objects from the database
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError: As this method requires an override in the extending class
         """
         if not self.related_field:
@@ -188,7 +196,7 @@ class RelationshipHandler(object):
         else:
             setattr(resource, self.related_field, related)
 
-    def remove_related(self, resource, related):
+    def remove_related(self, resource, related, request=None):
         """
         Remove a related resource.
 
@@ -196,6 +204,8 @@ class RelationshipHandler(object):
         :param model resource: The model for the relationship "parent"
         :param django.db.models.query.QuerySet related: A collection of related
         objects from the database
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
         :raises NotImplementedError: As this method requires an override in the extending class
         """
         assert(self.many)

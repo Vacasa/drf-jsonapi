@@ -39,6 +39,17 @@ class MixinsTestCase(TestCase):
         response = view(request)
         self.assertEquals(response.status_code, 200)
 
+    def test_list_no_filter(self):
+        
+        class TestViewSetNoFilter(TestViewSet):
+            filter_class = None
+
+        factory = APIRequestFactory()
+        request = factory.get('/test_resources')
+        view = TestViewSetNoFilter.as_view({'get': 'list'})
+        response = view(request)
+        self.assertEquals(response.status_code, 200)
+
     def test_retrieve_mixin(self):
         factory = APIRequestFactory()
         request = factory.get('/test_resources/1')
@@ -61,7 +72,7 @@ class MixinsTestCase(TestCase):
         response.render()
         self.assertEquals(response.status_code, 201)
 
-    def test_create_mixin_with_relationships(self):
+    def test_create_mixin_with_relationships_to_many(self):
         factory = APIRequestFactory()
         request = factory.post('/test_resources', {
             "data": {
@@ -81,6 +92,29 @@ class MixinsTestCase(TestCase):
                                 "id": "6"
                             },
                         ]
+                    }
+                }
+            }
+        }, format="json")
+        view = TestViewSet.as_view({'post': 'create'})
+        response = view(request)
+        response.render()
+        self.assertEquals(response.status_code, 201)
+
+    def test_create_mixin_with_relationships_to_one(self):
+        factory = APIRequestFactory()
+        request = factory.post('/test_resources', {
+            "data": {
+                "type": "test_model_resource",
+                "attributes": {
+                    "name": "Test Resource"
+                },
+                "relationships": {
+                    "related_thing": {
+                        "data": {
+                            "type": "test_resource",
+                            "id": "5"
+                        }
                     }
                 }
             }
@@ -333,6 +367,21 @@ class RelationshipDeleteMixinTestCase(TestCase):
         }
         view.delete(request)
 
+    def test_destroy_to_many_valid_iterator(self):
+        factory = APIRequestFactory()
+        request = factory.delete(
+            '/test_resources/relationships/related_thing',
+            format="json"
+        )
+        view = self.TestManyView()
+        request.data = {
+            "data": [{
+                "type": "test_resource",
+                "id": "5"
+            }]
+        }
+        view.delete(request)
+
 
 class RelationshipListMixinTestCase(TestCase):
 
@@ -341,14 +390,21 @@ class RelationshipListMixinTestCase(TestCase):
         relationship = 'related_things'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
 
     class TestOneView(mixins.RelationshipListMixin, RelationshipViewSet):
         serializer_class = TestModelSerializer
         relationship = 'related_thing'
 
         def get_resource(self, *args, **kwargs):
-            return True
+            return TestModel()
+
+    class TestEmptyView(mixins.RelationshipListMixin, RelationshipViewSet):
+        serializer_class = TestModelSerializer
+        relationship = 'empty_thing'
+
+        def get_resource(self, *args, **kwargs):
+            return TestModel()
 
     def test_list_mixin_one(self):
         factory = APIRequestFactory()
@@ -359,7 +415,14 @@ class RelationshipListMixinTestCase(TestCase):
 
     def test_list_mixin_many(self):
         factory = APIRequestFactory()
-        request = factory.get('/test_resources/relationships/related_thing')
+        request = factory.get('/test_resources/relationships/related_things')
         view = self.TestManyView.as_view({'get': 'list'})
+        response = view(request)
+        self.assertEquals(response.status_code, 200)
+
+    def test_list_mixin_empty(self):
+        factory = APIRequestFactory()
+        request = factory.get('/test_resources/relationships/empty_thing')
+        view = self.TestEmptyView.as_view({'get': 'list'})
         response = view(request)
         self.assertEquals(response.status_code, 200)
