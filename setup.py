@@ -7,7 +7,7 @@ def readme():
 
 setup(
     name='drf-jsonapi',
-    version='0.1.0',
+    version='0.1.3',
     license='MIT',
     description='OpenSource Django JSONAPI Library',
     long_description=readme(),
@@ -22,6 +22,7 @@ setup(
         'djangorestframework',
         'drf-nested-routers',
         'django-filter',
+        'django-filters',
         'drf-yasg',
     ],
     zip_safe=False
