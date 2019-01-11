@@ -104,3 +104,6 @@ ENV/
 # Random
 .DS_Store
 .vscode/
+
+# pycharm
+.idea/
