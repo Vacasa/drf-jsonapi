@@ -4,6 +4,7 @@ from django.conf import settings
 from rest_framework.exceptions import NotFound, MethodNotAllowed
 from rest_framework import status
 
+from . import defaults
 from .response import Response
 from .serializers.utils import resource_identifier
 from .utils import listify
@@ -43,7 +44,7 @@ class ListMixin(object):
             many=True,
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
             context={'request': request}
         )
 
@@ -150,7 +151,7 @@ class CreateMixin(ProcessRelationshipsMixin):
             data=request.data['data'],
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
             context={'request': request}
         )
 
@@ -197,7 +198,7 @@ class RetrieveMixin(object):
             resource,
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
             context={'request': request}
         )
 
@@ -230,7 +231,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
             only_fields=request.fields,
             partial=True,
             include=request.include,
-            page_size=request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE),
+            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
             context={'request': request}
         )
 

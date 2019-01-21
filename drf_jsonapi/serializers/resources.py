@@ -7,6 +7,7 @@ from rest_framework.exceptions import ParseError
 
 from .utils import resource_identifier
 
+from .. import defaults
 from ..objects import Error
 from ..utils import listify
 
@@ -60,7 +61,7 @@ class ResourceSerializer(serializers.Serializer):
             )
 
         self.only_fields = kwargs.pop('only_fields', None)
-        self.page_size = kwargs.pop('page_size', settings.DEFAULT_PAGE_SIZE)
+        self.page_size = kwargs.pop('page_size', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE))
         super().__init__(*args, **kwargs)
 
         # We have to this AFTER super().__init__ so that self.fields is populated

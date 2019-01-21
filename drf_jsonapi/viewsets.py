@@ -9,6 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import ParseError
 from rest_framework.generics import get_object_or_404
 
+from . import defaults
 from .response import Response
 from .objects import Document
 from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier
@@ -217,7 +218,7 @@ class ViewSet(GenericViewSet):
         :rtype: QuerySet
         """
 
-        page_size = self.request.GET.get('page[size]', settings.DEFAULT_PAGE_SIZE)
+        page_size = self.request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE))
         paginator = Paginator(collection, page_size)
         page = paginator.page(self.request.GET.get('page[number]', 1))
 
