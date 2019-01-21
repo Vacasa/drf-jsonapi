@@ -7,7 +7,7 @@ def readme():
 
 setup(
     name='drf-jsonapi',
-    version='0.1.0',
+    use_scm_version=True,
     license='MIT',
     description='OpenSource Django JSONAPI Library',
     long_description=readme(),
@@ -24,5 +24,6 @@ setup(
         'django-filter',
         'drf-yasg',
     ],
+    setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
     zip_safe=False
 )
