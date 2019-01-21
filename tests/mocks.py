@@ -110,6 +110,27 @@ class TestResourceSerializer(ResourceSerializer):
         return TestResource(id=id)
 
 
+class TestModelQuerySet(models.QuerySet):
+    def get(self, pk, **kwargs):
+        if pk == 666:
+            raise TestModel.DoesNotExist()
+        return TestModel(
+            pk=pk,
+            name="Test Model",
+            is_active=True
+        )
+
+
+class EmptyRelationshipHandler(RelationshipHandler):
+    many = False
+
+    def get_serializer_class(self):
+        return TestResourceSerializer
+
+    def get_related(self, instance):
+        return None
+
+
 class TestModelSerializer(ResourceModelSerializer):
 
     class Meta:
@@ -124,7 +145,8 @@ class TestModelSerializer(ResourceModelSerializer):
         )
         relationships = {
             'related_things': TestManyRelationshipHandler(),
-            'related_thing': TestOneRelationshipHandler()
+            'related_thing': TestOneRelationshipHandler(),
+            'empty_thing': EmptyRelationshipHandler()
         }
 
 

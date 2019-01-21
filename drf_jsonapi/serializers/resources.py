@@ -1,7 +1,3 @@
-from pydoc import locate
-import collections
-
-from django.core.exceptions import FieldError
 from django.urls import resolve, Resolver404
 from django.conf import settings
 
@@ -53,8 +49,8 @@ class ResourceSerializer(serializers.Serializer):
 
         self.included = []
 
-        # Validate Includes
-        self.include = list(filter(None, kwargs.pop('include', [])))
+        self.validate_includes(kwargs.pop('include', []))
+
         available_relationships = getattr(self.Meta, 'relationships', {}).keys()
         invalid_includes = list(set(self.include) - set(available_relationships))
         if invalid_includes:
@@ -70,6 +66,21 @@ class ResourceSerializer(serializers.Serializer):
         # We have to this AFTER super().__init__ so that self.fields is populated
         if self.only_fields is not None and self.Meta.type in self.only_fields:
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
+
+    def validate_includes(self, includes):
+        # Validate Includes
+        include_tree = {}
+        for include in list(filter(None, includes)):
+            parts = include.split('.')
+            root = parts[0]
+            if root not in include_tree:
+                include_tree[root] = []
+            branches = '.'.join(parts[1:])
+            if branches:
+                include_tree[root].append(branches)
+
+        self.include = list(include_tree.keys())
+        self.include_tree = include_tree
 
     def apply_sparse_fieldset(self, fields=None):
         """
@@ -208,7 +219,7 @@ class ResourceSerializer(serializers.Serializer):
         data = {}
 
         # Build Links
-        links = handler.build_relationship_links(self, relation, instance)
+        links = handler.build_relationship_links(self, relation, instance, self._context.get('request', None))
         if links:
             data['links'] = links
 
@@ -217,7 +228,10 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Resource Identifiers for linkage
         serializer_class = handler.get_serializer_class()
-        related = handler.get_related(instance)
+        try:
+            related = handler.get_related(instance, self._context.get('request', None))
+        except TypeError:
+            related = handler.get_related(instance)
 
         if related:
             if handler.many:
@@ -228,11 +242,15 @@ class ResourceSerializer(serializers.Serializer):
                 many=handler.many
             ).data
 
-            self.included += listify(serializer_class(
+            related_serializer = serializer_class(
                 related,
                 many=handler.many,
-                only_fields=self.only_fields
-            ).data)
+                only_fields=self.only_fields,
+                include=self.include_tree.get(relation, [])
+            )
+
+            self.included += listify(related_serializer.data)
+            self.included += related_serializer.included
         else:
             data['data'] = [] if handler.many else None
 
