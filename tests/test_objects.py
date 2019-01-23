@@ -4,7 +4,6 @@ from drf_jsonapi.objects import Document, Error
 
 
 class DocumentTestCase(TestCase):
-
     def test_default_object_creation(self):
         document = Document()
 
@@ -28,7 +27,6 @@ class DocumentTestCase(TestCase):
 
 
 class ErrorTestCase(TestCase):
-
     def test_default_object_creation(self):
         message = "This is my error message"
         error = Error(message)
@@ -38,13 +36,8 @@ class ErrorTestCase(TestCase):
 
     def test_parse_validation_errors(self):
         errors_dict = {
-            'foo': [
-                "This is an error with foo",
-                "This is another error with foo"
-            ],
-            'bar': [
-                "This is an error with bar"
-            ]
+            "foo": ["This is an error with foo", "This is another error with foo"],
+            "bar": ["This is an error with bar"],
         }
 
         errors = Error.parse_validation_errors(errors_dict)

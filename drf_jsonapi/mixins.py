@@ -1,4 +1,3 @@
-import warnings
 from django.conf import settings
 
 from rest_framework.exceptions import NotFound, MethodNotAllowed
@@ -11,12 +10,12 @@ from .utils import listify
 from .objects import Error
 
 
-class ListMixin(object):
+class ListMixin:
     """
     Override base view behavior: build a response for a list endpoint
     """
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request):
         """
         Create a response for a list, including sorting, filtering, and paging
 
@@ -26,15 +25,15 @@ class ListMixin(object):
         :rtype: Response
         """
 
-        collection = self.get_collection(request, *args, **kwargs)
+        collection = self.get_collection(request)
 
         # Sorting
-        collection = self.serializer_class.sort(request.GET.get('sort'), collection)
+        collection = self.serializer_class.sort(request.GET.get("sort"), collection)
 
         # Filtering
         if self.filter_class:
-            filter = self.filter_class(request.GET, collection)
-            collection = filter.collection
+            filterset = self.filter_class(request.GET, collection)
+            collection = filterset.collection
 
         # Paging
         page = self.apply_pagination(collection)
@@ -44,8 +43,11 @@ class ListMixin(object):
             many=True,
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
-            context={'request': request}
+            page_size=request.GET.get(
+                "page[size]",
+                getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
+            ),
+            context={"request": request},
         )
 
         self.document.instance.data = serializer.data
@@ -54,8 +56,7 @@ class ListMixin(object):
         return Response(self.document.data)
 
 
-class ProcessRelationshipsMixin(object):
-
+class ProcessRelationshipsMixin:
     def process_to_one_relationships(self, relationship_data, resource, request):
         """
         Validate and populate related To-One relationship resources
@@ -74,9 +75,11 @@ class ProcessRelationshipsMixin(object):
                 to_one_relationship_data[relation] = data
 
         if to_one_relationship_data:
-            resource = self.process_relationships(to_one_relationship_data, resource, request)
+            resource = self.process_relationships(
+                to_one_relationship_data, resource, request
+            )
 
-        return(resource)
+        return resource
 
     def process_to_many_relationships(self, relationship_data, resource, request):
         """
@@ -96,9 +99,11 @@ class ProcessRelationshipsMixin(object):
                 to_one_relationship_data[relation] = data
 
         if to_one_relationship_data:
-            resource = self.process_relationships(to_one_relationship_data, resource, request)
+            resource = self.process_relationships(
+                to_one_relationship_data, resource, request
+            )
 
-        return(resource)
+        return resource
 
     def process_relationships(self, relationship_data, resource, request):
         """
@@ -113,23 +118,14 @@ class ProcessRelationshipsMixin(object):
 
             handler = self.get_relationship_handler(relation)
 
-            data = handler.validate(data['data'])
-            related_resources = handler.get_serializer_class().from_identity(
+            data = handler.validate(data["data"])
+            related_resources = handler.serializer_class.from_identity(
                 data, many=handler.many
             )
 
-            try:
-                handler.set_related(resource, related_resources, request)
-            except TypeError:
-                warnings.warn(
-                    """set_related() should except the request 
-                    as a third argument. This warning will be 
-                    replaced with an exception in future versions.""",
-                    DeprecationWarning
-                )
-                handler.set_related(resource, related_resources)
+            handler.set_related(resource, related_resources, request)
 
-        return(resource)
+        return resource
 
 
 class CreateMixin(ProcessRelationshipsMixin):
@@ -148,28 +144,33 @@ class CreateMixin(ProcessRelationshipsMixin):
         """
 
         serializer = self.serializer_class(
-            data=request.data['data'],
+            data=request.data["data"],
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
-            context={'request': request}
+            page_size=request.GET.get(
+                "page[size]",
+                getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
+            ),
+            context={"request": request},
         )
 
         if not serializer.is_valid():
-            return self.error_response(
-                Error.parse_validation_errors(serializer.errors)
-            )
+            return self.error_response(Error.parse_validation_errors(serializer.errors))
 
         resource = serializer.Meta.model(**serializer.validated_data)
 
         # Check for relationships and process them
-        if 'relationships' in request.data['data']:
-            resource = self.process_to_one_relationships(request.data['data']['relationships'], resource, request)
+        if "relationships" in request.data["data"]:
+            resource = self.process_to_one_relationships(
+                request.data["data"]["relationships"], resource, request
+            )
 
         resource.save()
 
-        if 'relationships' in request.data['data']:
-            resource = self.process_to_many_relationships(request.data['data']['relationships'], resource, request)
+        if "relationships" in request.data["data"]:
+            resource = self.process_to_many_relationships(
+                request.data["data"]["relationships"], resource, request
+            )
 
         serializer.instance = resource
         self.document.instance.data = serializer.data
@@ -177,12 +178,12 @@ class CreateMixin(ProcessRelationshipsMixin):
         return Response(self.document.data, status=status.HTTP_201_CREATED)
 
 
-class RetrieveMixin(object):
+class RetrieveMixin:
     """
     Override base view behavior for retrieve endpoints
     """
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, pk):
         """
         Build a response for a retrieve endpoint
 
@@ -192,14 +193,17 @@ class RetrieveMixin(object):
         :rtype: Response
         """
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
+        resource = self.get_resource(request, pk)
 
         serializer = self.serializer_class(
             resource,
             only_fields=request.fields,
             include=request.include,
-            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
-            context={'request': request}
+            page_size=request.GET.get(
+                "page[size]",
+                getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
+            ),
+            context={"request": request},
         )
 
         self.document.instance.data = serializer.data
@@ -223,28 +227,31 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
         :rtype: Response
         """
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
+        resource = self.get_resource(request, *args, **kwargs)
 
         serializer = self.serializer_class(
             resource,
-            data=request.data['data'],
+            data=request.data["data"],
             only_fields=request.fields,
             partial=True,
             include=request.include,
-            page_size=request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE)),
-            context={'request': request}
+            page_size=request.GET.get(
+                "page[size]",
+                getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
+            ),
+            context={"request": request},
         )
 
         if not serializer.is_valid():
-            return self.error_response(
-                Error.parse_validation_errors(serializer.errors)
-            )
+            return self.error_response(Error.parse_validation_errors(serializer.errors))
 
         resource = serializer.save()
 
         # Check for relationships and process them
-        if 'relationships' in request.data['data']:
-            self.process_relationships(request.data['data']['relationships'], resource, request)
+        if "relationships" in request.data["data"]:
+            self.process_relationships(
+                request.data["data"]["relationships"], resource, request
+            )
 
         resource.save()
 
@@ -253,12 +260,12 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
         return Response(self.document.data)
 
 
-class DestroyMixin(object):
+class DestroyMixin:
     """
     Override base view behavior for delete endpoints
     """
 
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self, request, pk):
         """
         Build a response for a delete endpoint
 
@@ -268,18 +275,18 @@ class DestroyMixin(object):
         :rtype: Response
         """
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
+        resource = self.get_resource(request, pk)
         resource.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RelationshipListMixin(object):
+class RelationshipRetrieveMixin:
     """
     Override base view behavior for relationship list endpoints
     """
 
-    def list(self, request, *args, **kwargs):
+    def relationship_retrieve(self, request, pk, relationship):
         """
         Build a response for a relationship list endpoint
 
@@ -289,32 +296,21 @@ class RelationshipListMixin(object):
         :rtype: Response
         """
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
+        resource = self.get_resource(request, pk)
 
         # get the relationship handler
-        handler = self.get_relationship_handler(self.relationship)
-        serializer_class = handler.get_serializer_class()
-
-        try:
-            related = handler.get_related(resource, request)
-        except TypeError:
-            warnings.warn(
-                """get_related() should except the request 
-                as a second argument. This warning will be 
-                replaced with an exception in future versions.""",
-                DeprecationWarning
-            )
-            related = handler.get_related(resource)
+        handler = self.get_relationship_handler(relationship)
+        serializer_class = handler.serializer_class
+        related = handler.get_related(resource, request)
 
         if related:
             # Sorting
             if handler.many:
-                related = self.serializer_class.sort(request.GET.get('sort'), related)
+                related = serializer_class.sort(request.GET.get("sort"), related)
                 related = self.apply_pagination(related)
 
             serializer = resource_identifier(serializer_class)(
-                related,
-                many=handler.many
+                related, many=handler.many
             )
 
             self.document.instance.data = serializer.data
@@ -324,12 +320,12 @@ class RelationshipListMixin(object):
         return Response(self.document.data)
 
 
-class RelationshipCreateMixin(object):
+class RelationshipCreateMixin:
     """
     Override base view behavior for relationship get endpoints
     """
 
-    def create(self, request, *args, **kwargs):
+    def relationship_create(self, request, pk, relationship):
         """
         Build a response for a relationship create endpoint
 
@@ -341,14 +337,14 @@ class RelationshipCreateMixin(object):
 
         # get the relationship handler
         handler = self.get_relationship_handler(self.relationship)
-        serializer_class = handler.get_serializer_class()
+        serializer_class = handler.serializer_class
 
         if not handler.many:
             # to-one relationships do not have a detail route
-            raise MethodNotAllowed('POST')
+            raise MethodNotAllowed("POST")
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
-        data = request.data['data']
+        resource = self.get_resource(request, pk)
+        data = request.data["data"]
 
         # data could be a single Resource Identifier or an array of Resource
         # Identifiers. Let's convert single items to a single-item list.
@@ -356,31 +352,19 @@ class RelationshipCreateMixin(object):
             data = listify(data)
         data = handler.validate(data)
 
-        related = serializer_class.from_identity(
-            data,
-            many=handler.many
-        )
+        related = serializer_class.from_identity(data, many=handler.many)
 
-        try:
-            handler.add_related(resource, related, request)
-        except TypeError:
-            warnings.warn(
-                """add_related() should except the request 
-                as a third argument. This warning will be 
-                replaced with an exception in future versions.""",
-                DeprecationWarning
-            )
-            handler.add_related(resource, related)
+        handler.add_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RelationshipPatchMixin(object):
+class RelationshipUpdateMixin:
     """
     Override base view behavior for relationship patch endpoints
     """
 
-    def patch(self, request, *args, **kwargs):
+    def relationship_update(self, request, pk, relationship):
         """
         Build a response for a relationship patch endpoint
 
@@ -390,40 +374,30 @@ class RelationshipPatchMixin(object):
         :rtype: Response
         """
 
-        resource = kwargs.pop('resource', self.get_resource(request, *args, **kwargs))
+        resource = self.get_resource(request, pk)
 
         # get the relationship handler
         handler = self.get_relationship_handler(self.relationship)
-        serializer_class = handler.get_serializer_class()
+        serializer_class = handler.serializer_class
 
-        data = request.data['data']
+        data = request.data["data"]
         data = handler.validate(data)
 
         related = serializer_class.from_identity(
-            request.data['data'],
-            many=handler.many
+            request.data["data"], many=handler.many
         )
 
-        try:
-            handler.set_related(resource, related, request)
-        except TypeError:
-            warnings.warn(
-                """set_related() should except the request 
-                as a third argument. This warning will be 
-                replaced with an exception in future versions.""",
-                DeprecationWarning
-            )
-            handler.set_related(resource, related)
+        handler.set_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RelationshipDeleteMixin(object):
+class RelationshipDestroyMixin:
     """
     Override base view behavior for relationship delete endpoints
     """
 
-    def delete(self, request, *args, **kwargs):
+    def relationship_destroy(self, request, pk, relationship):
         """
         Build a response for a relationship delete endpoint
 
@@ -435,14 +409,14 @@ class RelationshipDeleteMixin(object):
 
         # get the relationship handler
         handler = self.get_relationship_handler(self.relationship)
-        serializer_class = handler.get_serializer_class()
+        serializer_class = handler.serializer_class
 
         if not handler.many:
             # to-one relationships do not support DELETE
             raise NotFound()
 
-        resource = self.get_resource(request, *args, **kwargs)
-        data = request.data['data']
+        resource = self.get_resource(request, pk)
+        data = request.data["data"]
 
         # data could be a single Resource Identifier or an array of Resource
         # Identifiers. Let's convert single items to a single-item list.
@@ -450,20 +424,8 @@ class RelationshipDeleteMixin(object):
             data = listify(data)
         data = handler.validate(data)
 
-        related = serializer_class.from_identity(
-            data,
-            many=handler.many
-        )
+        related = serializer_class.from_identity(data, many=handler.many)
 
-        try:
-            handler.remove_related(resource, related, request)
-        except TypeError:
-            warnings.warn(
-                """remove_related() should except the request 
-                as a second argument. This warning will be 
-                replaced with an exception in future versions.""",
-                DeprecationWarning
-            )
-            handler.remove_related(resource, related)
+        handler.remove_related(resource, related, request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)

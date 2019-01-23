@@ -1,8 +1,8 @@
-from rest_framework_nested import routers
+from drf_jsonapi.routers import Router
 
 from .views import TrunkViewSet, LeafViewSet
 
-router = routers.DefaultRouter(trailing_slash=False)
-router.register("trunks", TrunkViewSet, base_name="trunks")
-router.register("leaves", LeafViewSet, base_name="leaves")
+router = Router(trailing_slash=False)
+router.register(TrunkViewSet)
+router.register(LeafViewSet)
 urlpatterns = router.urls

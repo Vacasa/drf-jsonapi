@@ -19,7 +19,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
     def serializer_to_schema(self, serializer):
         """
-        Generate an OpenAPI schema from an event serializer
+        Generate an OpenAPI schema from a serializer
 
         :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
         :param drf_jsonapi.serializers.resources.ResourceSerializer serializer: A serializer Class
@@ -31,16 +31,20 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             title="Resource",
             type="object",
             properties={
-                'type': {'type': 'string', 'enum': [serializer.Meta.type], 'required': True}
+                "type": {
+                    "type": "string",
+                    "enum": [serializer.Meta.type],
+                    "required": True,
+                }
             },
-            required=['type']
+            required=["type"],
         )
 
-        if self.method in ('GET', 'PATCH', 'UPDATE'):
-            schema.properties['id'] = {'type': ['integer', 'string']}
-            schema.required.append('id')
+        if self.method in ("GET", "PATCH", "UPDATE"):
+            schema.properties["id"] = {"type": ["integer", "string"]}
+            schema.required.append("id")
 
-        schema.properties['attributes'] = super().serializer_to_schema(serializer)
+        schema.properties["attributes"] = super().serializer_to_schema(serializer)
 
         return schema
 
@@ -57,11 +61,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         schema = super().get_request_body_schema(serializer)
 
         return openapi.Schema(
-            title="Document",
-            type="object",
-            properties={
-                'data': schema
-            }
+            title="Document", type="object", properties={"data": schema}
         )
 
     def get_response_schemas(self, response_serializers):
@@ -76,15 +76,11 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
         responses = super().get_response_schemas(response_serializers)
 
-        for rc, response in responses.items():
-            if 'schema' not in response:
+        for response in responses.values():
+            if "schema" not in response:
                 continue
-            response['schema'] = openapi.Schema(
-                title="Document",
-                type="object",
-                properties={
-                    'data': response['schema']
-                }
+            response["schema"] = openapi.Schema(
+                title="Document", type="object", properties={"data": response["schema"]}
             )
 
         return responses
@@ -102,19 +98,23 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         method = self.method.lower()
 
         default_status = guess_response_status(method)
-        default_schema = ''
-        if method in ('get', 'post', 'put', 'patch'):
+        default_schema = ""
+        if method in ("get", "post", "put", "patch"):
             default_schema = self.get_request_serializer() or self.get_view_serializer()
 
-        default_schema = default_schema or ''
+        default_schema = default_schema or ""
         if default_schema and not isinstance(default_schema, openapi.Schema):
-            default_schema = self.serializer_to_schema(default_schema) or ''
+            default_schema = self.serializer_to_schema(default_schema) or ""
 
         if default_schema:
             if self.is_list():
-                default_schema = openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
+                default_schema = openapi.Schema(
+                    type=openapi.TYPE_ARRAY, items=default_schema
+                )
             if self.should_page():
-                default_schema = self.get_paginated_response(default_schema) or default_schema
+                default_schema = (
+                    self.get_paginated_response(default_schema) or default_schema
+                )
 
         return OrderedDict({str(default_status): default_schema})
 
@@ -130,12 +130,14 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         parameters = super().get_query_parameters()
         parameters = parameters + self.get_sort_parameters()
 
-        return list(itertools.chain(
-            super().get_query_parameters(),
-            self.get_sort_parameters(),
-            self.get_sparse_fieldset_parameters(),
-            self.get_include_parameters()
-        ))
+        return list(
+            itertools.chain(
+                super().get_query_parameters(),
+                self.get_sort_parameters(),
+                self.get_sparse_fieldset_parameters(),
+                self.get_include_parameters(),
+            )
+        )
 
     def is_list(self):
         """
@@ -146,7 +148,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         :rtype: boolean
         """
 
-        if self.method.lower() != 'get':
+        if self.method.lower() != "get":
             return False
 
         return is_list_view(self.path, self.method, self.view)
@@ -175,18 +177,26 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             return []
 
         serializer_class = self.view.get_serializer_class()
-        sort_fields = getattr(serializer_class.Meta, 'sort_fields', serializer_class.Meta.fields)
+        sort_fields = getattr(
+            serializer_class.Meta, "sort_fields", serializer_class.Meta.fields
+        )
 
         # Replace '__' with '.' to maintain consistency with filter fields
-        sort_fields = [field.replace('__', '.') for field in sort_fields]
+        sort_fields = [field.replace("__", ".") for field in sort_fields]
 
-        return [openapi.Parameter(
-            name="sort",
-            in_="query",
-            type="string",
-            enum=[val for pair in zip(sort_fields, ['-' + x for x in sort_fields]) for val in pair],
-            description="Multiple values may be separated by commas."
-        )]
+        return [
+            openapi.Parameter(
+                name="sort",
+                in_="query",
+                type="string",
+                enum=[
+                    val
+                    for pair in zip(sort_fields, ["-" + x for x in sort_fields])
+                    for val in pair
+                ],
+                description="Multiple values may be separated by commas.",
+            )
+        ]
 
     def get_sparse_fieldset_parameters(self):
         """
@@ -197,7 +207,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         :rtype: list[openapi.Parameter]
         """
 
-        if self.method.lower() == 'delete':
+        if self.method.lower() == "delete":
             return []
 
         serializer_class = self.view.get_serializer_class()
@@ -207,18 +217,20 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             in_="query",
             type="string",
             enum=serializer_class.Meta.fields,
-            description="Multiple values may be separated by commas."
+            description="Multiple values may be separated by commas.",
         )
 
         if self.is_list():
-            relationships = getattr(serializer_class.Meta, 'relationships', {})
-            for serializer_class in [r.get_serializer_class() for r in relationships.values()]:
+            relationships = getattr(serializer_class.Meta, "relationships", {})
+            for serializer_class in [
+                r.get_serializer_class() for r in relationships.values()
+            ]:
                 parameters[serializer_class.Meta.type] = openapi.Parameter(
                     name="fields[{}]".format(serializer_class.Meta.type),
                     in_="query",
                     type="string",
                     enum=serializer_class.Meta.fields,
-                    description="Multiple values may be separated by commas."
+                    description="Multiple values may be separated by commas.",
                 )
 
         return list(parameters.values())
@@ -237,13 +249,15 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
         serializer_class = self.view.get_serializer_class()
 
-        return [openapi.Parameter(
-            name="include",
-            in_="query",
-            type="string",
-            enum=list(getattr(serializer_class.Meta, 'relationships', {}).keys()),
-            description="Multiple values may be separated by commas."
-        )]
+        return [
+            openapi.Parameter(
+                name="include",
+                in_="query",
+                type="string",
+                enum=list(getattr(serializer_class.Meta, "relationships", {}).keys()),
+                description="Multiple values may be separated by commas.",
+            )
+        ]
 
     def get_pagination_parameters(self):
         """
@@ -266,23 +280,18 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
                 description="Default page size: {}".format(settings.DEFAULT_PAGE_SIZE),
             ),
             openapi.Parameter(
-                name="page[number]",
-                in_="query",
-                type="integer",
-                default=1
+                name="page[number]", in_="query", type="integer", default=1
             ),
         ]
 
 
 class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
-    '''
-        """
+    """
     Build an OpenAPI schema for a relationship using serializers for resource objects, responses,
     query parameters, and metadata
     """
 
-    '''
-    implicit_body_methods = ('POST', 'PATCH', 'DELETE')
+    implicit_body_methods = ("POST", "PATCH", "DELETE")
 
     def get_operation_id(self, operation_keys):
         """
@@ -299,12 +308,12 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         :rtype: string
         """
 
-        id = super().get_operation_id(operation_keys)
-        id = id.replace('_relationships', '')
-        id = id.replace('_list', '')
-        id = id.replace('partial_update', 'patch')
+        i = super().get_operation_id(operation_keys)
+        i = i.replace("_relationships", "")
+        i = i.replace("_list", "")
+        i = i.replace("partial_update", "patch")
 
-        return id
+        return i
 
     def serializer_to_schema(self, serializer):
         """
@@ -320,12 +329,16 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
             title="Resource",
             type="object",
             properties={
-                'type': {'type': 'string', 'enum': [serializer.Meta.type], 'required': True}
+                "type": {
+                    "type": "string",
+                    "enum": [serializer.Meta.type],
+                    "required": True,
+                }
             },
-            required=['type']
+            required=["type"],
         )
-        schema.properties['id'] = {'type': ['integer', 'string']}
-        schema.required.append('id')
+        schema.properties["id"] = {"type": ["integer", "string"]}
+        schema.required.append("id")
 
         return schema
 
@@ -338,13 +351,13 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         :rtype: Ordered dictionary
         """
 
-        if self.method == 'GET':
-            status = '200'
+        if self.method == "GET":
+            status = "200"
             serializer = self.get_request_serializer() or self.get_view_serializer()
-            schema = self.serializer_to_schema(serializer) or ''
+            schema = self.serializer_to_schema(serializer) or ""
         else:
-            status = '204'
-            schema = ''
+            status = "204"
+            schema = ""
 
         if schema:
             if self.is_list():
@@ -370,7 +383,9 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
 
         handler = self.view.get_relationship_handler(self.view.relationship)
         if handler.many:
-            schema.properties['data'] = openapi.Schema(type=openapi.TYPE_ARRAY, items=schema.properties['data'])
+            schema.properties["data"] = openapi.Schema(
+                type=openapi.TYPE_ARRAY, items=schema.properties["data"]
+            )
 
         return schema
 
@@ -385,7 +400,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
 
         handler = self.view.get_relationship_handler(self.view.relationship)
-        if self.method != 'GET' or not handler.many:
+        if self.method != "GET" or not handler.many:
             return []
         return super().get_sort_parameters()
 
@@ -399,7 +414,7 @@ class RelationshipSwaggerAutoSchema(EntitySwaggerAutoSchema):
         """
 
         handler = self.view.get_relationship_handler(self.view.relationship)
-        return self.method == 'GET' and handler.many
+        return self.method == "GET" and handler.many
 
     def is_list(self):
         """

@@ -10,39 +10,45 @@ class URLValidator(DjangoURLValidator):
     Set validation regex rules for URLs.
     """
 
-    ul = '\u00a1-\uffff'  # unicode letters range (must not be a raw string)
+    ul = "\u00a1-\uffff"  # unicode letters range (must not be a raw string)
 
     # IP patterns
-    ipv4_re = r'(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}'
-    ipv6_re = r'\[[0-9a-f:\.]+\]'  # (simple regex, validated later)
+    ipv4_re = (
+        r"(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}"
+    )
+    ipv6_re = r"\[[0-9a-f:\.]+\]"  # (simple regex, validated later)
 
     # Host patterns
-    hostname_re = r'[a-z' + ul + r'0-9](?:[a-z' + ul + r'0-9-]{0,61}[a-z' + ul + r'0-9])?'
-    # Max length for domain name labels is 63 characters per RFC 1034 sec. 3.1
-    domain_re = r'(?:\.(?!-)[a-z' + ul + r'0-9-]{1,63}(?<!-))*'
-    tld_re = (
-        r'\.'                                # dot
-        r'(?!-)'                             # can't start with a dash
-        r'(?:[a-z' + ul + '-]{2,63}'         # domain label
-        r'|xn--[a-z0-9]{1,59})'              # or punycode label
-        r'(?<!-)'                            # can't end with a dash
-        r'\.?'                               # may have a trailing dot
+    hostname_re = (
+        r"[a-z" + ul + r"0-9](?:[a-z" + ul + r"0-9-]{0,61}[a-z" + ul + r"0-9])?"
     )
-    host_re = '(' + hostname_re + domain_re + tld_re + '|localhost|testserver)'
+    # Max length for domain name labels is 63 characters per RFC 1034 sec. 3.1
+    domain_re = r"(?:\.(?!-)[a-z" + ul + r"0-9-]{1,63}(?<!-))*"
+    tld_re = (
+        r"\."  # dot
+        r"(?!-)"  # can't start with a dash
+        r"(?:[a-z" + ul + "-]{2,63}"  # domain label
+        r"|xn--[a-z0-9]{1,59})"  # or punycode label
+        r"(?<!-)"  # can't end with a dash
+        r"\.?"  # may have a trailing dot
+    )
+    host_re = "(" + hostname_re + domain_re + tld_re + "|localhost|testserver)"
 
     regex = _lazy_re_compile(
-        r'^(?:[a-z0-9\.\-\+]*)://'  # scheme is validated separately
-        r'(?:\S+(?::\S*)?@)?'  # user:pass authentication
-        r'(?:' + ipv4_re + '|' + ipv6_re + '|' + host_re + ')'
-        r'(?::\d{2,5})?'  # port
-        r'(?:[/?#][^\s]*)?'  # resource path
-        r'\Z', re.IGNORECASE)
-    message = _('Enter a valid URL.')
-    schemes = ['http', 'https', 'ftp', 'ftps']
+        r"^(?:[a-z0-9\.\-\+]*)://"  # scheme is validated separately
+        r"(?:\S+(?::\S*)?@)?"  # user:pass authentication
+        r"(?:" + ipv4_re + "|" + ipv6_re + "|" + host_re + ")"
+        r"(?::\d{2,5})?"  # port
+        r"(?:[/?#][^\s]*)?"  # resource path
+        r"\Z",
+        re.IGNORECASE,
+    )
+    message = _("Enter a valid URL.")
+    schemes = ["http", "https", "ftp", "ftps"]
 
 
 class JsonApiValidator(object):
-    '''
+    """
     http://jsonapi.org/format/
 
     Latest Specification (v1.0)
@@ -73,16 +79,16 @@ class JsonApiValidator(object):
 
     Clients MUST ignore any parameters for the application/vnd.api+json media type received in the Content-Type header of response documents.
 
-    '''
+    """
 
-    VALID_HEADER = 'application/vnd.api+json'
+    VALID_HEADER = "application/vnd.api+json"
 
     def __init__(self):
         self.errors = []
         self.url_validator = URLValidator()
 
     def is_valid(self, response):
-        '''
+        """
         http://jsonapi.org/format/#content-negotiation-servers
         Server Responsibilities
         Servers MUST send all JSON API data in response documents with the header Content-Type: application/vnd.api+json without any media type parameters.
@@ -109,14 +115,16 @@ class JsonApiValidator(object):
         ignore members not recognized by this specification.
 
         Note: These conditions allow this specification to evolve through additive changes.
-        '''
+        """
         self.errors = []
         if not isinstance(response, Response):
-            self.errors.append('Response must be of type Response')
+            self.errors.append("Response must be of type Response")
             return False
         if not response.data:
             if response.status_code != 204:
-                self.errors.append('A server MUST return 204 No Content status code when there is no response document')
+                self.errors.append(
+                    "A server MUST return 204 No Content status code when there is no response document"
+                )
                 return False
             return True
         self.errors = self._validate_headers(response)
@@ -138,21 +146,25 @@ class JsonApiValidator(object):
 
         if response.status_code == 204:
             return []
-        response.has_header('Content-Type')
-        if not response.has_header('Content-Type'):
+        response.has_header("Content-Type")
+        if not response.has_header("Content-Type"):
             return ["Non-empty Response MUST have 'Content-Type' header"]
-        elif response['Content-Type'] != self.VALID_HEADER:
-            return ["'Content-Type' header MUST be equal to '{}'".format(self.VALID_HEADER)]
+        elif response["Content-Type"] != self.VALID_HEADER:
+            return [
+                "'Content-Type' header MUST be equal to '{}'".format(self.VALID_HEADER)
+            ]
         return []
 
-    def _validate_section(self,  # NOSONAR
-                          entity_name,
-                          data_dict,
-                          must_contain={},
-                          must_contain_one={},
-                          may_contain={},
-                          must_not_contain_both=[],
-                          must_not_contain=[]):
+    def _validate_section(
+        self,  # NOSONAR
+        entity_name,
+        data_dict,
+        must_contain={},
+        must_contain_one={},
+        may_contain={},
+        must_not_contain_both=[],
+        must_not_contain=[],
+    ):
         """
         Servers must send all JSON-API data with a correctly formatted structure.
 
@@ -167,27 +179,56 @@ class JsonApiValidator(object):
 
         ret = []
         for key in [key for key in must_contain if key not in data_dict]:
-            ret.append("Object of type '{}' MUST contain element of type '{}'".format(entity_name, key))
+            ret.append(
+                "Object of type '{}' MUST contain element of type '{}'".format(
+                    entity_name, key
+                )
+            )
 
         # verify that we have at least one of our must_contain_one
-        if must_contain_one and set(must_contain_one) - set(data_dict) == set(must_contain_one):
-            ret.append("Object of type '{}' MUST contain one of ({})".format(entity_name, ", ".join(["'{}'".format(key) for key in must_contain_one])))
+        if must_contain_one and set(must_contain_one) - set(data_dict) == set(
+            must_contain_one
+        ):
+            ret.append(
+                "Object of type '{}' MUST contain one of ({})".format(
+                    entity_name,
+                    ", ".join(["'{}'".format(key) for key in must_contain_one]),
+                )
+            )
 
         # verify that we have nothing that is not in may_contain
         if may_contain:
-            for key in set(data_dict) - (set(may_contain) | set(must_contain) | set(must_contain_one)):
-                ret.append("Object of type '{}' MUST NOT contain element of type '{}'".format(entity_name, key))
+            for key in set(data_dict) - (
+                set(may_contain) | set(must_contain) | set(must_contain_one)
+            ):
+                ret.append(
+                    "Object of type '{}' MUST NOT contain element of type '{}'".format(
+                        entity_name, key
+                    )
+                )
 
         # verify that we don't include two keys that can't appear together
         for [one, two] in must_not_contain_both:
             if one in data_dict and two in data_dict:
-                ret.append("Object of type '{}' MUST NOT contain both of ('{}', '{}')".format(entity_name, one, two))
+                ret.append(
+                    "Object of type '{}' MUST NOT contain both of ('{}', '{}')".format(
+                        entity_name, one, two
+                    )
+                )
 
         # verify that we don't have any strictly prohibited keys in our object
         for key in set(must_not_contain) & set(data_dict):
-            ret.append("Object of type '{}' MUST NOT contain element of type '{}'".format(entity_name, key))
+            ret.append(
+                "Object of type '{}' MUST NOT contain element of type '{}'".format(
+                    entity_name, key
+                )
+            )
 
-        for key, validator in {**must_contain, **must_contain_one, **may_contain}.items():
+        for key, validator in {
+            **must_contain,
+            **must_contain_one,
+            **may_contain,
+        }.items():
             if validator and key in data_dict:
                 fxn = getattr(self, "_validate_{}".format(validator))
                 ret.extend(fxn(data_dict[key]))
@@ -195,7 +236,7 @@ class JsonApiValidator(object):
         return ret
 
     def _validate_top_level(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-top-level
 
         Top Level
@@ -256,19 +297,22 @@ class JsonApiValidator(object):
         :param dict data_dict: The docuement's primary data
         :return: A list of validation messages
         :rtype: list
-        '''
-        return self._validate_section('Top-Level Object',
-                                      data_dict,
-                                      must_contain_one={
-                                          'data': 'primary_data_element',
-                                          'errors': 'errors_object',
-                                          'meta': None},
-                                      may_contain={
-                                          'jsonapi': 'jsonapi_object',
-                                          'links': 'top_level_links_object',
-                                          'included': 'resource_objects',
-                                      },
-                                      must_not_contain_both=[['data', 'errors']])
+        """
+        return self._validate_section(
+            "Top-Level Object",
+            data_dict,
+            must_contain_one={
+                "data": "primary_data_element",
+                "errors": "errors_object",
+                "meta": None,
+            },
+            may_contain={
+                "jsonapi": "jsonapi_object",
+                "links": "top_level_links_object",
+                "included": "resource_objects",
+            },
+            must_not_contain_both=[["data", "errors"]],
+        )
 
     def _validate_primary_data_element(self, data_element):
         """
@@ -310,22 +354,26 @@ class JsonApiValidator(object):
         if data_element == [] or data_element is None:
             return ret
 
-        if not self._validate_resource_objects(data_list=data_element) \
-                or \
-                not self._validate_resource_identifier_objects(data_list=data_element):
+        if not self._validate_resource_objects(
+            data_list=data_element
+        ) or not self._validate_resource_identifier_objects(data_list=data_element):
             # If we get back [] from _validate_resource_objects OR from _validate_resource_identifier_objects,
             # we know that we have a list of resource_objects or a list of resource_identifier_objects,
             # which means we have a valid primary_data_element
             return ret
         # Otherwise we just return the general erro, because we don't know which one they were trying for
-        ret.extend(["Primary data MUST be either: "
-                    "a single resource object, "
-                    "a single resource identifier object, "
-                    "or null, for requests that target single "
-                    "resources, "
-                    "an array of resource objects, "
-                    "an array of resource identifier objects, "
-                    "or an empty array ([]), for requests that target resource collections"])
+        ret.extend(
+            [
+                "Primary data MUST be either: "
+                "a single resource object, "
+                "a single resource identifier object, "
+                "or null, for requests that target single "
+                "resources, "
+                "an array of resource objects, "
+                "an array of resource identifier objects, "
+                "or an empty array ([]), for requests that target resource collections"
+            ]
+        )
         return ret
 
     def _validate_top_level_links_object(self, data_dict):
@@ -338,16 +386,18 @@ class JsonApiValidator(object):
         :rtype: list
         """
 
-        return self._validate_section(entity_name="Top-Level Links Object",
-                                      data_dict=data_dict,
-                                      may_contain={
-                                          'self': 'link_object',
-                                          'related': 'links_object',
-                                          'first': 'link_object',
-                                          'next': 'link_object',
-                                          'prev': 'link_object',
-                                          'last': 'link_object',
-                                      })
+        return self._validate_section(
+            entity_name="Top-Level Links Object",
+            data_dict=data_dict,
+            may_contain={
+                "self": "link_object",
+                "related": "links_object",
+                "first": "link_object",
+                "next": "link_object",
+                "prev": "link_object",
+                "last": "link_object",
+            },
+        )
 
     def _validate_resource_objects(self, data_list):
         """
@@ -367,7 +417,7 @@ class JsonApiValidator(object):
         return ret
 
     def _validate_resource_object(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-objects
 
         Resource Objects
@@ -429,23 +479,22 @@ class JsonApiValidator(object):
         :param dict data_dict: A dictionary representing a JSON-API data resource object
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
-        return self._validate_section(entity_name='Resource Object',
-                                      data_dict=data_dict,
-                                      must_contain={
-                                          'id': None,
-                                          'type': None,
-                                      },
-                                      may_contain={
-                                          'attributes': 'resource_object_attributes',
-                                          'relationships': 'resource_object_relationships',
-                                          'links': 'links_object',
-                                          'meta': 'meta',
-                                      })
+        return self._validate_section(
+            entity_name="Resource Object",
+            data_dict=data_dict,
+            must_contain={"id": None, "type": None},
+            may_contain={
+                "attributes": "resource_object_attributes",
+                "relationships": "resource_object_relationships",
+                "links": "links_object",
+                "meta": "meta",
+            },
+        )
 
     def _validate_resource_object_attributes(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-object-attributes
 
         Attributes
@@ -466,16 +515,18 @@ class JsonApiValidator(object):
         :param dict data_dict: The docuement's attribute data
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
         if not isinstance(data_dict, dict) or data_dict == {}:
             return ["Object of type 'Attributes Object' must not be empty"]
-        return self._validate_section(entity_name='Attributes Object',
-                                      data_dict=data_dict,
-                                      must_not_contain=['relationships', 'links'])
+        return self._validate_section(
+            entity_name="Attributes Object",
+            data_dict=data_dict,
+            must_not_contain=["relationships", "links"],
+        )
 
     def _validate_resource_object_relationships(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-object-relationships
         Relationships
         The value of the relationships key MUST be an object (a “relationships object”). Members of the relationships object (“relationships”) represent
@@ -502,7 +553,7 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's list of resource object relationships
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
         for key, data_list in data_dict.items():
             if not isinstance(data_list, list):
@@ -514,7 +565,7 @@ class JsonApiValidator(object):
         return []
 
     def _validate_resource_object_relationship(self, data_dict):
-        '''
+        """
         Validate a single Resource Object Relationship
         (as opposed to a list of them, which is handled in
         _validate_resource_object_relationships())
@@ -522,19 +573,21 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's attribute data
         :return: A list of validation messages
         :rtype: list
-        '''
-        return self._validate_section(entity_name='Resource Object Relationship',
-                                      data_dict=data_dict,
-                                      must_contain_one={
-                                          'links': 'links_object',
-                                          'self': 'link_object',
-                                          'related': 'url',
-                                          'data': 'resource_linkage',
-                                          'meta': 'meta',
-                                      })
+        """
+        return self._validate_section(
+            entity_name="Resource Object Relationship",
+            data_dict=data_dict,
+            must_contain_one={
+                "links": "links_object",
+                "self": "link_object",
+                "related": "url",
+                "data": "resource_linkage",
+                "meta": "meta",
+            },
+        )
 
     def _validate_resource_linkage(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-object-linkage
 
         Resource Linkage
@@ -580,13 +633,13 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's relationships links
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
         if data_dict is None or data_dict == []:
             return []
         return self._validate_resource_identifier_objects(data_dict)
 
     def _validate_resource_identifier_objects(self, data_list):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-identifier-objects
 
         Resource Identifier Objects
@@ -600,7 +653,7 @@ class JsonApiValidator(object):
         :param dict data_list: The document's list of resource identifier objects
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
         if not isinstance(data_list, list):
             data_list = [data_list]
         for element in data_list:
@@ -610,7 +663,7 @@ class JsonApiValidator(object):
         return []
 
     def _validate_resource_identifier_object(self, data_dict):
-        '''
+        """
         Validate a single Resource Identifier Relationship
         (as opposed to a list of them, which is handled in
         _validate_resource_identifier_objects())
@@ -618,14 +671,16 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's attribute data
         :return: A list of validation messages
         :rtype: list
-        '''
-        return self._validate_section(entity_name='Resource Identifier Object',
-                                      data_dict=data_dict,
-                                      must_contain={'type': None, 'id': None},
-                                      may_contain={'meta': 'meta'})
+        """
+        return self._validate_section(
+            entity_name="Resource Identifier Object",
+            data_dict=data_dict,
+            must_contain={"type": None, "id": None},
+            may_contain={"meta": "meta"},
+        )
 
     def _validate_meta(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-meta
 
         Meta Information
@@ -654,12 +709,12 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's meta object
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
         return []
 
     def _validate_links_object(self, data_dict, links_exist=False):
-        '''
+        """
         http://jsonapi.org/format/#document-links
 
         Links
@@ -694,14 +749,13 @@ class JsonApiValidator(object):
         :param dict data_dict: The document's links object
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
-        return self._validate_section(entity_name='Links Object',
-                                      data_dict=data_dict,
-                                      must_contain_one={
-                                          'self': 'url',
-                                          'related': 'link_object'
-                                      })
+        return self._validate_section(
+            entity_name="Links Object",
+            data_dict=data_dict,
+            must_contain_one={"self": "url", "related": "link_object"},
+        )
 
     def _validate_link_object(self, data):
         """
@@ -714,12 +768,11 @@ class JsonApiValidator(object):
         """
 
         if isinstance(data, dict):
-            return self._validate_section(entity_name="Link Object",
-                                          data_dict=data,
-                                          may_contain={
-                                              'href': 'url',
-                                              'meta': 'meta',
-                                          })
+            return self._validate_section(
+                entity_name="Link Object",
+                data_dict=data,
+                may_contain={"href": "url", "meta": "meta"},
+            )
         return self._validate_url(data)
 
     def _validate_url(self, url):
@@ -732,7 +785,7 @@ class JsonApiValidator(object):
         :rtype: list
         """
 
-        if url is None or url == 'None':
+        if url is None or url == "None":
             return []
         try:
             self.url_validator(url)
@@ -741,7 +794,7 @@ class JsonApiValidator(object):
         return []
 
     def _validate_jsonapi_object(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-jsonapi-object
 
         JSON API Object
@@ -763,21 +816,23 @@ class JsonApiValidator(object):
         :param dict url: The document's jsonapi object
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
-        return self._validate_section(entity_name="Error Object",
-                                      data_dict=data_dict,
-                                      may_contain={'version': None})
+        return self._validate_section(
+            entity_name="Error Object",
+            data_dict=data_dict,
+            may_contain={"version": None},
+        )
 
     def _validate_errors_object(self, data_list):
-        '''
+        """
         Validate that this is an list of error_objects.
 
         :param JsonApiValidator self: This object
         :param list data_list: The document's errors object
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
         if not isinstance(data_list, list):
             return ["'Errors' object MUST be an array"]
@@ -787,7 +842,7 @@ class JsonApiValidator(object):
         return ret
 
     def _validate_error_object(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#error-objects
 
         Errors
@@ -822,26 +877,28 @@ class JsonApiValidator(object):
         :param list data_doct: An errors dictionary
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
-        return self._validate_section(entity_name="Error Object",
-                                      data_dict=data_dict,
-                                      may_contain={
-                                          'id': None,
-                                          'links': 'links_object',
-                                          'about': None,
-                                          'status': None,
-                                          'code': None,
-                                          'title': None,
-                                          'detail': None,
-                                          'source': None,
-                                          'pointer': None,
-                                          'parameter': None,
-                                          'meta': None,
-                                      })
+        return self._validate_section(
+            entity_name="Error Object",
+            data_dict=data_dict,
+            may_contain={
+                "id": None,
+                "links": "links_object",
+                "about": None,
+                "status": None,
+                "code": None,
+                "title": None,
+                "detail": None,
+                "source": None,
+                "pointer": None,
+                "parameter": None,
+                "meta": None,
+            },
+        )
 
     def _validate_member_names(self, data_dict):
-        '''
+        """
         http://jsonapi.org/format/#document-member-names
 
         Member Names
@@ -913,7 +970,7 @@ class JsonApiValidator(object):
         :param list data_doct: An errors dictionary
         :return: A list of validation messages
         :rtype: list
-        '''
+        """
 
         disallowed_boundary_chars = [
             0x002D,  # HYPHEN - MINUS, “-“
@@ -989,15 +1046,35 @@ class JsonApiValidator(object):
 
         ret = []
         for key, val in data_dict.items():
-            if key == '':
+            if key == "":
                 ret.extend(["<empty_string> is not a valid Member Name"])
             else:
-                disallowed_boundary_chars = [char for char in [key[0], key[-1]] if ord(char) in disallowed_boundary_chars]
+                disallowed_boundary_chars = [
+                    char
+                    for char in [key[0], key[-1]]
+                    if ord(char) in disallowed_boundary_chars
+                ]
                 if disallowed_boundary_chars:
-                    ret.extend(["'{}' is not a valid boundary character in a Member Name".format(char) for char in disallowed_boundary_chars])
-                disallowed_chars = [char for char in key if ord(char) in disallowed_chars]
+                    ret.extend(
+                        [
+                            "'{}' is not a valid boundary character in a Member Name".format(
+                                char
+                            )
+                            for char in disallowed_boundary_chars
+                        ]
+                    )
+                disallowed_chars = [
+                    char for char in key if ord(char) in disallowed_chars
+                ]
                 if disallowed_chars:
-                    ret.extend(["'{}' is not a valid character in a Member Name".format(char) for char in disallowed_chars])
+                    ret.extend(
+                        [
+                            "'{}' is not a valid character in a Member Name".format(
+                                char
+                            )
+                            for char in disallowed_chars
+                        ]
+                    )
             if isinstance(val, dict):
                 ret.extend(self._validate_member_names(val))
         return ret

@@ -1,14 +1,11 @@
 from django.db import models
 
+
 class TestModelQuerySet(models.QuerySet):
-    def get(self, pk, **kwargs):
-        if pk == 666:
+    def get(self, *args, **kwargs):
+        if kwargs["pk"] == 666:
             raise TestModel.DoesNotExist()
-        return TestModel(
-            pk=pk,
-            name="Test Model",
-            is_active=True
-        )
+        return TestModel(name="Test Model", is_active=True, **kwargs)
 
 
 class TestModelManager(models.Manager):
@@ -25,16 +22,18 @@ class TestModel(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    related_things = models.ForeignKey('self', on_delete=models.CASCADE)
+    related_things = models.ForeignKey("self", on_delete=models.CASCADE)
 
     # Override manager so we can mock the methods
     objects = TestModelManager()
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
 
-    def save(self, *args, **kwargs):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         return self
 
-    def delete(self, *args, **kwargs):
+    def delete(self, using=None, keep_parents=False):
         return self

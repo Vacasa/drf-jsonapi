@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 from django.utils import dateparse, timezone
 from django.urls import path
@@ -7,67 +7,50 @@ from django.views.defaults import page_not_found
 from rest_framework.exceptions import ParseError
 from rest_framework import serializers
 
-from drf_jsonapi.objects import (
-    Document,
-    Error
-)
+from drf_jsonapi.objects import Document, Error
 
 from drf_jsonapi.serializers import (
     DocumentSerializer,
     ErrorSerializer,
     ResourceSerializer,
-    ResourceModelSerializer,
-    resource_identifier
+    resource_identifier,
 )
 
 from . import mocks
 
 urlpatterns = [
-    path('test_resources', page_not_found),
-    path('test_resources/<int:pk>', page_not_found),
-    path('test_resources/<int:pk>/relationships/related_things', page_not_found),
-    path('test_resources/<int:pk>/related_things', page_not_found)
+    path("test_resources", page_not_found),
+    path("test_resources/<int:pk>", page_not_found),
+    path("test_resources/<int:pk>/relationships/related_things", page_not_found),
+    path("test_resources/<int:pk>/related_things", page_not_found),
 ]
 
 
 class DocumentSerializerTestCase(TestCase):
-
     def setUp(self):
 
         self.document = Document(
-            data={
-                "type": "test",
-                "id": "12345"
-            },
-            jsonapi={
-                "version": "1.0"
-            },
-            links={
-                "google": "https://google.com"
-            },
-            meta={
-                "foo": "bar"
-            },
+            data={"type": "test", "id": "12345"},
+            jsonapi={"version": "1.0"},
+            links={"google": "https://google.com"},
+            meta={"foo": "bar"},
             included=[
-                {
-                    "type": "included_thing",
-                    "id": "5678",
-                    "attributes": {
-                        "foo": "bar"
-                    }
-                }
-            ]
+                {"type": "included_thing", "id": "5678", "attributes": {"foo": "bar"}}
+            ],
         )
 
     def test_to_representation(self):
         serializer = DocumentSerializer(self.document)
-        self.assertDictEqual(serializer.data, {
-            "data": self.document.data,
-            "jsonapi": self.document.jsonapi,
-            "links": self.document.links,
-            "included": self.document.included,
-            "meta": self.document.meta
-        })
+        self.assertDictEqual(
+            serializer.data,
+            {
+                "data": self.document.data,
+                "jsonapi": self.document.jsonapi,
+                "links": self.document.links,
+                "included": self.document.included,
+                "meta": self.document.meta,
+            },
+        )
 
     def test_to_representation_with_errors(self):
         """
@@ -76,48 +59,40 @@ class DocumentSerializerTestCase(TestCase):
 
         If a Document has both data and errors we supress "data"
         """
-        self.document.errors = [
-            {
-                "detail": "This is an error"
-            }
-        ]
+        self.document.errors = [{"detail": "This is an error"}]
         serializer = DocumentSerializer(self.document)
-        self.assertNotIn('data', serializer.data)
+        self.assertNotIn("data", serializer.data)
 
 
 class ErrorSerializerTestCase(TestCase):
-
     def setUp(self):
 
         self.error = Error(
             detail="This is an error",
             id="12345",
-            links={
-                "google": "https://google.com"
-            },
+            links={"google": "https://google.com"},
             status_code=405,
             code="12345",
             title="Error",
-            source={
-                "parameter": "foobar"
-            },
-            meta={
-                "foo": "bar"
-            }
+            source={"parameter": "foobar"},
+            meta={"foo": "bar"},
         )
 
     def test_to_representation(self):
         serializer = ErrorSerializer(self.error)
-        self.assertDictEqual(serializer.data, {
-            "detail": self.error.detail,
-            "id": self.error.id,
-            "links": self.error.links,
-            "status": str(self.error.status_code),  # status should be a string!
-            "code": self.error.code,
-            "title": self.error.title,
-            "source": self.error.source,
-            "meta": self.error.meta
-        })
+        self.assertDictEqual(
+            serializer.data,
+            {
+                "detail": self.error.detail,
+                "id": self.error.id,
+                "links": self.error.links,
+                "status": str(self.error.status_code),  # status should be a string!
+                "code": self.error.code,
+                "title": self.error.title,
+                "source": self.error.source,
+                "meta": self.error.meta,
+            },
+        )
 
 
 class ResourceListSerializerTestCase(TestCase):
@@ -127,35 +102,26 @@ class ResourceListSerializerTestCase(TestCase):
     def setUp(self):
         self.collection = [
             mocks.TestResource(
-                pk=1,
-                name="Test Resource 1",
-                count=5,
-                created_at=timezone.now()
+                pk=1, name="Test Resource 1", count=5, created_at=timezone.now()
             ),
             mocks.TestResource(
-                pk=2,
-                name="Test Resource 2",
-                count=4,
-                created_at=timezone.now()
+                pk=2, name="Test Resource 2", count=4, created_at=timezone.now()
             ),
             mocks.TestResource(
-                pk=3,
-                name="Test Resource 3",
-                count=3,
-                created_at=timezone.now()
+                pk=3, name="Test Resource 3", count=3, created_at=timezone.now()
             ),
             mocks.TestResource(
-                pk=4,
-                name="Test Resource 4",
-                count=2,
-                created_at=timezone.now()
-            )
+                pk=4, name="Test Resource 4", count=2, created_at=timezone.now()
+            ),
         ]
 
     def test_include(self):
-        serializer = self.serializer_class(self.collection, many=True, include=['related_things'])
+        serializer = self.serializer_class(
+            self.collection, many=True, include=["related_things"]
+        )
         # We need to access data before included can be populated
-        serializer.data
+        data = serializer.data
+        del data
         included = serializer.included
         self.assertEqual(len(included), 2)
 
@@ -167,18 +133,15 @@ class ResourceSerializerTestCase(TestCase):
 
     def setUp(self):
         self.resource = mocks.TestResource(
-            pk=1,
-            name="Test Resource",
-            count=5,
-            created_at=timezone.now()
+            pk=1, name="Test Resource", count=5, created_at=timezone.now()
         )
         self.test_request = {
             "type": "test_resource",
             "attributes": {
                 "name": "Test Resource",
                 "count": 5,
-                "created_at": "1981-11-26T03:24:00"
-            }
+                "created_at": "1981-11-26T03:24:00",
+            },
         }
 
     def test_save(self):
@@ -186,176 +149,170 @@ class ResourceSerializerTestCase(TestCase):
         self.assertTrue(serializer.is_valid())
         resource = serializer.save()
         self.assertIsInstance(resource, mocks.TestResource)
-        for attr in [attr for attr in self.test_request['attributes'].keys() if attr != 'created_at']:
-            self.assertEqual(getattr(resource, attr), self.test_request['attributes'][attr])
-        if 'created_at' in self.test_request['attributes']:
+        for attr in [
+            attr for attr in self.test_request["attributes"] if attr != "created_at"
+        ]:
+            self.assertEqual(
+                getattr(resource, attr), self.test_request["attributes"][attr]
+            )
+        if "created_at" in self.test_request["attributes"]:
             self.assertEqual(
                 resource.created_at,
-                dateparse.parse_datetime(self.test_request['attributes']['created_at'])
+                dateparse.parse_datetime(self.test_request["attributes"]["created_at"]),
             )
 
     def test_run_validation_fails_without_attributes(self):
         data = self.test_request
-        del(data['attributes'])
+        del (data["attributes"])
         serializer = self.serializer_class(data=data)
         with self.assertRaises(ParseError):
             serializer.is_valid()
 
     def test_run_validation_fails_without_type(self):
         data = self.test_request
-        del(data['type'])
+        del (data["type"])
         serializer = self.serializer_class(data=data)
         with self.assertRaises(ParseError):
             serializer.is_valid()
 
     def test_run_validation_fails_with_wrong_type(self):
         data = self.test_request
-        data['type'] = 'homunculus'
+        data["type"] = "homunculus"
         serializer = self.serializer_class(data=data)
         with self.assertRaises(ParseError):
             serializer.is_valid()
 
     def test_to_representation(self):
         serializer = mocks.TestResourceSerializer(self.resource)
-        self.assertDictEqual(serializer.data, {
-            "type": mocks.TestResourceSerializer.Meta.type,
-            "id": self.resource.pk,
-            "meta": {
-                "reverse_name": self.resource.name[::-1]
+        self.assertDictEqual(
+            serializer.data,
+            {
+                "type": mocks.TestResourceSerializer.Meta.type,
+                "id": self.resource.pk,
+                "meta": {"reverse_name": self.resource.name[::-1]},
+                "links": {
+                    "self": "https://test.com/resources/{}".format(self.resource.pk)
+                },
+                "attributes": {
+                    "name": self.resource.name,
+                    "count": self.resource.count,
+                    "created_at": serializers.DateTimeField().to_representation(
+                        self.resource.created_at
+                    ),
+                },
+                "relationships": {
+                    "related_things": {"links": {"self": "http://testserver/"}}
+                },
             },
-            "links": {
-                "self": "https://test.com/resources/{}".format(self.resource.pk)
-            },
-            "attributes": {
-                "name": self.resource.name,
-                "count": self.resource.count,
-                "created_at": serializers.DateTimeField().to_representation(
-                    self.resource.created_at
-                )
-            },
-            "relationships": {
-                'related_things': {
-                    "links": {
-                        "self": "http://testserver/"
-                    },
-                }
-            }
-        })
+        )
 
     def test_to_representation_identity(self):
         serializer = resource_identifier(mocks.TestResourceSerializer)(self.resource)
-        self.assertDictEqual(serializer.data, {
-            "type": mocks.TestResourceSerializer.Meta.type,
-            "id": self.resource.pk,
-        })
+        self.assertDictEqual(
+            serializer.data,
+            {"type": mocks.TestResourceSerializer.Meta.type, "id": self.resource.pk},
+        )
 
     def test_invalid_relationship(self):
         with self.assertRaises(Error):
-            mocks.TestResourceSerializer(self.resource, include=['foobar'])
+            mocks.TestResourceSerializer(self.resource, include=["foobar"])
 
     def test_empty_relationship(self):
-        serializer = mocks.TestResourceSerializer(self.resource, include=['', None])
-        self.assertNotIn('data', serializer.data['relationships'])
+        serializer = mocks.TestResourceSerializer(self.resource, include=["", None])
+        self.assertNotIn("data", serializer.data["relationships"])
 
     def test_get_relationships(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=['related_things'],
-            page_size=10
+            self.resource, include=["related_things"], page_size=10
         )
         data = serializer.data
-        self.assertIn('relationships', data)
-        self.assertDictEqual(data['relationships'], {
-            'related_things': {
-                "links": {
-                    "self": "http://testserver/"
-                },
-                "data": [
-                    {'type': 'test_resource', 'id': 5},
-                    {'type': 'test_resource', 'id': 6}
-                ],
-                "meta": {
-                    "count": 2,
-                    "has_next": False,
-                    "has_previous": False,
-                    "page_size": 10,
-                    "page": 1,
-                    "num_pages": 1
+        self.assertIn("relationships", data)
+        self.assertDictEqual(
+            data["relationships"],
+            {
+                "related_things": {
+                    "links": {"self": "http://testserver/"},
+                    "data": [
+                        {"type": "test_resource", "id": 5},
+                        {"type": "test_resource", "id": 6},
+                    ],
+                    "meta": {
+                        "count": 2,
+                        "has_next": False,
+                        "has_previous": False,
+                        "page_size": 10,
+                        "page": 1,
+                        "num_pages": 1,
+                    },
                 }
-            }
-        })
+            },
+        )
 
     def test_included_single(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=['related_things']
+            self.resource, include=["related_things"]
         )
-        serializer.data
+        data = serializer.data
+        del data
         included = serializer.included
-        self.assertEquals(included[0]['type'], mocks.TestResourceSerializer.Meta.type)
-        self.assertEquals(included[0]['id'], 5)
-        self.assertEquals(len(included), 2)
+        self.assertEqual(included[0]["type"], mocks.TestResourceSerializer.Meta.type)
+        self.assertEqual(included[0]["id"], 5)
+        self.assertEqual(len(included), 2)
 
     def test_included_list(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=['related_things']
+            self.resource, include=["related_things"]
         )
         serializer.get_related_things = lambda x: [
             mocks.TestResource(
-                pk=5,
-                name="Related Thing 1",
-                count=5,
-                created_at=timezone.now()
+                pk=5, name="Related Thing 1", count=5, created_at=timezone.now()
             ),
             mocks.TestResource(
-                pk=6,
-                name="Related Thing 2",
-                count=5,
-                created_at=timezone.now()
-            )
+                pk=6, name="Related Thing 2", count=5, created_at=timezone.now()
+            ),
         ]
-        serializer.data
+        data = serializer.data
+        del data
         included = serializer.included
-        self.assertEquals(len(included), 2)
+        self.assertEqual(len(included), 2)
 
     def test_apply_sparse_fielset(self):
-        serializer = mocks.TestResourceSerializer(self.resource, only_fields={'test_resource': ['name']})
-        self.assertDictEqual(serializer.data, {
-            "type": mocks.TestResourceSerializer.Meta.type,
-            "id": self.resource.pk,
-            "meta": {
-                "reverse_name": self.resource.name[::-1]
+        serializer = mocks.TestResourceSerializer(
+            self.resource, only_fields={"test_resource": ["name"]}
+        )
+        self.assertDictEqual(
+            serializer.data,
+            {
+                "type": mocks.TestResourceSerializer.Meta.type,
+                "id": self.resource.pk,
+                "meta": {"reverse_name": self.resource.name[::-1]},
+                "links": {
+                    "self": "https://test.com/resources/{}".format(self.resource.pk)
+                },
+                "attributes": {"name": self.resource.name},
+                "relationships": {
+                    "related_things": {"links": {"self": "http://testserver/"}}
+                },
             },
-            "links": {
-                "self": "https://test.com/resources/{}".format(self.resource.pk)
-            },
-            "attributes": {
-                "name": self.resource.name
-            },
-            "relationships": {
-                "related_things": {
-                    "links": {
-                        "self": "http://testserver/"
-                    }
-                }
-            }
-        })
+        )
 
     def test_apply_sparse_fielset_invalid_fields(self):
         with self.assertRaises(ParseError):
-            mocks.TestResourceSerializer(self.resource, only_fields={'test_resource': ['foobar']})
+            mocks.TestResourceSerializer(
+                self.resource, only_fields={"test_resource": ["foobar"]}
+            )
 
     def test_get_meta(self):
         self.assertEqual(
             mocks.TestResourceSerializer().get_meta(self.resource),
-            {'reverse_name': 'ecruoseR tseT'}
+            {"reverse_name": "ecruoseR tseT"},
         )
 
     def test_get_links(self):
+        request = RequestFactory().get("https://test.com")
         self.assertEqual(
-            mocks.TestResourceSerializer().get_links(self.resource),
-            {'self': 'https://test.com/resources/1'}
+            mocks.TestResourceSerializer().get_links(self.resource, request),
+            {"self": "https://test.com/resources/1"},
         )
 
     def test_get_id(self):
@@ -375,34 +332,23 @@ class ResourceSerializerTestCase(TestCase):
             mocks.TestResource(id=2, count=3),
             mocks.TestResource(id=1, count=3),
         ]
-        sorted_collection = ResourceSerializer.sort('-count,id', collection)
+        sorted_collection = ResourceSerializer.sort("-count,id", collection)
         self.assertEqual(sorted_collection[0].count, 3)
         self.assertEqual(sorted_collection[0].id, 1)
 
 
 class ResourceModelSerializerTestCase(TestCase):
-
     def test_from_identity(self):
-        identity_data = {
-            "type": "test_model_resource",
-            "id": 5
-        }
+        identity_data = {"type": "test_model_resource", "id": 5}
         model = mocks.TestModelSerializer.from_identity(identity_data)
         self.assertIsInstance(model, mocks.TestModel)
         self.assertEqual(model.pk, 5)
 
     def test_from_identity_many(self):
         identity_data = [
-            {
-                "type": "test_model_resource",
-                "id": 1
-            }, {
-                "type": "test_model_resource",
-                "id": 2
-            }, {
-                "type": "test_model_resource",
-                "id": 3
-            }
+            {"type": "test_model_resource", "id": 1},
+            {"type": "test_model_resource", "id": 2},
+            {"type": "test_model_resource", "id": 3},
         ]
         models = mocks.TestModelSerializer.from_identity(identity_data, many=True)
         self.assertIsInstance(models, list)
@@ -410,32 +356,26 @@ class ResourceModelSerializerTestCase(TestCase):
         self.assertEqual(models[2].pk, 3)
 
     def test_from_identity_does_not_exist(self):
-        identity_data = {
-            "type": "test_model_resource",
-            "id": 666
-        }
+        identity_data = {"type": "test_model_resource", "id": 666}
         with self.assertRaises(Error):
             mocks.TestModelSerializer.from_identity(identity_data)
 
     def test_sort(self):
-        queryset = mocks.TestModelSerializer.sort('id,-name', mocks.TestModel.objects.all())
-        self.assertEquals(queryset.query.order_by, ('id', '-name'))
+        queryset = mocks.TestModelSerializer.sort(
+            "id,-name", mocks.TestModel.objects.all()
+        )
+        self.assertEqual(queryset.query.order_by, ("id", "-name"))
 
     def test_sort_default(self):
         queryset = mocks.TestModelSerializer.sort(None, mocks.TestModel.objects.all())
-        self.assertEquals(queryset.query.order_by, ())
+        self.assertEqual(queryset.query.order_by, ())
 
     def test_sort_invalid_field(self):
         with self.assertRaises(ParseError):
-            mocks.TestModelSerializer.sort('foobar', mocks.TestModel.objects.all())
+            mocks.TestModelSerializer.sort("foobar", mocks.TestModel.objects.all())
 
 
 class ResourceIdentifierTestCase(TestCase):
-
     def test_resource_identifier(self):
         serializer_class = resource_identifier(mocks.TestModelSerializer)
-        self.assertEqual(serializer_class.Meta.type, 'test_model_resource')
-
-    def test_resource_indentifier_locate(self):
-        serializer_class = resource_identifier('tests.mocks.TestModelSerializer')
-        self.assertEqual(serializer_class.Meta.type, 'test_model_resource')
+        self.assertEqual(serializer_class.Meta.type, "test_model_resource")

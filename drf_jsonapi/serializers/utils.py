@@ -1,7 +1,4 @@
-from pydoc import locate
-
-
-class ResourceIdentifierSerializer(object):
+class ResourceIdentifierSerializer:
     pass
 
 
@@ -15,10 +12,6 @@ def resource_identifier(serializer_class):
     :return: A SerializerMetaclass object
     :rtype: rest_framework.serializers.SerializerMetaclass
     """
-
-    if isinstance(serializer_class, str):
-        # TODO: throw exception if locate fails
-        serializer_class = locate(serializer_class)
 
     # TODO: Validate serializer_class is sub_class of ResourceSerializer
     class ResourceIdentifier(ResourceIdentifierSerializer, serializer_class):
@@ -36,9 +29,6 @@ def resource_identifier(serializer_class):
             :rtype: dict
             """
 
-            return {
-                'type': self.Meta.type,
-                'id': self.get_id(instance)
-            }
+            return {"type": self.Meta.type, "id": self.get_id(instance)}
 
     return ResourceIdentifier

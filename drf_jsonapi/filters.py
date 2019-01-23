@@ -7,14 +7,14 @@ from django_filters.filters import Filter
 from .objects import Error
 
 
-FILTER_PATTERN = re.compile("^filter\[([\w\._-]+)\]\[?([\w_-]+)?\]?$")
+FILTER_PATTERN = re.compile(r"^filter\[([\w\._-]+)\]\[?([\w_-]+)?\]?$")
 
 
 class FilterParseError(Exception):
     pass
 
 
-class ParseFiltersMixin(object):
+class ParseFiltersMixin:
     """
     Helper functions used by the FilterSet class.  Translate a query dictionary
     to a standard dictionary.
@@ -30,12 +30,11 @@ class ParseFiltersMixin(object):
         :return: A dictionary of filters requested by the client
         :rtype: dict
         """
-
         translated_data = {}
         for param, value in data.items():
-            filter = cls.parse_filter_field(param)
-            if filter:
-                translated_data[filter] = value
+            filterstring = cls.parse_filter_field(param)
+            if filterstring:
+                translated_data[filterstring] = value
         return translated_data
 
     @classmethod
@@ -50,13 +49,12 @@ class ParseFiltersMixin(object):
         of brackets
         :rtype: str
         """
-
         match = FILTER_PATTERN.search(param)
         if not match:
             return None
-        field = match.group(1).replace('.', '__')
-        expr = match.group(2) or 'exact'
-        return field if expr == 'exact' else field + '__' + expr
+        field = match.group(1).replace(".", "__")
+        expr = match.group(2) or "exact"
+        return field if expr == "exact" else field + "__" + expr
 
 
 class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
@@ -73,7 +71,7 @@ class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
     standard dialect before passing them to the FilterSet.
     """
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, queryset=None, **kwargs):
         """
         Validate given data filters against available model filters.
 
@@ -85,13 +83,11 @@ class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
         # Translate filters in data
         translated_data = self.parse_filters(data)
 
-        super().__init__(translated_data, *args, **kwargs)
+        super().__init__(translated_data, queryset, **kwargs)
 
         for field, value in self.data.items():
-            if (field not in self.filters):
-                raise Error(
-                    detail="Invalid filter field: {}".format(field)
-                )
+            if field not in self.filters:
+                raise Error(detail="Invalid filter field: {}".format(field))
             self.data[field] = self.validate_value(field, value)
 
     def validate_value(self, field, value):
@@ -107,12 +103,14 @@ class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
         # translate BooleanFilters to 'True' or 'False'
         # django_filter expects boolean strings to be capitalized
         if isinstance(self.filters[field], django_filters.filters.BooleanFilter):
-            if value.lower() == 'true' or value.lower() == 'false':
+            if value.lower() == "true" or value.lower() == "false":
                 return value.lower().title()
-            else:
-                raise Error(
-                    detail="Invalid filter value for {}. Allowed values: true, false".format(field),
+
+            raise Error(
+                detail="Invalid filter value for {}. Allowed values: true, false".format(
+                    field
                 )
+            )
 
         return value
 
@@ -157,10 +155,7 @@ class GenericFilterSet(ParseFiltersMixin, BaseFilterSet, metaclass=FilterSetMeta
 
         results = []
         for expr, value in self.data.items():
-            results.append(getattr(
-                self,
-                "filter_{}".format(expr)
-            )(item, value))
+            results.append(getattr(self, "filter_{}".format(expr))(item, value))
 
         return all(results)
 

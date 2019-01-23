@@ -6,102 +6,129 @@ from drf_jsonapi.response import Response as JsonApiResponse
 
 
 class Response(JsonApiResponse):
-
     def json(self):
         return self.data
 
 
 class TestJsonApiValidator(unittest.TestCase):
-
     def setUp(self, *args, **kwargs):
         super().setUp(*args, **kwargs)
         self.validator = JsonApiValidator()
-        self.valid_url = 'http://dead.net'
-        self.valid_test_data_entry = {'type': 'test_type', 'id': 'test_id'}
-        self.valid_link_object = {'self': self.valid_url}
-        self.valid_relationships_entry = {'related_type': self.valid_link_object}
-        self.valid_content_type = 'application/vnd.api+json'
+        self.valid_url = "http://dead.net"
+        self.valid_test_data_entry = {"type": "test_type", "id": "test_id"}
+        self.valid_link_object = {"self": self.valid_url}
+        self.valid_relationships_entry = {"related_type": self.valid_link_object}
+        self.valid_content_type = "application/vnd.api+json"
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_passes(self):
-        response = Response(content_type=self.valid_content_type, data={'data': self.valid_test_data_entry})
-        response['Content-Type'] = self.valid_content_type
+        response = Response(
+            content_type=self.valid_content_type,
+            data={"data": self.valid_test_data_entry},
+        )
+        response["Content-Type"] = self.valid_content_type
         self.assertTrue(self.validator.is_valid(response=response))
         self.assertEqual([], self.validator.errors)
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_non_response(self):
-        self.assertFalse(self.validator.is_valid(response='foo'))
-        self.assertEqual(['Response must be of type Response'], self.validator.errors)
+        self.assertFalse(self.validator.is_valid(response="foo"))
+        self.assertEqual(["Response must be of type Response"], self.validator.errors)
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_no_headers(self):
-        response = Response(data={'data': self.valid_test_data_entry})
-        del(response['Content-Type'])
+        response = Response(data={"data": self.valid_test_data_entry})
+        del (response["Content-Type"])
         self.assertFalse(self.validator.is_valid(response))
-        self.assertEqual(["Non-empty Response MUST have 'Content-Type' header"], self.validator.errors)
+        self.assertEqual(
+            ["Non-empty Response MUST have 'Content-Type' header"],
+            self.validator.errors,
+        )
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_wrong_headers(self):
-        response = Response(headers={'Bunk-Header': ''}, data={'data': self.valid_test_data_entry})
-        del(response['Content-Type'])
+        response = Response(
+            headers={"Bunk-Header": ""}, data={"data": self.valid_test_data_entry}
+        )
+        del (response["Content-Type"])
         self.assertFalse(self.validator.is_valid(response))
-        self.assertEqual(["Non-empty Response MUST have 'Content-Type' header"], self.validator.errors)
+        self.assertEqual(
+            ["Non-empty Response MUST have 'Content-Type' header"],
+            self.validator.errors,
+        )
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_wrong_content_type_header(self):
-        self.assertFalse(self.validator.is_valid(Response(headers={'Content-Type': ''}, data={'data': self.valid_test_data_entry})))
-        self.assertEqual(["'Content-Type' header MUST be equal to 'application/vnd.api+json'"], self.validator.errors)
+        self.assertFalse(
+            self.validator.is_valid(
+                Response(
+                    headers={"Content-Type": ""},
+                    data={"data": self.valid_test_data_entry},
+                )
+            )
+        )
+        self.assertEqual(
+            ["'Content-Type' header MUST be equal to 'application/vnd.api+json'"],
+            self.validator.errors,
+        )
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_passes_with_empty_top_level(self):
-        response = Response(data={'data': []})
-        response['Content-Type'] = self.valid_content_type
+        response = Response(data={"data": []})
+        response["Content-Type"] = self.valid_content_type
         self.assertTrue(self.validator.is_valid(response))
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_bad_character(self):
-        response = Response(data={'data': {'b@d': 'stuff'}})
-        response['Content-Type'] = self.valid_content_type
+        response = Response(data={"data": {"b@d": "stuff"}})
+        response["Content-Type"] = self.valid_content_type
         self.assertFalse(self.validator.is_valid(response=response))
-        self.assertIn("'@' is not a valid character in a Member Name", self.validator.errors)
+        self.assertIn(
+            "'@' is not a valid character in a Member Name", self.validator.errors
+        )
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_passes_with_empty_data_with_204_response_code(self):
         response = Response(status=204)
-        response['Content-Type'] = self.valid_content_type
+        response["Content-Type"] = self.valid_content_type
         self.assertTrue(self.validator.is_valid(response=response))
 
-    @tag('is_valid')
+    @tag("is_valid")
     def test_is_valid_fails_with_empty_data_without_204_response_code(self):
         response = Response()
-        response['Content-Type'] = self.valid_content_type
+        response["Content-Type"] = self.valid_content_type
         self.assertFalse(self.validator.is_valid(response=response))
 
-    @tag('headers')
+    @tag("headers")
     def test_validate_headers_fails_without_content_type_header(self):
         response = Response(data="stuff")
-        del(response['Content-Type'])
-        self.assertEqual(["Non-empty Response MUST have 'Content-Type' header"], self.validator._validate_headers(response=response))
+        del (response["Content-Type"])
+        self.assertEqual(
+            ["Non-empty Response MUST have 'Content-Type' header"],
+            self.validator._validate_headers(response=response),
+        )
 
-    @tag('headers')
+    @tag("headers")
     def test_validate_headers_passes_without_content_type_header_with_204(self):
         response = Response(data="stuff", status=204)
-        del(response['Content-Type'])
+        del (response["Content-Type"])
         self.assertEqual([], self.validator._validate_headers(response=response))
 
-    @tag('headers')
+    @tag("headers")
     def test_validate_headers_fails_with_wrong_content_type_header(self):
         response = Response(data="stuff")
-        self.assertEqual(["'Content-Type' header MUST be equal to 'application/vnd.api+json'"], self.validator._validate_headers(response=response))
+        self.assertEqual(
+            ["'Content-Type' header MUST be equal to 'application/vnd.api+json'"],
+            self.validator._validate_headers(response=response),
+        )
 
-    @tag('headers')
+    @tag("headers")
     def test_validate_headers_passes_with_correct_content_type_header(self):
         response = Response(data="stuff")
-        response['Content-Type'] = 'application/vnd.api+json'
+        response["Content-Type"] = "application/vnd.api+json"
         self.assertEqual([], self.validator._validate_headers(response=response))
 
-    '''
+    """
     A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”.
 
     A document MUST contain at least one of the following top-level members:
@@ -110,42 +137,50 @@ class TestJsonApiValidator(unittest.TestCase):
     errors: an array of error objects
     meta: a meta object that contains non-standard meta-information.
     The members data and errors MUST NOT coexist in the same document.
-    '''
+    """
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_data_true(self):
-        test_dict = {'data': self.valid_test_data_entry}
+        test_dict = {"data": self.valid_test_data_entry}
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_data_empty_list_true(self):
-        test_dict = {'data': []}
+        test_dict = {"data": []}
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_meta_true(self):
-        test_dict = {'meta': []}
+        test_dict = {"meta": []}
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_meta_as_dict_fails(self):
-        test_dict = {'meta': {}}
+        test_dict = {"meta": {}}
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_errors_true(self):
-        test_dict = {'errors': []}
+        test_dict = {"errors": []}
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_errors_as_dict_fails(self):
-        test_dict = {'errors': {}}
-        self.assertEqual(["'Errors' object MUST be an array"], self.validator._validate_top_level(test_dict))
+        test_dict = {"errors": {}}
+        self.assertEqual(
+            ["'Errors' object MUST be an array"],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_data_and_errors_false(self):
-        test_dict = {'data': self.valid_test_data_entry, 'errors': []}
-        self.assertEqual(["Object of type 'Top-Level Object' MUST NOT contain both of ('data', 'errors')"], self.validator._validate_top_level(test_dict))
+        test_dict = {"data": self.valid_test_data_entry, "errors": []}
+        self.assertEqual(
+            [
+                "Object of type 'Top-Level Object' MUST NOT contain both of ('data', 'errors')"
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
     # '''
     # A document MAY contain any of these top-level members:
@@ -156,99 +191,138 @@ class TestJsonApiValidator(unittest.TestCase):
     # If a document does not contain a top-level data key, the included member MUST NOT be present either.
     # '''
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_other_valid_keys(self):
-        test_dict = {'data': self.valid_test_data_entry, 'jsonapi': {}, 'links': {}, 'included': []}
+        test_dict = {
+            "data": self.valid_test_data_entry,
+            "jsonapi": {},
+            "links": {},
+            "included": [],
+        }
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_with_invalid_keys(self):
-        test_dict = {'data': self.valid_test_data_entry, 'jsonvapi': {}}
-        self.assertEqual(["Object of type 'Top-Level Object' MUST NOT contain element of type 'jsonvapi'"], self.validator._validate_top_level(test_dict))
+        test_dict = {"data": self.valid_test_data_entry, "jsonvapi": {}}
+        self.assertEqual(
+            [
+                "Object of type 'Top-Level Object' MUST NOT contain element of type 'jsonvapi'"
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_included_as_dict_fails_keys(self):
-        test_dict = {'data': self.valid_test_data_entry, 'included': {}}
-        self.assertEqual(["Object of type 'Resource Object' MUST contain element of type 'id'",
-                          "Object of type 'Resource Object' MUST contain element of type 'type'"],
-                         self.validator._validate_top_level(test_dict))
+        test_dict = {"data": self.valid_test_data_entry, "included": {}}
+        self.assertEqual(
+            [
+                "Object of type 'Resource Object' MUST contain element of type 'id'",
+                "Object of type 'Resource Object' MUST contain element of type 'type'",
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_included_without_data_fails(self):
-        test_dict = {'included': []}
-        self.assertEqual(["Object of type 'Top-Level Object' MUST contain one of ('data', 'errors', 'meta')"], self.validator._validate_top_level(test_dict))
+        test_dict = {"included": []}
+        self.assertEqual(
+            [
+                "Object of type 'Top-Level Object' MUST contain one of ('data', 'errors', 'meta')"
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('top_level')
+    @tag("top_level")
     def test_top_level_included_must_contain_resource_objects(self):
-        test_dict = {'data': self.valid_test_data_entry, 'included': [{}]}
-        self.assertEqual(["Object of type 'Resource Object' MUST contain element of type 'id'",
-                          "Object of type 'Resource Object' MUST contain element of type 'type'"],
-                         self.validator._validate_top_level(test_dict))
+        test_dict = {"data": self.valid_test_data_entry, "included": [{}]}
+        self.assertEqual(
+            [
+                "Object of type 'Resource Object' MUST contain element of type 'id'",
+                "Object of type 'Resource Object' MUST contain element of type 'type'",
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    '''
+    """
     The top-level links object MAY contain the following members:
 
     self: the link that generated the current response document.
     related: a related resource link when the primary data represents a resource relationship.
     pagination links for the primary data.
-    '''
-    @tag('top_level', 'links')
+    """
+
+    @tag("top_level", "links")
     def test_top_level_links_valid_keys(self):
-        test_dict = {'data': self.valid_test_data_entry,
-                     'links': {
-                         'self': 'http://stuff.com',
-                         'related': {'self': 'http://stuff.com'},
-                         'first': 'http://stuff.com',
-                         'last': 'http://stuff.com',
-                         'prev': 'http://stuff.com',
-                         'next': 'http://stuff.com',
-                     }}
+        test_dict = {
+            "data": self.valid_test_data_entry,
+            "links": {
+                "self": "http://stuff.com",
+                "related": {"self": "http://stuff.com"},
+                "first": "http://stuff.com",
+                "last": "http://stuff.com",
+                "prev": "http://stuff.com",
+                "next": "http://stuff.com",
+            },
+        }
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('top_level', 'links')
+    @tag("top_level", "links")
     def test_top_level_links_invalid_keys(self):
         self.maxDiff = None
-        test_dict = {'data': self.valid_test_data_entry,
-                     'links': {
-                         'blurgh': '',
-                         'related': {'self': 'http://stuff.com'},
-                         'first': 'http://stuff.com',
-                         'last': 'http://stuff.com',
-                         'prev': 'http://stuff.com',
-                         'next': 'http://stuff.com',
-                     }}
-        self.assertEqual(["Object of type 'Top-Level Links Object' MUST NOT contain element of type 'blurgh'"], self.validator._validate_top_level(test_dict))
+        test_dict = {
+            "data": self.valid_test_data_entry,
+            "links": {
+                "blurgh": "",
+                "related": {"self": "http://stuff.com"},
+                "first": "http://stuff.com",
+                "last": "http://stuff.com",
+                "prev": "http://stuff.com",
+                "next": "http://stuff.com",
+            },
+        }
+        self.assertEqual(
+            [
+                "Object of type 'Top-Level Links Object' MUST NOT contain element of type 'blurgh'"
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('links')
+    @tag("links")
     def test_self_link_is_valid_link(self):
-        test_dict = {'data': self.valid_test_data_entry,
-                     'links': {
-                         'self': 'http://stuffandthings.com',
-                     }}
+        test_dict = {
+            "data": self.valid_test_data_entry,
+            "links": {"self": "http://stuffandthings.com"},
+        }
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('links')
+    @tag("links")
     def test_top_level_links_invalid_keys_2(self):
-        test_dict = {'data': self.valid_test_data_entry,
-                     'links': {
-                        'bunk': '',
-                     }}
-        self.assertEqual(["Object of type 'Top-Level Links Object' MUST NOT contain element of type 'bunk'"], self.validator._validate_top_level(test_dict))
+        test_dict = {"data": self.valid_test_data_entry, "links": {"bunk": ""}}
+        self.assertEqual(
+            [
+                "Object of type 'Top-Level Links Object' MUST NOT contain element of type 'bunk'"
+            ],
+            self.validator._validate_top_level(test_dict),
+        )
 
-    @tag('primary_data_element')
+    @tag("primary_data_element")
     def test_validate_primary_data_element_fails_with_empty_dict(self):
-        self.assertEqual(["Primary data MUST be either: a single resource object, "
-                          "a single resource identifier object, or null, "
-                          "for requests that target single resources, "
-                          "an array of resource objects, "
-                          "an array of resource identifier objects, "
-                          "or an empty array ([]), "
-                          "for requests that target resource collections"
-                          ], self.validator._validate_primary_data_element({}))
+        self.assertEqual(
+            [
+                "Primary data MUST be either: a single resource object, "
+                "a single resource identifier object, or null, "
+                "for requests that target single resources, "
+                "an array of resource objects, "
+                "an array of resource identifier objects, "
+                "or an empty array ([]), "
+                "for requests that target resource collections"
+            ],
+            self.validator._validate_primary_data_element({}),
+        )
 
-    @tag('resource_object')
+    @tag("resource_object")
     def test_validate_resource_object(self):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-objects
 
         Resource Objects
@@ -268,62 +342,80 @@ class TestJsonApiValidator(unittest.TestCase):
         meta: a meta object containing non-standard meta-information about a resource that can not be represented as an attribute or relationship.
         :param data_dict:
         :return:
-        '''
+        """
         test_resource = {
-            'type': 'test_type',
-            'id': 'test_id',
-            'attributes': {'test_attribute_type': 'test_attribute_value'},
-            'relationships': self.valid_relationships_entry,
-            'links': {'self': 'http://dead.net'},
-            'meta': 'test_meta'}
+            "type": "test_type",
+            "id": "test_id",
+            "attributes": {"test_attribute_type": "test_attribute_value"},
+            "relationships": self.valid_relationships_entry,
+            "links": {"self": "http://dead.net"},
+            "meta": "test_meta",
+        }
         self.assertEqual([], self.validator._validate_resource_object(test_resource))
 
-    @tag('resource_object')
+    @tag("resource_object")
     def test_validate_resource_object_fails_without_id(self):
         test_resource = {
-            'type': 'test_type',
-            'attributes': {'test_attribute_type': 'test_attribute_value'},
-            'relationships': self.valid_relationships_entry,
-            'links': {'self': 'http://dead.net'},
-            'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Resource Object' MUST contain element of type 'id'"], self.validator._validate_resource_object(test_resource))
+            "type": "test_type",
+            "attributes": {"test_attribute_type": "test_attribute_value"},
+            "relationships": self.valid_relationships_entry,
+            "links": {"self": "http://dead.net"},
+            "meta": "test_meta",
+        }
+        self.assertEqual(
+            ["Object of type 'Resource Object' MUST contain element of type 'id'"],
+            self.validator._validate_resource_object(test_resource),
+        )
 
-    @tag('resource_object')
+    @tag("resource_object")
     def test_validate_resource_object_fails_without_type(self):
         test_resource = {
-            'id': 'test_id',
-            'attributes': {'test_attribute_type': 'test_attribute_value'},
-            'relationships': self.valid_relationships_entry,
-            'links': {'self': 'http://dead.net'},
-            'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Resource Object' MUST contain element of type 'type'"], self.validator._validate_resource_object(test_resource))
+            "id": "test_id",
+            "attributes": {"test_attribute_type": "test_attribute_value"},
+            "relationships": self.valid_relationships_entry,
+            "links": {"self": "http://dead.net"},
+            "meta": "test_meta",
+        }
+        self.assertEqual(
+            ["Object of type 'Resource Object' MUST contain element of type 'type'"],
+            self.validator._validate_resource_object(test_resource),
+        )
 
-    @tag('resource_object')
+    @tag("resource_object")
     def test_validate_resource_object_fails_with_bad_attributes(self):
         test_resource = {
-            'type': 'test_type',
-            'id': 'test_id',
-            'attributes': {},
-            'relationships': self.valid_relationships_entry,
-            'links': {'self': 'http://dead.net'},
-            'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Attributes Object' must not be empty"], self.validator._validate_resource_object(test_resource))
+            "type": "test_type",
+            "id": "test_id",
+            "attributes": {},
+            "relationships": self.valid_relationships_entry,
+            "links": {"self": "http://dead.net"},
+            "meta": "test_meta",
+        }
+        self.assertEqual(
+            ["Object of type 'Attributes Object' must not be empty"],
+            self.validator._validate_resource_object(test_resource),
+        )
 
-    @tag('resource_object')
+    @tag("resource_object")
     def test_validate_resource_object_fails_with_bad_relationships(self):
         test_resource = {
-            'type': 'test_type',
-            'id': 'test_id',
-            'attributes': {'test_attribute_type': 'test_attribute_value'},
-            'relationships': {'related_type': {'something': 'silly'}},
-            'links': {'self': 'http://dead.net'},
-            'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Resource Object Relationship' MUST contain one of ('links', 'self', 'related', 'data', 'meta')"],
-                         self.validator._validate_resource_object(test_resource))
+            "type": "test_type",
+            "id": "test_id",
+            "attributes": {"test_attribute_type": "test_attribute_value"},
+            "relationships": {"related_type": {"something": "silly"}},
+            "links": {"self": "http://dead.net"},
+            "meta": "test_meta",
+        }
+        self.assertEqual(
+            [
+                "Object of type 'Resource Object Relationship' MUST contain one of ('links', 'self', 'related', 'data', 'meta')"
+            ],
+            self.validator._validate_resource_object(test_resource),
+        )
 
-    @tag('resource_identifier_object')
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object(self):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-identifier-objects
 
         Resource Identifier Objects
@@ -335,36 +427,73 @@ class TestJsonApiValidator(unittest.TestCase):
         non-standard meta-information.
         :param data_dict:
         :return:
-        '''
-        test_resource_identifier = {'type': 'test_type', 'id': 'test_id', 'meta': 'test_meta'}
-        self.assertEqual([], self.validator._validate_resource_identifier_object(test_resource_identifier))
+        """
+        test_resource_identifier = {
+            "type": "test_type",
+            "id": "test_id",
+            "meta": "test_meta",
+        }
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_identifier_object(
+                test_resource_identifier
+            ),
+        )
 
-    @tag('resource_identifier_object')
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object_without_type_fails(self):
-        test_resource_identifier = {'id': 'test_id', 'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Resource Identifier Object' MUST contain element of type 'type'"],
-                         self.validator._validate_resource_identifier_object(test_resource_identifier))
+        test_resource_identifier = {"id": "test_id", "meta": "test_meta"}
+        self.assertEqual(
+            [
+                "Object of type 'Resource Identifier Object' MUST contain element of type 'type'"
+            ],
+            self.validator._validate_resource_identifier_object(
+                test_resource_identifier
+            ),
+        )
 
-    @tag('resource_identifier_object')
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object_without_id_fails(self):
-        test_resource_identifier = {'type': 'test_type', 'meta': 'test_meta'}
-        self.assertEqual(["Object of type 'Resource Identifier Object' MUST contain element of type 'id'"],
-                         self.validator._validate_resource_identifier_object(test_resource_identifier))
+        test_resource_identifier = {"type": "test_type", "meta": "test_meta"}
+        self.assertEqual(
+            [
+                "Object of type 'Resource Identifier Object' MUST contain element of type 'id'"
+            ],
+            self.validator._validate_resource_identifier_object(
+                test_resource_identifier
+            ),
+        )
 
-    @tag('resource_identifier_object')
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object_without_meta_passes(self):
-        test_resource_identifier = {'type': 'test_type', 'id': 'test_id'}
-        self.assertEqual([], self.validator._validate_resource_identifier_object(test_resource_identifier))
+        test_resource_identifier = {"type": "test_type", "id": "test_id"}
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_identifier_object(
+                test_resource_identifier
+            ),
+        )
 
-    @tag('resource_identifier_object')
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object_with_random_key_fails(self):
-        test_resource_identifier = {'type': 'test_type', 'id': 'test_id', 'meta': 'test_meta', 'junk': 'junk'}
-        self.assertEqual(["Object of type 'Resource Identifier Object' MUST NOT contain element of type 'junk'"],
-                         self.validator._validate_resource_identifier_object(test_resource_identifier))
+        test_resource_identifier = {
+            "type": "test_type",
+            "id": "test_id",
+            "meta": "test_meta",
+            "junk": "junk",
+        }
+        self.assertEqual(
+            [
+                "Object of type 'Resource Identifier Object' MUST NOT contain element of type 'junk'"
+            ],
+            self.validator._validate_resource_identifier_object(
+                test_resource_identifier
+            ),
+        )
 
-    @tag('resource_object_attributes')
+    @tag("resource_object_attributes")
     def test_validate_resource_object_attributes(self):
-        '''
+        """
         http://jsonapi.org/format/#document-resource-object-attributes
 
         Attributes
@@ -382,23 +511,33 @@ class TestJsonApiValidator(unittest.TestCase):
 
         :param data_dict:
         :return:
-        '''
-        test_attributes = {'stuff': ['things', 'more things'], 'things': 'stuff'}
-        self.assertEqual([], self.validator._validate_resource_object_attributes(test_attributes))
+        """
+        test_attributes = {"stuff": ["things", "more things"], "things": "stuff"}
+        self.assertEqual(
+            [], self.validator._validate_resource_object_attributes(test_attributes)
+        )
 
-    @tag('resource_object_attributes')
+    @tag("resource_object_attributes")
     def test_validate_resource_object_attributes_with_relationships_fails(self):
-        test_attributes = {'relationships': 'stuff'}
-        self.assertEqual(["Object of type 'Attributes Object' MUST NOT contain element of type 'relationships'"],
-                         self.validator._validate_resource_object_attributes(test_attributes))
+        test_attributes = {"relationships": "stuff"}
+        self.assertEqual(
+            [
+                "Object of type 'Attributes Object' MUST NOT contain element of type 'relationships'"
+            ],
+            self.validator._validate_resource_object_attributes(test_attributes),
+        )
 
-    @tag('resource_object_attributes')
+    @tag("resource_object_attributes")
     def test_validate_resource_object_attributes_with_links_fails(self):
-        test_attributes = {'links': 'stuff'}
-        self.assertEqual(["Object of type 'Attributes Object' MUST NOT contain element of type 'links'"],
-                         self.validator._validate_resource_object_attributes(test_attributes))
+        test_attributes = {"links": "stuff"}
+        self.assertEqual(
+            [
+                "Object of type 'Attributes Object' MUST NOT contain element of type 'links'"
+            ],
+            self.validator._validate_resource_object_attributes(test_attributes),
+        )
 
-    '''
+    """
     http://jsonapi.org/format/#document-resource-object-relationships
     Relationships
     The value of the relationships key MUST be an object (a “relationships object”). Members of the relationships object (“relationships”) represent
@@ -422,115 +561,154 @@ class TestJsonApiValidator(unittest.TestCase):
     Note: See fields and member names for more restrictions on this container.
     :param data_dict:
     :return:
-    '''
+    """
 
-    @tag('resource_object_relationships')
+    @tag("resource_object_relationships")
     def test_validate_resource_object_relationships_valid(self):
         test_relationships = {
-            'relationship_type_one':
-                {'links': {'self': 'http://dead.net'}},
-            'relationship_type_two':
-                {'links': {'self': 'http://dead.net'}},
+            "relationship_type_one": {"links": {"self": "http://dead.net"}},
+            "relationship_type_two": {"links": {"self": "http://dead.net"}},
         }
-        self.assertEqual([], self.validator._validate_resource_object_relationships(test_relationships))
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationships(test_relationships),
+        )
 
-    @tag('resource_object_relationships')
+    @tag("resource_object_relationships")
     def test_validate_resource_object_relationships_no_valid_keys(self):
         test_relationships = {
-            'relationship_type_one': {'links': {'self': 'http://dead.net'}},
-            'relationship_type_two': {'links': {'boo': 'http://dead.net'}},
+            "relationship_type_one": {"links": {"self": "http://dead.net"}},
+            "relationship_type_two": {"links": {"boo": "http://dead.net"}},
         }
-        self.assertEqual(["Object of type 'Links Object' MUST contain one of ('self', 'related')"],
-                         self.validator._validate_resource_object_relationships(test_relationships))
+        self.assertEqual(
+            ["Object of type 'Links Object' MUST contain one of ('self', 'related')"],
+            self.validator._validate_resource_object_relationships(test_relationships),
+        )
 
-    @tag('resource_object_relationships')
+    @tag("resource_object_relationships")
     def test_validate_relationship_object_passes_with_single_relationship_object(self):
         test_relationships = {
-            'relationship_type_one': {'links': {'self': 'http://dead.net'}},
+            "relationship_type_one": {"links": {"self": "http://dead.net"}}
         }
-        self.assertEqual([], self.validator._validate_resource_object_relationships(test_relationships))
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationships(test_relationships),
+        )
 
-    @tag('resource_object_relationships')
-    def test_validate_relationship_object_passes_with_list_of_relationship_objects(self):
+    @tag("resource_object_relationships")
+    def test_validate_relationship_object_passes_with_list_of_relationship_objects(
+        self
+    ):
         test_relationships = {
-            'relationship_type_one': [{'links': {'self': 'http://dead.net'}}, {'links': {'self': 'http://dead.net'}}],
+            "relationship_type_one": [
+                {"links": {"self": "http://dead.net"}},
+                {"links": {"self": "http://dead.net"}},
+            ]
         }
-        self.assertEqual([], self.validator._validate_resource_object_relationships(test_relationships))
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationships(test_relationships),
+        )
 
-    @tag('resource_object_relationship')
+    @tag("resource_object_relationship")
     def test_validate_relationship_object_passes_with_only_links(self):
-        test_relationship_object = {'links': self.valid_link_object}
-        self.assertEqual([], self.validator._validate_resource_object_relationship(test_relationship_object))
+        test_relationship_object = {"links": self.valid_link_object}
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationship(
+                test_relationship_object
+            ),
+        )
 
-    @tag('resource_object_relationship')
+    @tag("resource_object_relationship")
     def test_validate_relationship_object_passes_with_only_data(self):
-        test_relationship_object = {'data': []}
-        self.assertEqual([], self.validator._validate_resource_object_relationship(test_relationship_object))
+        test_relationship_object = {"data": []}
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationship(
+                test_relationship_object
+            ),
+        )
 
-    @tag('resource_object_relationship')
+    @tag("resource_object_relationship")
     def test_validate_relationship_object_passes_with_only_meta(self):
-        test_relationship_object = {'meta': {}}
-        self.assertEqual([], self.validator._validate_resource_object_relationship(test_relationship_object))
+        test_relationship_object = {"meta": {}}
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_object_relationship(
+                test_relationship_object
+            ),
+        )
 
-    @tag('resource_object_relationship')
+    @tag("resource_object_relationship")
     def test_validate_relationship_object_fails_without_links_or_data_or_meta(self):
-        test_relationship_object = {'blah': {}}
-        self.assertEqual(["Object of type 'Resource Object Relationship' MUST contain one of ('links', 'self', 'related', 'data', 'meta')"],
-                         self.validator._validate_resource_object_relationship(test_relationship_object))
+        test_relationship_object = {"blah": {}}
+        self.assertEqual(
+            [
+                "Object of type 'Resource Object Relationship' MUST contain one of ('links', 'self', 'related', 'data', 'meta')"
+            ],
+            self.validator._validate_resource_object_relationship(
+                test_relationship_object
+            ),
+        )
 
-    @tag('resource_linkage')
+    @tag("resource_linkage")
     def test_validate_resource_linkage_passes_with_none(self):
         self.assertEqual([], self.validator._validate_resource_linkage(None))
 
-    @tag('resource_linkage')
+    @tag("resource_linkage")
     def test_validate_resource_linkage_passes_with_empty_list(self):
         self.assertEqual([], self.validator._validate_resource_linkage([]))
 
-    @tag('link_object')
+    @tag("link_object")
     def test_validate_link_object_with_dict(self):
-        link_dict = {
-            'href': self.valid_url,
-            'meta': 'meta',
-        }
+        link_dict = {"href": self.valid_url, "meta": "meta"}
         self.assertEqual([], self.validator._validate_link_object(link_dict))
 
-    @tag('url')
+    @tag("url")
     def test_validate_url_passes_with_good_url(self):
-        self.assertEqual([], self.validator._validate_url('http://testserver'))
+        self.assertEqual([], self.validator._validate_url("http://testserver"))
 
-    @tag('url')
+    @tag("url")
     def test_validate_url_fails_with_bad_url(self):
-        self.assertEqual(['stuff is not a valid URL'], self.validator._validate_url('stuff'))
+        self.assertEqual(
+            ["stuff is not a valid URL"], self.validator._validate_url("stuff")
+        )
 
-    @tag('errors_object')
+    @tag("errors_object")
     def test_validate_errors_object(self):
-        self.assertEqual([], self.validator._validate_errors_object([{'id': 'error_id'}, {'id': 'error_id'}]))
+        self.assertEqual(
+            [],
+            self.validator._validate_errors_object(
+                [{"id": "error_id"}, {"id": "error_id"}]
+            ),
+        )
 
-    @tag('big')
+    @tag("big")
     def test_one(self):
         test_dict = {
-          "data": [
-            {
-              "type": "user",
-              "id": None,
-              "attributes": {
-                "first_name": "string",
-                "last_name": "string",
-                "email": "user@example.com",
-                "is_active": True,
-                "is_superuser": True,
-                "created_at": "2018-05-01T23:37:19Z",
-                "modified_at": "2018-05-01T23:37:19Z",
-                "last_seen": "2018-05-01"
-              }
-            }
-          ]
+            "data": [
+                {
+                    "type": "user",
+                    "id": None,
+                    "attributes": {
+                        "first_name": "string",
+                        "last_name": "string",
+                        "email": "user@example.com",
+                        "is_active": True,
+                        "is_superuser": True,
+                        "created_at": "2018-05-01T23:37:19Z",
+                        "modified_at": "2018-05-01T23:37:19Z",
+                        "last_seen": "2018-05-01",
+                    },
+                }
+            ]
         }
         self.assertEqual([], self.validator._validate_top_level(test_dict))
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names(self):
-        '''
+        """
         http://jsonapi.org/format/#document-member-names
 
         Member Names
@@ -598,34 +776,52 @@ class TestJsonApiValidator(unittest.TestCase):
         U+007F DELETE
         U+0000 to U+001F (C0 Controls)
 
-        '''
-        self.assertEqual([], self.validator._validate_member_names({'stuff': "things"}))
+        """
+        self.assertEqual([], self.validator._validate_member_names({"stuff": "things"}))
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_sub_element(self):
-        self.assertEqual(['<empty_string> is not a valid Member Name'], self.validator._validate_member_names({'stuff': {'': 'things'}}))
+        self.assertEqual(
+            ["<empty_string> is not a valid Member Name"],
+            self.validator._validate_member_names({"stuff": {"": "things"}}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_empty_string(self):
-        self.assertEqual(['<empty_string> is not a valid Member Name'], self.validator._validate_member_names({'': 'things'}))
+        self.assertEqual(
+            ["<empty_string> is not a valid Member Name"],
+            self.validator._validate_member_names({"": "things"}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_disallowed_first_character(self):
-        self.assertEqual(["'_' is not a valid boundary character in a Member Name"], self.validator._validate_member_names({'_stuff': 'things'}))
+        self.assertEqual(
+            ["'_' is not a valid boundary character in a Member Name"],
+            self.validator._validate_member_names({"_stuff": "things"}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_disallowed_last_character(self):
-        self.assertEqual(["'-' is not a valid boundary character in a Member Name"], self.validator._validate_member_names({'stuff-': 'things'}))
+        self.assertEqual(
+            ["'-' is not a valid boundary character in a Member Name"],
+            self.validator._validate_member_names({"stuff-": "things"}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_disallowed_boundary_character(self):
-        self.assertEqual(["' ' is not a valid boundary character in a Member Name"], self.validator._validate_member_names({'stuff ': 'things'}))
+        self.assertEqual(
+            ["' ' is not a valid boundary character in a Member Name"],
+            self.validator._validate_member_names({"stuff ": "things"}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_validate_member_names_fails_with_plus_sign(self):
-        self.assertEqual(["'+' is not a valid character in a Member Name"], self.validator._validate_member_names({'stuff+': 'things'}))
+        self.assertEqual(
+            ["'+' is not a valid character in a Member Name"],
+            self.validator._validate_member_names({"stuff+": "things"}),
+        )
 
-    @tag('member_names')
+    @tag("member_names")
     def test_invalid_chars(self):
         invalid_chars = [
             "\u002b",  # PLUS SIGN, “+” (used for ordering)
@@ -693,5 +889,10 @@ class TestJsonApiValidator(unittest.TestCase):
             "\u001f",  # C0 control
         ]
         for char in invalid_chars:
-            self.assertEqual(["'{}' is not a valid character in a Member Name".format(char)],
-                             self.validator._validate_member_names({'stuff{}'.format(char): 'things'}))
+            self.assertEqual(
+                ["'{}' is not a valid character in a Member Name".format(char)],
+                self.validator._validate_member_names(
+                    {"stuff{}".format(char): "things"}
+                ),
+            )
+

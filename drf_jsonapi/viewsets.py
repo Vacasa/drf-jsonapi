@@ -34,10 +34,9 @@ class ViewSet(GenericViewSet):
     """
 
     swagger_schema = inspectors.EntitySwaggerAutoSchema
-
     lookup_field = "pk"
     filter_class = None
-    validate_http_methods = ['POST', 'PUT', 'PATCH']
+    validate_http_methods = ["POST", "PUT", "PATCH"]
 
     def get_queryset(self):
         """
@@ -66,7 +65,7 @@ class ViewSet(GenericViewSet):
 
         return collection
 
-    def get_resource(self, request, **kwargs):
+    def get_resource(self, request, pk):
         """
         Retrieve a resource by primary identifier
 
@@ -76,7 +75,7 @@ class ViewSet(GenericViewSet):
         """
         return get_object_or_404(
             self.get_collection(request).model,
-            **{self.lookup_field: kwargs[self.lookup_field]}
+            **{self.serializer_class.get_id_field(): pk}
         )
 
     def get_view_name(self):
@@ -90,7 +89,7 @@ class ViewSet(GenericViewSet):
 
         name = self.view_name_prefix
         if self.suffix:
-            name += ' ' + self.suffix
+            name += " " + self.suffix
         return name
 
     def initial(self, *args, **kwargs):
@@ -134,26 +133,24 @@ class ViewSet(GenericViewSet):
         :param rest_framework.request.Request request: The client request
         """
 
-        if 'include' not in request.GET:
+        if "include" not in request.GET:
             request.include = []
             return
 
-        request.include = request.GET['include'].split(',')
+        request.include = request.GET["include"].split(",")
 
         allowed_includes = getattr(
             self,
-            'allowed_includes',
-            getattr(
-                self.serializer_class.Meta,
-                'relationships',
-                {}
-            ).keys()
+            "allowed_includes",
+            self.serializer_class.define_relationships().keys(),
         )
         invalid_includes = list(set(request.include) - set(allowed_includes))
         if invalid_includes:
             raise Error(
-                detail="The following are not valid includes: {}".format(", ".join(invalid_includes)),
-                source={'parameter': 'include'}
+                detail="The following are not valid includes: {}".format(
+                    ", ".join(invalid_includes)
+                ),
+                source={"parameter": "include"},
             )
 
     def parse_sparse_fieldset(self, request):
@@ -168,7 +165,7 @@ class ViewSet(GenericViewSet):
         for param, value in request.GET.items():
             match = FIELD_PATTERN.search(param)
             if match:
-                fields = filter(None, value.split(','))
+                fields = filter(None, value.split(","))
                 request.fields[match.group(1)] = list(set(fields))
 
     def validate_request_body(self, request_data):
@@ -181,16 +178,20 @@ class ViewSet(GenericViewSet):
         :raises ParseError: if validation fails
         """
 
-        if 'data' not in request_data:
-            raise ParseError('The top level object of all request bodies must include a "data" node.')
+        if "data" not in request_data:
+            raise ParseError(
+                'The top level object of all request bodies must include a "data" node.'
+            )
         if (
-            not isinstance(request_data['data'], list) and
-            not isinstance(request_data['data'], dict) and
-            request_data['data'] is not None
+            not isinstance(request_data["data"], list)
+            and not isinstance(request_data["data"], dict)
+            and request_data["data"] is not None
         ):
             raise ParseError('The top-level "data" element must be an array or object.')
         if len(request_data) != 1:
-            raise ParseError('There must be one and only one element at the top level of the json object: "data."')
+            raise ParseError(
+                'There must be one and only one element at the top level of the json object: "data."'
+            )
 
     def error_response(self, errors, status=400):
         """
@@ -202,10 +203,10 @@ class ViewSet(GenericViewSet):
         """
 
         return Response(
-            DocumentSerializer(Document(
-                errors=ErrorSerializer(errors, many=True).data
-            )).data,
-            status=status
+            DocumentSerializer(
+                Document(errors=ErrorSerializer(errors, many=True).data)
+            ).data,
+            status=status,
         )
 
     def apply_pagination(self, collection):
@@ -218,42 +219,55 @@ class ViewSet(GenericViewSet):
         :rtype: QuerySet
         """
 
-        page_size = self.request.GET.get('page[size]', getattr(settings, 'DEFAULT_PAGE_SIZE', defaults.DEFAULT_PAGE_SIZE))
+        page_size = self.request.GET.get(
+            "page[size]",
+            getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
+        )
         paginator = Paginator(collection, page_size)
-        page = paginator.page(self.request.GET.get('page[number]', 1))
+        page = paginator.page(self.request.GET.get("page[number]", 1))
 
-        self.document.instance.meta.update({
-            'count': paginator.count,
-            'has_next': page.has_next(),
-            'has_previous': page.has_previous(),
-            'page_size': paginator.per_page,
-            'page': page.number,
-            'num_pages': paginator.num_pages
-        })
+        self.document.instance.meta.update(
+            {
+                "count": paginator.count,
+                "has_next": page.has_next(),
+                "has_previous": page.has_previous(),
+                "page_size": paginator.per_page,
+                "page": page.number,
+                "num_pages": paginator.num_pages,
+            }
+        )
 
         # Build links
         current_path = self.request.build_absolute_uri().split("?")[0]
         query = self.request.GET.copy()
 
         # first link
-        query['page[number]'] = 1
-        self.document.instance.links['first'] = current_path + "?" + query.urlencode(safe="[]")
+        query["page[number]"] = 1
+        self.document.instance.links["first"] = (
+            current_path + "?" + query.urlencode(safe="[]")
+        )
 
         # next link
-        self.document.instance.links['next'] = None
+        self.document.instance.links["next"] = None
         if page.has_next():
-            query['page[number]'] = page.next_page_number()
-            self.document.instance.links['next'] = current_path + "?" + query.urlencode(safe="[]")
+            query["page[number]"] = page.next_page_number()
+            self.document.instance.links["next"] = (
+                current_path + "?" + query.urlencode(safe="[]")
+            )
 
         # prev link
-        self.document.instance.links['prev'] = None
+        self.document.instance.links["prev"] = None
         if page.has_previous():
-            query['page[number]'] = page.previous_page_number()
-            self.document.instance.links['prev'] = current_path + "?" + query.urlencode(safe="[]")
+            query["page[number]"] = page.previous_page_number()
+            self.document.instance.links["prev"] = (
+                current_path + "?" + query.urlencode(safe="[]")
+            )
 
         # last link
-        query['page[number]'] = paginator.num_pages
-        self.document.instance.links['last'] = current_path + "?" + query.urlencode(safe="[]")
+        query["page[number]"] = paginator.num_pages
+        self.document.instance.links["last"] = (
+            current_path + "?" + query.urlencode(safe="[]")
+        )
 
         return page.object_list
 
@@ -265,7 +279,7 @@ class ViewSet(GenericViewSet):
         :return: A dictionary of relationships and handlers
         :rtype: dict
         """
-        return self.serializer_class.Meta.relationships
+        return self.serializer_class.define_relationships()
 
     def get_relationship_handler(self, relation):
         """
@@ -280,13 +294,13 @@ class ViewSet(GenericViewSet):
 
         available_relationships = self.get_relationships()
         if relation not in available_relationships.keys():
-            raise ParseError('Invalid relationship: {}'.format(relation))
+            raise ParseError("Invalid relationship: {}".format(relation))
         return available_relationships[relation]
 
 
-class ReadOnlyViewSet(mixins.ListMixin,
-                      mixins.RetrieveMixin,
-                      ViewSet):
+class ReadOnlyViewSet(
+    mixins.ListMixin, mixins.RetrieveMixin, mixins.RelationshipRetrieveMixin, ViewSet
+):
     """
     Create a ViewSet for a read-only endpoint.
     """
@@ -294,82 +308,20 @@ class ReadOnlyViewSet(mixins.ListMixin,
     pass
 
 
-class ReadWriteViewSet(mixins.ListMixin,
-                       mixins.CreateMixin,
-                       mixins.RetrieveMixin,
-                       mixins.PartialUpdateMixin,
-                       mixins.DestroyMixin,
-                       ViewSet):
+class ReadWriteViewSet(
+    mixins.ListMixin,
+    mixins.CreateMixin,
+    mixins.RetrieveMixin,
+    mixins.PartialUpdateMixin,
+    mixins.DestroyMixin,
+    mixins.RelationshipRetrieveMixin,
+    mixins.RelationshipCreateMixin,
+    mixins.RelationshipUpdateMixin,
+    mixins.RelationshipDestroyMixin,
+    ViewSet,
+):
     """
     Create a viewset for a readable and writeable endpoint.
-    """
-    pass
-
-
-class RelationshipViewSet(ViewSet):
-    """
-    Create a viewset for a relationship endpoint.
-    """
-
-    swagger_schema = inspectors.RelationshipSwaggerAutoSchema
-    validate_http_methods = ['POST', 'PUT', 'PATCH', 'DELETE']
-
-    def get_serializer_class(self):
-        """
-        Retrieve a resource identifier serializer for this object's relationship.
-
-        :param RelationshipViewSet self: This object
-        :return: A resource identifier
-        :rtype: dict
-        """
-
-        handler = self.get_relationship_handler(self.relationship)
-        return resource_identifier(handler.get_serializer_class())
-
-    def get_related(self, request, resource):
-        """
-        Should return the related resource(s).
-        For to-one relationships should return a single resource.
-        For to-many should return a collection (list or QuerySet) of resources.
-        """
-        raise NotImplementedError("`get_related()` must be implemented in {}".format(self.__class__))
-
-
-class ReadOnlyToManyRelationshipViewSet(mixins.RelationshipListMixin,
-                                        RelationshipViewSet):
-    """
-    Create a viewset for a read-only to-many relationship endpoint.
-    """
-
-    pass
-
-
-class ReadOnlyToOneRelationshipViewSet(mixins.RelationshipListMixin,
-                                       RelationshipViewSet):
-    """
-    Create a viewset for a read-only to-one relationship endpoint.
-    """
-
-    pass
-
-
-class ToManyRelationshipViewSet(mixins.RelationshipListMixin,
-                                mixins.RelationshipCreateMixin,
-                                mixins.RelationshipPatchMixin,
-                                mixins.RelationshipDeleteMixin,
-                                RelationshipViewSet):
-    """
-    Create a Viewset for a writeable to-many relationship endpoint.
-    """
-
-    pass
-
-
-class ToOneRelationshipViewSet(mixins.RelationshipListMixin,
-                               mixins.RelationshipPatchMixin,
-                               RelationshipViewSet):
-    """
-    Create a Viewset for a writeable to-one relationship endpoint.
     """
 
     pass

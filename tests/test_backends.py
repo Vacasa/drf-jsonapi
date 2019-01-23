@@ -10,36 +10,33 @@ class TestFilterSet(FilterSet):
     class Meta:
         model = TestModel
         fields = {
-            'id': ['exact'],
-            'name': ['exact', 'iexact', 'contains', 'icontains', 'startswith'],
-            'is_active': ['exact']
+            "id": ["exact"],
+            "name": ["exact", "iexact", "contains", "icontains", "startswith"],
+            "is_active": ["exact"],
         }
 
 
 class DjangoFilterBackendTestCase(TestCase):
-
     def test_get_schema_fields(self):
-
-        class FakeView(object):
+        class FakeView:
             filter_class = TestFilterSet
 
         backend = DjangoFilterBackend()
         fields = backend.get_schema_fields(FakeView())
         field_names = {field.name for field in fields}
         expected_field_names = {
-            'filter[id]',
-            'filter[name]',
-            'filter[name][iexact]',
-            'filter[name][contains]',
-            'filter[name][icontains]',
-            'filter[name][startswith]',
-            'filter[is_active]'
+            "filter[id]",
+            "filter[name]",
+            "filter[name][iexact]",
+            "filter[name][contains]",
+            "filter[name][icontains]",
+            "filter[name][startswith]",
+            "filter[is_active]",
         }
         self.assertEqual(field_names, expected_field_names)
 
     def test_get_schema_fields_no_filter_class(self):
-
-        class FakeView(object):
+        class FakeView:
             pass
 
         backend = DjangoFilterBackend()

@@ -6,21 +6,22 @@ from .relationships import (
     NodeParentHandler,
     NodeChildrenHandler,
     NodeLinksToHandler,
-    NodeLinksFromHandler
+    NodeLinksFromHandler,
 )
 
-class NodeSerializer(ResourceModelSerializer):
 
+class NodeSerializer(ResourceModelSerializer):
     class Meta:
         model = Node
         type = "node"
-        base_path = "/nodes"
-        fields = (
-            'name'
-        )
-        relationships = {
-            'parent': NodeParentHandler(),
-            'children': NodeChildrenHandler(),
-            'links_to': NodeLinksToHandler(),
-            'links_from': NodeLinksFromHandler()
+        basename = "nodes"
+        fields = "name"
+
+    @staticmethod
+    def define_relationships():
+        return {
+            "parent": NodeParentHandler(NodeSerializer),
+            "children": NodeChildrenHandler(NodeSerializer),
+            "links_to": NodeLinksToHandler(NodeSerializer),
+            "links_from": NodeLinksFromHandler(NodeSerializer),
         }

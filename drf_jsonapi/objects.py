@@ -1,7 +1,7 @@
 from rest_framework.exceptions import APIException
 
 
-class Document(object):
+class Document:
     """
     The root document object of a JSON API response.
     See: http://jsonapi.org/format/#document-top-level
@@ -43,12 +43,12 @@ class Document(object):
         :param dict included:
         """
 
-        self.data = kwargs.get('data', {})
-        self.errors = kwargs.get('errors', [])
-        self.meta = kwargs.get('meta', {})
-        self.jsonapi = kwargs.get('jsonapi', {})
-        self.links = kwargs.get('links', {})
-        self.included = kwargs.get('included', [])
+        self.data = kwargs.get("data", {})
+        self.errors = kwargs.get("errors", [])
+        self.meta = kwargs.get("meta", {})
+        self.jsonapi = kwargs.get("jsonapi", {})
+        self.links = kwargs.get("links", {})
+        self.included = kwargs.get("included", [])
 
 
 class Error(APIException):
@@ -73,13 +73,13 @@ class Error(APIException):
         """
 
         self.detail = detail
-        self.id = kwargs.get('id', {})
-        self.links = kwargs.get('links', {})
-        self.status_code = kwargs.get('status_code', 400)
-        self.code = kwargs.get('code', {})
-        self.title = kwargs.get('title', {})
-        self.source = kwargs.get('source', {})
-        self.meta = kwargs.get('meta', {})
+        self.id = kwargs.get("id", {})
+        self.links = kwargs.get("links", {})
+        self.status_code = kwargs.get("status_code", 400)
+        self.code = kwargs.get("code", {})
+        self.title = kwargs.get("title", {})
+        self.source = kwargs.get("source", {})
+        self.meta = kwargs.get("meta", {})
         super().__init__(detail)
 
     @staticmethod
@@ -99,10 +99,12 @@ class Error(APIException):
             if isinstance(errors, str):
                 errors = [errors]
             for error in errors:
-                error_list.append(Error(
-                    source={'pointer': "data/attributes/{}".format(attribute)},
-                    detail=error,
-                    status_code=400
-                ))
+                error_list.append(
+                    Error(
+                        source={"pointer": "data/attributes/{}".format(attribute)},
+                        detail=error,
+                        status_code=400,
+                    )
+                )
 
         return error_list
