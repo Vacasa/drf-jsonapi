@@ -71,6 +71,7 @@ class ViewSet(GenericViewSet):
 
         :param ViewSet self: This object
         :param rest_framework.request.Request request: A client request
+        :param pk: The ID of the resource
         :return list collection: A filtered list of model objects
         """
         return get_object_or_404(
@@ -199,6 +200,7 @@ class ViewSet(GenericViewSet):
 
         :param ViewSet self: This object
         :param list errors: A list of errors
+        :param int status: HTTP status code
         :return Response response: A json response
         """
 

@@ -88,6 +88,10 @@ class JsonApiValidator(object):
         self.url_validator = URLValidator()
 
     def is_valid(self, response):
+        self.errors = self._validate(response)
+        return len(self.errors) == 0
+
+    def _validate(self, response):
         """
         http://jsonapi.org/format/#content-negotiation-servers
         Server Responsibilities
@@ -116,23 +120,27 @@ class JsonApiValidator(object):
 
         Note: These conditions allow this specification to evolve through additive changes.
         """
-        self.errors = []
+
+        errors = []
+
         if not isinstance(response, Response):
-            self.errors.append("Response must be of type Response")
-            return False
+            errors.append("Response must be of type Response")
+            return errors
+
+        if not response.data and response.status_code != 204:
+            errors.append(
+                "A server MUST return 204 No Content status code when there is no response document"
+            )
+            return errors
+
         if not response.data:
-            if response.status_code != 204:
-                self.errors.append(
-                    "A server MUST return 204 No Content status code when there is no response document"
-                )
-                return False
-            return True
-        self.errors = self._validate_headers(response)
-        if not self.errors:
-            self.errors.extend(self._validate_member_names(response.data))
-        if not self.errors:
-            self.errors.extend(self._validate_top_level(response.json()))
-        return not bool(self.errors)
+            return errors
+
+        errors.extend(self._validate_headers(response))
+        errors.extend(self._validate_member_names(response.data))
+        errors.extend(self._validate_top_level(response.json()))
+
+        return errors
 
     def _validate_headers(self, response):
         """
