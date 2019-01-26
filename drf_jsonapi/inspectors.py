@@ -65,7 +65,6 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         else:
             summary = "{} {}".format(resource_type, ACTIONS[action]).title()
 
-        # raise Exception(self.view.__dict__)
         return summary, description
 
     def get_tags(self, operation_keys):
@@ -173,15 +172,14 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         if default_schema and not isinstance(default_schema, openapi.Schema):
             default_schema = self.serializer_to_schema(default_schema) or ""
 
-        if default_schema:
-            if self.is_list():
-                default_schema = openapi.Schema(
-                    type=openapi.TYPE_ARRAY, items=default_schema
+        if default_schema and self.is_list():
+            default_schema = openapi.Schema(
+                type=openapi.TYPE_ARRAY, items=default_schema
+            )
+            if self.should_page():
+                default_schema = (
+                    self.get_paginated_response(default_schema) or default_schema
                 )
-                if self.should_page():
-                    default_schema = (
-                        self.get_paginated_response(default_schema) or default_schema
-                    )
 
         return OrderedDict({str(default_status): default_schema})
 
