@@ -6,6 +6,7 @@ from django.views.defaults import page_not_found
 
 from rest_framework.exceptions import ParseError
 from rest_framework import serializers
+from rest_framework.test import APIRequestFactory
 
 from drf_jsonapi.objects import Document, Error
 
@@ -236,11 +237,35 @@ class ResourceSerializerTestCase(TestCase):
                         {"type": "test_resource", "id": 5},
                         {"type": "test_resource", "id": 6},
                     ],
+                }
+            },
+        )
+
+    def test_get_relationships_with_pagination(self):
+        factory = APIRequestFactory()
+        request = factory.get("/tests/?page[related_things][size]=5")
+        serializer = mocks.TestResourceSerializer(
+            self.resource,
+            include=["related_things"],
+            page_size=10,
+            context={"request": request},
+        )
+        data = serializer.data
+        self.assertIn("relationships", data)
+        self.assertDictEqual(
+            data["relationships"],
+            {
+                "related_things": {
+                    "links": {"self": "http://testserver/"},
+                    "data": [
+                        {"type": "test_resource", "id": 5},
+                        {"type": "test_resource", "id": 6},
+                    ],
                     "meta": {
                         "count": 2,
                         "has_next": False,
                         "has_previous": False,
-                        "page_size": 10,
+                        "page_size": 5,
                         "page": 1,
                         "num_pages": 1,
                     },

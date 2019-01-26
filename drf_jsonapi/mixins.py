@@ -16,15 +16,6 @@ class ListMixin:
     """
 
     def list(self, request):
-        """
-        Create a response for a list, including sorting, filtering, and paging
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         collection = self.get_collection(request)
 
         # Sorting
@@ -58,19 +49,15 @@ class ListMixin:
 
 class ProcessRelationshipsMixin:
     def process_to_one_relationships(self, relationship_data, resource, request):
-        """
-        Validate and populate related To-One relationship resources
-
-        :param viewset self: This object
-        :param dict relationship_data: A dictionary of relationships
-        :param resource:
-        """
-
         to_one_relationship_data = {}
 
         for relation, data in relationship_data.items():
-
             handler = self.get_relationship_handler(relation)
+            if handler.read_only:
+                raise Error(
+                    detail="{} is a read-only relationship".format(relation),
+                    source={"pointer": "data/relationships/{}".format(relation)},
+                )
             if not handler.many:
                 to_one_relationship_data[relation] = data
 
@@ -82,19 +69,15 @@ class ProcessRelationshipsMixin:
         return resource
 
     def process_to_many_relationships(self, relationship_data, resource, request):
-        """
-        Validate and populate related To-Many relationship resources
-
-        :param viewset self: This object
-        :param dict relationship_data: A dictionary of relationships
-        :param resource:
-        """
-
         to_one_relationship_data = {}
 
         for relation, data in relationship_data.items():
-
             handler = self.get_relationship_handler(relation)
+            if handler.read_only:
+                raise Error(
+                    detail="{} is a read-only relationship".format(relation),
+                    source={"pointer": "data/relationships/{}".format(relation)},
+                )
             if handler.many:
                 to_one_relationship_data[relation] = data
 
@@ -106,18 +89,14 @@ class ProcessRelationshipsMixin:
         return resource
 
     def process_relationships(self, relationship_data, resource, request):
-        """
-        Validate and populate related resources
-
-        :param viewset self: This object
-        :param dict relationship_data: A dictionary of relationships
-        :param resource:
-        """
-
         for relation, data in relationship_data.items():
 
             handler = self.get_relationship_handler(relation)
-
+            if handler.read_only:
+                raise Error(
+                    detail="{} is a read-only relationship".format(relation),
+                    source={"pointer": "data/relationships/{}".format(relation)},
+                )
             data = handler.validate(data["data"])
             related_resources = handler.serializer_class.from_identity(
                 data, many=handler.many
@@ -134,15 +113,6 @@ class CreateMixin(ProcessRelationshipsMixin):
     """
 
     def create(self, request):
-        """
-        Build a response for a create endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         serializer = self.serializer_class(
             data=request.data["data"],
             only_fields=request.fields,
@@ -184,15 +154,6 @@ class RetrieveMixin:
     """
 
     def retrieve(self, request, pk):
-        """
-        Build a response for a retrieve endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         resource = self.get_resource(request, pk)
 
         serializer = self.serializer_class(
@@ -218,15 +179,6 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
     """
 
     def partial_update(self, request, *args, **kwargs):
-        """
-        Build a response for a partial update endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         resource = self.get_resource(request, *args, **kwargs)
 
         serializer = self.serializer_class(
@@ -266,15 +218,6 @@ class DestroyMixin:
     """
 
     def destroy(self, request, pk):
-        """
-        Build a response for a delete endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         resource = self.get_resource(request, pk)
         resource.delete()
 
@@ -287,15 +230,6 @@ class RelationshipRetrieveMixin:
     """
 
     def relationship_retrieve(self, request, pk, relationship):
-        """
-        Build a response for a relationship list endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         resource = self.get_resource(request, pk)
 
         # get the relationship handler
@@ -326,15 +260,6 @@ class RelationshipCreateMixin:
     """
 
     def relationship_create(self, request, pk, relationship):
-        """
-        Build a response for a relationship create endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         # get the relationship handler
         handler = self.get_relationship_handler(self.relationship)
         serializer_class = handler.serializer_class
@@ -365,15 +290,6 @@ class RelationshipUpdateMixin:
     """
 
     def relationship_update(self, request, pk, relationship):
-        """
-        Build a response for a relationship patch endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         resource = self.get_resource(request, pk)
 
         # get the relationship handler
@@ -398,15 +314,6 @@ class RelationshipDestroyMixin:
     """
 
     def relationship_destroy(self, request, pk, relationship):
-        """
-        Build a response for a relationship delete endpoint
-
-        :param viewset self: This object
-        :param rest_framework.request.Request request: A request object
-        :return: A json response
-        :rtype: Response
-        """
-
         # get the relationship handler
         handler = self.get_relationship_handler(self.relationship)
         serializer_class = handler.serializer_class

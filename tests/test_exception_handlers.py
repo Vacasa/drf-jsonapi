@@ -102,3 +102,8 @@ class ExceptionHandlersTestCase(TestCase):
         error = PermissionDenied()
         response = jsonapi_exception_handler(error, {})
         self.assertEqual(response.data["errors"][0]["status"], "403")
+
+    def test_no_default_response(self):
+        error = Exception()
+        response = jsonapi_exception_handler(error, {})
+        self.assertIsNone(response)

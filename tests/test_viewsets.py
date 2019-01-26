@@ -33,6 +33,11 @@ class ViewSetTestCase(TestCase):
             viewset.get_view_name(), viewset.view_name_prefix + " " + viewset.suffix
         )
 
+    def test_get_view_name_no_suffix(self):
+        viewset = TestViewSet()
+        viewset.view_name_prefix = "test"
+        self.assertEqual(viewset.get_view_name(), viewset.view_name_prefix)
+
     def test_get_queryset(self):
         viewset = TestViewSet()
         self.assertEqual(viewset.get_queryset(), viewset.collection)

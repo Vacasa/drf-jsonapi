@@ -73,9 +73,6 @@ class ResourceSerializer(serializers.Serializer):
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
 
     def validate_includes(self, includes):
-        """
-        TODO: Write documentation to explain the tree stuff
-        """
         include_tree = {}
         for include in list(filter(None, includes)):
             parts = include.split(".")
@@ -206,13 +203,11 @@ class ResourceSerializer(serializers.Serializer):
         :return: A dictionary of relationship data
         :rtype: dict
         """
-
+        request = self._context.get("request")
         data = {}
 
         # Build Links
-        links = handler.build_relationship_links(
-            self, relation, instance, self._context.get("request")
-        )
+        links = handler.build_relationship_links(self, relation, instance, request)
         if links:
             data["links"] = links
 
@@ -222,21 +217,25 @@ class ResourceSerializer(serializers.Serializer):
 
         # Add Resource Identifiers for linkage
         serializer_class = handler.serializer_class
-        related = handler.get_related(instance, self._context.get("request"))
+        related = handler.get_related(instance, request)
 
         if related:
 
             if handler.many:
-                # TODO: We need a better way to handle paginated includes
-                # maybe we default to include all includes but allow
-                # handlers to set a default?
-                # The question is how do we indicate page numbers for includes?
-                related, data["meta"] = handler.apply_pagination(
-                    related, self.page_size
-                )
+                if request:
+                    page_number = request.GET.get(
+                        "page[{}][number]".format(relation), 1
+                    )
+                    page_size = request.GET.get("page[{}][size]".format(relation), None)
+                else:
+                    page_size = None
+                if page_size:
+                    related, data["meta"] = handler.apply_pagination(
+                        related, page_size, page_number
+                    )
 
             data["data"] = resource_identifier(serializer_class)(
-                related, many=handler.many
+                related, many=handler.many, context={"request": request}
             ).data
 
             related_serializer = serializer_class(
@@ -244,6 +243,7 @@ class ResourceSerializer(serializers.Serializer):
                 many=handler.many,
                 only_fields=self.only_fields,
                 include=self.include_tree.get(relation, []),
+                context={"request": request},
             )
             self.included += listify(related_serializer.data)
             self.included += related_serializer.included

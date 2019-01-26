@@ -18,7 +18,12 @@ setup(
     url="https://github.com/vacasa/drf-jsonapi",
     packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
-    install_requires=["django", "djangorestframework", "django-filter", "drf-yasg"],
+    install_requires=[
+        "django",
+        "djangorestframework",
+        "django-filter",
+        "drf-yasg==1.12.1",
+    ],
     setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
     zip_safe=False,
 )

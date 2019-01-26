@@ -15,18 +15,22 @@ class Router(DefaultRouter):
     def get_routes(self, viewset):
         routes = super().get_routes(viewset)
         relationships = viewset.serializer_class.define_relationships()
-        for relationship in relationships:
+        for relationship, handler in relationships.items():
+            if handler.read_only:
+                action_map = {"get": "relationship_retrieve"}
+            else:
+                action_map = {
+                    "get": "relationship_retrieve",
+                    "post": "relationship_create",
+                    "patch": "relationship_update",
+                    "delete": "relationship_destroy",
+                }
             routes.append(
                 Route(
                     url=r"^{{prefix}}/{{lookup}}/relationships/{}{{trailing_slash}}$".format(
                         relationship
                     ),
-                    mapping={
-                        "get": "relationship_retrieve",
-                        "post": "relationship_create",
-                        "patch": "relationship_update",
-                        "delete": "relationship_destroy",
-                    },
+                    mapping=action_map,
                     name="{{basename}}-relationships-{}".format(relationship),
                     detail=True,
                     initkwargs={"suffix": relationship},

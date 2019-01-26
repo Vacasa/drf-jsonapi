@@ -1,5 +1,5 @@
 from django.urls import reverse, NoReverseMatch
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 from rest_framework.exceptions import ParseError
 
@@ -14,13 +14,17 @@ class RelationshipHandler:
     many = False
     serializer_class = None
     related_field = None
+    default_page_size = None
 
-    def __init__(self, serializer_class, related_field=None, many=None):
+    def __init__(
+        self, serializer_class, related_field=None, many=None, read_only=False
+    ):
         self.serializer_class = serializer_class
         if related_field is not None:
             self.related_field = related_field
         if many is not None:
             self.many = many
+        self.read_only = read_only
 
     def validate(self, data):
         """
@@ -114,7 +118,7 @@ class RelationshipHandler:
             )
         )
 
-    def apply_pagination(self, related, page_size):
+    def apply_pagination(self, related, page_size=None, page_number=1):
         """
         Builds a pagination metadata for a JSON-API response
 
@@ -126,19 +130,32 @@ class RelationshipHandler:
         :rtype: list
         """
 
+        page_size = page_size or self.default_page_size
+        page_number = int(page_number)
+
         paginator = Paginator(related, page_size)
-        page = paginator.page(1)
 
-        meta = {
-            "count": paginator.count,
-            "has_next": page.has_next(),
-            "has_previous": page.has_previous(),
-            "page_size": paginator.per_page,
-            "page": page.number,
-            "num_pages": paginator.num_pages,
-        }
-
-        return page.object_list, meta
+        try:
+            page = paginator.page(page_number)
+            meta = {
+                "count": paginator.count,
+                "has_next": page.has_next(),
+                "has_previous": page.has_previous(),
+                "page_size": paginator.per_page,
+                "page": page.number,
+                "num_pages": paginator.num_pages,
+            }
+            return page.object_list, meta
+        except EmptyPage:
+            meta = {
+                "count": paginator.count,
+                "has_next": False,
+                "has_previous": page_number == paginator.count + 1,
+                "page_size": paginator.per_page,
+                "page": int(page_number),
+                "num_pages": paginator.num_pages,
+            }
+            return [], meta
 
     def add_related(self, resource, related, request):
         """
