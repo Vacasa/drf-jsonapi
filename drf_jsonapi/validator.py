@@ -4,6 +4,78 @@ from django.core.validators import _lazy_re_compile, _
 from django.core.exceptions import ValidationError
 from rest_framework.response import Response
 
+DISALLOWED_BOUNDARY_CHARS = {
+    0x002D,  # HYPHEN - MINUS, “-“
+    0x005F,  # LOW LINE, “_”
+    0x0020,  # SPACE, “ “ (not recommended, not URL safe)
+}
+
+DISALLOWED_CHARS = {
+    0x002B,  # PLUS SIGN, “+” (used for ordering)
+    0x002C,  # COMMA, “,” (used as a separator between relationship paths)
+    0x002E,  # PERIOD, “.” (used as a separator within relationship paths)
+    0x005B,  # LEFT SQUARE BRACKET, “[” (used in sparse fieldsets)
+    0x005D,  # RIGHT SQUARE BRACKET, “]” (used in sparse fieldsets)
+    0x0021,  # EXCLAMATION MARK, “!”
+    0x0022,  # QUOTATION MARK, ‘”’
+    0x0023,  # NUMBER SIGN, “#”
+    0x0024,  # DOLLAR SIGN, “$”
+    0x0025,  # PERCENT SIGN, “%”
+    0x0026,  # AMPERSAND, “&”
+    0x0027,  # APOSTROPHE, “’”
+    0x0028,  # LEFT PARENTHESIS, “(“
+    0x0029,  # RIGHT PARENTHESIS, “)”
+    0x002A,  # ASTERISK, “*”
+    0x002F,  # SOLIDUS, “/”
+    0x003A,  # COLON, “:”
+    0x003B,  # SEMICOLON, “;”
+    0x003C,  # LESS-THAN SIGN, “<”
+    0x003D,  # EQUALS SIGN, “=”
+    0x003E,  # GREATER-THAN SIGN, “>”
+    0x003F,  # QUESTION MARK, “?”
+    0x0040,  # COMMERCIAL AT, “@”
+    0x005C,  # REVERSE SOLIDUS, “\”
+    0x005E,  # CIRCUMFLEX ACCENT, “^”
+    0x0060,  # GRAVE ACCENT, “`”
+    0x007B,  # LEFT CURLY BRACKET, “{“
+    0x007C,  # VERTICAL LINE, “|”
+    0x007D,  # RIGHT CURLY BRACKET, “}”
+    0x007E,  # TILDE, “~”
+    0x007F,  # DELETE
+    0x0000,  # to U+001F (C0 Controls)
+    0x0001,  # (C0 Controls)
+    0x0002,  # (C0 Controls)
+    0x0003,  # (C0 Controls)
+    0x0004,  # (C0 Controls)
+    0x0005,  # (C0 Controls)
+    0x0006,  # (C0 Controls)
+    0x0007,  # (C0 Controls)
+    0x0008,  # (C0 Controls)
+    0x0009,  # (C0 Controls)
+    0x000A,  # (C0 Controls)
+    0x000B,  # (C0 Controls)
+    0x000C,  # (C0 Controls)
+    0x000D,  # (C0 Controls)
+    0x000E,  # (C0 Controls)
+    0x000F,  # (C0 Controls)
+    0x0010,  # (C0 Controls)
+    0x0011,  # (C0 Controls)
+    0x0012,  # (C0 Controls)
+    0x0013,  # (C0 Controls)
+    0x0014,  # (C0 Controls)
+    0x0015,  # (C0 Controls)
+    0x0016,  # (C0 Controls)
+    0x0017,  # (C0 Controls)
+    0x0018,  # (C0 Controls)
+    0x0019,  # (C0 Controls)
+    0x001A,  # (C0 Controls)
+    0x001B,  # (C0 Controls)
+    0x001C,  # (C0 Controls)
+    0x001D,  # (C0 Controls)
+    0x001E,  # (C0 Controls)
+    0x001F,  # (C0 Controls)
+}
+
 
 class URLValidator(DjangoURLValidator):
     """
@@ -978,109 +1050,39 @@ class JsonApiValidator(object):
         :rtype: list
         """
 
-        disallowed_boundary_chars = [
-            0x002D,  # HYPHEN - MINUS, “-“
-            0x005F,  # LOW LINE, “_”
-            0x0020,  # SPACE, “ “ (not recommended, not URL safe)
-        ]
-
-        disallowed_chars = [
-            0x002B,  # PLUS SIGN, “+” (used for ordering)
-            0x002C,  # COMMA, “,” (used as a separator between relationship paths)
-            0x002E,  # PERIOD, “.” (used as a separator within relationship paths)
-            0x005B,  # LEFT SQUARE BRACKET, “[” (used in sparse fieldsets)
-            0x005D,  # RIGHT SQUARE BRACKET, “]” (used in sparse fieldsets)
-            0x0021,  # EXCLAMATION MARK, “!”
-            0x0022,  # QUOTATION MARK, ‘”’
-            0x0023,  # NUMBER SIGN, “#”
-            0x0024,  # DOLLAR SIGN, “$”
-            0x0025,  # PERCENT SIGN, “%”
-            0x0026,  # AMPERSAND, “&”
-            0x0027,  # APOSTROPHE, “’”
-            0x0028,  # LEFT PARENTHESIS, “(“
-            0x0029,  # RIGHT PARENTHESIS, “)”
-            0x002A,  # ASTERISK, “*”
-            0x002F,  # SOLIDUS, “/”
-            0x003A,  # COLON, “:”
-            0x003B,  # SEMICOLON, “;”
-            0x003C,  # LESS-THAN SIGN, “<”
-            0x003D,  # EQUALS SIGN, “=”
-            0x003E,  # GREATER-THAN SIGN, “>”
-            0x003F,  # QUESTION MARK, “?”
-            0x0040,  # COMMERCIAL AT, “@”
-            0x005C,  # REVERSE SOLIDUS, “\”
-            0x005E,  # CIRCUMFLEX ACCENT, “^”
-            0x0060,  # GRAVE ACCENT, “`”
-            0x007B,  # LEFT CURLY BRACKET, “{“
-            0x007C,  # VERTICAL LINE, “|”
-            0x007D,  # RIGHT CURLY BRACKET, “}”
-            0x007E,  # TILDE, “~”
-            0x007F,  # DELETE
-            0x0000,  # to U+001F (C0 Controls)
-            0x0001,  # (C0 Controls)
-            0x0002,  # (C0 Controls)
-            0x0003,  # (C0 Controls)
-            0x0004,  # (C0 Controls)
-            0x0005,  # (C0 Controls)
-            0x0006,  # (C0 Controls)
-            0x0007,  # (C0 Controls)
-            0x0008,  # (C0 Controls)
-            0x0009,  # (C0 Controls)
-            0x000A,  # (C0 Controls)
-            0x000B,  # (C0 Controls)
-            0x000C,  # (C0 Controls)
-            0x000D,  # (C0 Controls)
-            0x000E,  # (C0 Controls)
-            0x000F,  # (C0 Controls)
-            0x0010,  # (C0 Controls)
-            0x0011,  # (C0 Controls)
-            0x0012,  # (C0 Controls)
-            0x0013,  # (C0 Controls)
-            0x0014,  # (C0 Controls)
-            0x0015,  # (C0 Controls)
-            0x0016,  # (C0 Controls)
-            0x0017,  # (C0 Controls)
-            0x0018,  # (C0 Controls)
-            0x0019,  # (C0 Controls)
-            0x001A,  # (C0 Controls)
-            0x001B,  # (C0 Controls)
-            0x001C,  # (C0 Controls)
-            0x001D,  # (C0 Controls)
-            0x001E,  # (C0 Controls)
-            0x001F,  # (C0 Controls)
-        ]
-
-        ret = []
+        errors = []
         for key, val in data_dict.items():
-            if key == "":
-                ret.extend(["<empty_string> is not a valid Member Name"])
-            else:
-                disallowed_boundary_chars = [
-                    char
-                    for char in [key[0], key[-1]]
-                    if ord(char) in disallowed_boundary_chars
-                ]
-                if disallowed_boundary_chars:
-                    ret.extend(
-                        [
-                            "'{}' is not a valid boundary character in a Member Name".format(
-                                char
-                            )
-                            for char in disallowed_boundary_chars
-                        ]
-                    )
-                disallowed_chars = [
-                    char for char in key if ord(char) in disallowed_chars
-                ]
-                if disallowed_chars:
-                    ret.extend(
-                        [
-                            "'{}' is not a valid character in a Member Name".format(
-                                char
-                            )
-                            for char in disallowed_chars
-                        ]
-                    )
+
             if isinstance(val, dict):
-                ret.extend(self._validate_member_names(val))
-        return ret
+                errors.extend(self._validate_member_names(val))
+
+            if key == "":
+                errors.extend(["<empty_string> is not a valid Member Name"])
+                continue
+
+            boundary_chars = [key[0], key[-1]]
+            disallowed_boundary_chars = [
+                char
+                for char in boundary_chars
+                if ord(char) in DISALLOWED_BOUNDARY_CHARS
+            ]
+            if disallowed_boundary_chars:
+                errors.extend(
+                    [
+                        "'{}' is not a valid boundary character in a Member Name".format(
+                            char
+                        )
+                        for char in disallowed_boundary_chars
+                    ]
+                )
+
+            disallowed_chars = [char for char in key if ord(char) in DISALLOWED_CHARS]
+            if disallowed_chars:
+                errors.extend(
+                    [
+                        "'{}' is not a valid character in a Member Name".format(char)
+                        for char in disallowed_chars
+                    ]
+                )
+
+        return errors
