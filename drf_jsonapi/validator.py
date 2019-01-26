@@ -562,15 +562,13 @@ class JsonApiValidator(object):
         :return: A list of validation messages
         :rtype: list
         """
-
+        errors = []
         for key, data_list in data_dict.items():
             if not isinstance(data_list, list):
                 data_list = [data_list]
             for element in data_list:
-                ret = self._validate_resource_object_relationship(element)
-                if ret:
-                    return ret
-        return []
+                errors.extend(self._validate_resource_object_relationship(element))
+        return errors
 
     def _validate_resource_object_relationship(self, data_dict):
         """
