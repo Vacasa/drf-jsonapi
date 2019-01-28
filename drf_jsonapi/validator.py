@@ -206,10 +206,15 @@ class JsonApiValidator:
         :return: A list of validation messages
         :rtype: list
         """
+        must_contain = must_contain or {}
+        must_contain_one = must_contain_one or {}
+        may_contain = may_contain or {}
+        must_not_contain = must_not_contain or []
+        must_not_contain_both = must_not_contain_both or []
 
-        ret = []
+        errors = []
         for key in [key for key in must_contain if key not in data_dict]:
-            ret.append(
+            errors.append(
                 "Object of type '{}' MUST contain element of type '{}'".format(
                     entity_name, key
                 )
@@ -219,7 +224,7 @@ class JsonApiValidator:
         if must_contain_one and set(must_contain_one) - set(data_dict) == set(
             must_contain_one
         ):
-            ret.append(
+            errors.append(
                 "Object of type '{}' MUST contain one of ({})".format(
                     entity_name,
                     ", ".join(["'{}'".format(key) for key in must_contain_one]),
@@ -231,7 +236,7 @@ class JsonApiValidator:
             for key in set(data_dict) - (
                 set(may_contain) | set(must_contain) | set(must_contain_one)
             ):
-                ret.append(
+                errors.append(
                     "Object of type '{}' MUST NOT contain element of type '{}'".format(
                         entity_name, key
                     )
@@ -240,7 +245,7 @@ class JsonApiValidator:
         # verify that we don't include two keys that can't appear together
         for [one, two] in must_not_contain_both:
             if one in data_dict and two in data_dict:
-                ret.append(
+                errors.append(
                     "Object of type '{}' MUST NOT contain both of ('{}', '{}')".format(
                         entity_name, one, two
                     )
@@ -248,7 +253,7 @@ class JsonApiValidator:
 
         # verify that we don't have any strictly prohibited keys in our object
         for key in set(must_not_contain) & set(data_dict):
-            ret.append(
+            errors.append(
                 "Object of type '{}' MUST NOT contain element of type '{}'".format(
                     entity_name, key
                 )
@@ -261,9 +266,9 @@ class JsonApiValidator:
         }.items():
             if validator and key in data_dict:
                 fxn = getattr(self, "_validate_{}".format(validator))
-                ret.extend(fxn(data_dict[key]))
+                errors.extend(fxn(data_dict[key]))
 
-        return ret
+        return errors
 
     def _validate_top_level(self, data_dict):
         """
