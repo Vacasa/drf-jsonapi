@@ -73,18 +73,9 @@ class ResourceSerializer(serializers.Serializer):
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
 
     def validate_includes(self, includes):
-        include_tree = {}
-        for include in list(filter(None, includes)):
-            parts = include.split(".")
-            root = parts[0]
-            if root not in include_tree:
-                include_tree[root] = []
-            branches = ".".join(parts[1:])
-            if branches:
-                include_tree[root].append(branches)
 
-        self.include = list(include_tree.keys())
-        self.include_tree = include_tree
+        self.include_tree = self._build_include_tree(includes)
+        self.include = list(self.include_tree.keys())
 
         invalid_includes = list(set(self.include) - set(self.relationships.keys()))
         if invalid_includes:
@@ -94,6 +85,18 @@ class ResourceSerializer(serializers.Serializer):
                 ),
                 source={"parameter": "include"},
             )
+
+    def _build_include_tree(self, includes):
+        include_tree = {}
+        for include in list(filter(None, includes)):
+            parts = include.split(".")
+            root = parts[0]
+            if root not in include_tree:
+                include_tree[root] = []
+            branches = ".".join(parts[1:])
+            if branches:
+                include_tree[root].append(branches)
+        return include_tree
 
     def apply_sparse_fieldset(self, fields=None):
         """

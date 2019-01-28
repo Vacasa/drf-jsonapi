@@ -237,20 +237,17 @@ class RelationshipRetrieveMixin:
         serializer_class = handler.serializer_class
         related = handler.get_related(resource, request)
 
-        if related:
-            # Sorting
-            if handler.many:
-                related = serializer_class.sort(request.GET.get("sort"), related)
-                related = self.apply_pagination(related)
-
-            serializer = resource_identifier(serializer_class)(
-                related, many=handler.many
-            )
-
-            self.document.instance.data = serializer.data
-        else:
+        if not related:
             self.document.instance.data = [] if handler.many else None
+            return Response(self.document.data)
 
+        if handler.many:
+            related = serializer_class.sort(request.GET.get("sort"), related)
+            related = self.apply_pagination(related)
+
+        serializer = resource_identifier(serializer_class)(related, many=handler.many)
+
+        self.document.instance.data = serializer.data
         return Response(self.document.data)
 
 
