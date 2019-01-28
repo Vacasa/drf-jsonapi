@@ -70,13 +70,7 @@ class Router(DefaultRouter):
             if not mapping:
                 continue
 
-            # Build the url pattern
-            regex = route.url.format(
-                prefix=prefix, lookup=lookup, trailing_slash=self.trailing_slash
-            )
-
-            if not prefix and regex[:2] == "^/":
-                regex = "^" + regex[2:]
+            regex = self._build_url_regex(route, prefix, lookup, self.trailing_slash)
 
             initkwargs = route.initkwargs.copy()
             initkwargs.update({"basename": basename, "detail": route.detail})
@@ -86,6 +80,12 @@ class Router(DefaultRouter):
             urls.append(re_path(regex, view, getattr(route, "kwargs", {}), name=name))
 
         return urls
+
+    def _build_url_regex(self, route, prefix, lookup, trailing_slash):
+        regex = route.url.format(
+            prefix=prefix, lookup=lookup, trailing_slash=self.trailing_slash
+        )
+        return "^" + regex[2:] if not prefix and regex[:2] == "^/" else regex
 
     def register(self, viewset):  # noqa
         basename = getattr(
