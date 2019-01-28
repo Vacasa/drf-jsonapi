@@ -46,32 +46,7 @@ class Router(DefaultRouter):
         urls = []
 
         for prefix, viewset, basename in self.registry:
-            lookup = self.get_lookup_regex(viewset)
-            routes = self.get_routes(viewset)
-
-            for route in routes:
-
-                # Only actions which actually exist on the viewset will be bound
-                mapping = self.get_method_map(viewset, route.mapping)
-                if not mapping:
-                    continue
-
-                # Build the url pattern
-                regex = route.url.format(
-                    prefix=prefix, lookup=lookup, trailing_slash=self.trailing_slash
-                )
-
-                if not prefix and regex[:2] == "^/":
-                    regex = "^" + regex[2:]
-
-                initkwargs = route.initkwargs.copy()
-                initkwargs.update({"basename": basename, "detail": route.detail})
-
-                view = viewset.as_view(mapping, **initkwargs)
-                name = route.name.format(basename=basename)
-                urls.append(
-                    re_path(regex, view, getattr(route, "kwargs", {}), name=name)
-                )
+            urls.extend(self.get_urls_for_viewset(prefix, viewset, basename))
 
         if self.include_root_view:
             view = self.get_api_root_view(api_urls=urls)
@@ -80,6 +55,35 @@ class Router(DefaultRouter):
 
         if self.include_format_suffixes:
             urls = format_suffix_patterns(urls)
+
+        return urls
+
+    def get_urls_for_viewset(self, prefix, viewset, basename):
+        urls = []
+
+        lookup = self.get_lookup_regex(viewset)
+        routes = self.get_routes(viewset)
+
+        for route in routes:
+            # Only actions which actually exist on the viewset will be bound
+            mapping = self.get_method_map(viewset, route.mapping)
+            if not mapping:
+                continue
+
+            # Build the url pattern
+            regex = route.url.format(
+                prefix=prefix, lookup=lookup, trailing_slash=self.trailing_slash
+            )
+
+            if not prefix and regex[:2] == "^/":
+                regex = "^" + regex[2:]
+
+            initkwargs = route.initkwargs.copy()
+            initkwargs.update({"basename": basename, "detail": route.detail})
+
+            view = viewset.as_view(mapping, **initkwargs)
+            name = route.name.format(basename=basename)
+            urls.append(re_path(regex, view, getattr(route, "kwargs", {}), name=name))
 
         return urls
 
