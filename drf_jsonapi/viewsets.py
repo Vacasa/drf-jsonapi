@@ -40,7 +40,9 @@ class ViewSet(GenericViewSet):
 
     @property
     def view_name_prefix(self):
-        return self.serializer_class.Meta.type.title()
+        if hasattr(self, "serializer_class") and self.serializer_class:
+            return self.serializer_class.Meta.type.title()
+        return ""
 
     def get_queryset(self):
         """

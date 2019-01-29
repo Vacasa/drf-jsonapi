@@ -7,6 +7,11 @@ from drf_jsonapi.response import Response
 from drf_jsonapi.objects import Error
 
 
+class TestSerializer:
+    class Meta:
+        type = "Test Type"
+
+
 class TestViewSet(ViewSet):
     authentication_classes = []
     permission_classes = []
@@ -27,15 +32,19 @@ class TestViewSet(ViewSet):
 class ViewSetTestCase(TestCase):
     def test_get_view_name(self):
         viewset = TestViewSet()
-        viewset.view_name_prefix = "test"
         viewset.suffix = "list"
         self.assertEqual(
             viewset.get_view_name(), viewset.view_name_prefix + " " + viewset.suffix
         )
 
+    def test_get_view_name_from_serializer(self):
+        TestViewSet.serializer_class = TestSerializer
+        viewset = TestViewSet()
+        viewset.suffix = "list"
+        self.assertEqual(viewset.get_view_name(), "Test Type" + " " + "list")
+
     def test_get_view_name_no_suffix(self):
         viewset = TestViewSet()
-        viewset.view_name_prefix = "test"
         self.assertEqual(viewset.get_view_name(), viewset.view_name_prefix)
 
     def test_get_queryset(self):

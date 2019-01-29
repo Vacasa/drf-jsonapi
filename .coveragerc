@@ -2,7 +2,9 @@
 source = drf_jsonapi
 branch = true
 omit =
+  drf_jsonapi/__init__.py
   tests/*
+  example/*
   venv/*
   runtests.py
   setup.py
