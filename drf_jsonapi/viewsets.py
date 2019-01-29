@@ -38,6 +38,10 @@ class ViewSet(GenericViewSet):
     filter_class = None
     validate_http_methods = ["POST", "PUT", "PATCH"]
 
+    @property
+    def view_name_prefix(self):
+        return self.serializer_class.Meta.type.title()
+
     def get_queryset(self):
         """
         Return the queryset that will be used to retrieve the object that this
