@@ -33,7 +33,7 @@ class Router(DefaultRouter):
                     mapping=action_map,
                     name="{{basename}}-relationships-{}".format(relationship),
                     detail=True,
-                    initkwargs={"suffix": relationship},
+                    initkwargs={"suffix": relationship.title()},
                     kwargs={"relationship": relationship},
                 )
             )
@@ -83,7 +83,7 @@ class Router(DefaultRouter):
 
     def _build_url_regex(self, route, prefix, lookup, trailing_slash):
         regex = route.url.format(
-            prefix=prefix, lookup=lookup, trailing_slash=self.trailing_slash
+            prefix=prefix, lookup=lookup, trailing_slash=trailing_slash
         )
         return "^" + regex[2:] if not prefix and regex[:2] == "^/" else regex
 
