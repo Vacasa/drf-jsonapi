@@ -2,4 +2,4 @@ Django==2.1.5
 django-filter==2.0.0  
 djangorestframework==3.8.2
 drf-yasg==1.12.1 
-git+https://github.com/Vacasa/drf-jsonapi@1.0rc#egg=drf-jsonapi
+git+https://github.com/Vacasa/drf-jsonapi@1.0#egg=drf-jsonapi
