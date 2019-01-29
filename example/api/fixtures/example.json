@@ -1,0 +1,386 @@
+[
+    {
+        "model": "api.publisher",
+        "pk": 1,
+        "fields": {
+            "name": "Putnam"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 2,
+        "fields": {
+            "name": "Little, Brown"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 3,
+        "fields": {
+            "name": "Harper"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 4,
+        "fields": {
+            "name": "Doubleday"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 5,
+        "fields": {
+            "name": "Delacorte"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 6,
+        "fields": {
+            "name": "St. Martin's"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 7,
+        "fields": {
+            "name": "Red Dress Press"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 8,
+        "fields": {
+            "name": "Penguin"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 9,
+        "fields": {
+            "name": "Forge"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 10,
+        "fields": {
+            "name": "Grand Central"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 11,
+        "fields": {
+            "name": "Stoker Aces"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 12,
+        "fields": {
+            "name": "Flatiron"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 13,
+        "fields": {
+            "name": "Harlequin"
+        }
+    },
+    {
+        "model": "api.publisher",
+        "pk": 14,
+        "fields": {
+            "name": "Simon & Schuster"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 1,
+        "fields": {
+            "name": "Delia Owens"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 2,
+        "fields": {
+            "name": "James Patterson"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 3,
+        "fields": {
+            "name": "Candice Fox"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 4,
+        "fields": {
+            "name": "Heather Morris"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 5,
+        "fields": {
+            "name": "John Grisham"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 6,
+        "fields": {
+            "name": "Danielle Steel"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 7,
+        "fields": {
+            "name": "Greer Hendricks"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 8,
+        "fields": {
+            "name": "Sarah Pekkanen"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 9,
+        "fields": {
+            "name": "Meghan March"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 10,
+        "fields": {
+            "name": "Gail Honeyman"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 11,
+        "fields": {
+            "name": "W. Bruce Cameron"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 12,
+        "fields": {
+            "name": "James Patterson"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 13,
+        "fields": {
+            "name": "Darynda Jones"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 14,
+        "fields": {
+            "name": "Susan Stoker"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 15,
+        "fields": {
+            "name": "Liane Moriarty"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 16,
+        "fields": {
+            "name": "RaeAnne Thayne"
+        }
+    },
+    {
+        "model": "api.author",
+        "pk": 17,
+        "fields": {
+            "name": "James Lee Burke"
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 1,
+        "fields": {
+            "title": "Where The Crawdads Sing",
+            "publisher": 1,
+            "authors": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 2,
+        "fields": {
+            "title": "Liar Liar",
+            "publisher": 2,
+            "authors": [
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 3,
+        "fields": {
+            "title": "The Tattooist of Auschwitz",
+            "publisher": 3,
+            "authors": [
+                4
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 4,
+        "fields": {
+            "title": "The Reckoning",
+            "publisher": 4,
+            "authors": [
+                5
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 5,
+        "fields": {
+            "title": "Turning Point",
+            "publisher": 5,
+            "authors": [
+                6
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 6,
+        "fields": {
+            "title": "An Anonymous Girl",
+            "publisher": 6,
+            "authors": [
+                7,
+                8
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 7,
+        "fields": {
+            "title": "Deal With The Devil",
+            "publisher": 7,
+            "authors": [
+                9
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 8,
+        "fields": {
+            "title": "Eleanor Oliphant Is Completely Fine",
+            "publisher": 8,
+            "authors": [
+                10
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 9,
+        "fields": {
+            "title": "A Dog's Way Home",
+            "publisher": 9,
+            "authors": [
+                11
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 10,
+        "fields": {
+            "title": "The House Next Door",
+            "publisher": 10,
+            "authors": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 11,
+        "fields": {
+            "title": "Summoned To The Thirteenth Grave",
+            "publisher": 6,
+            "authors": [
+                12
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 12,
+        "fields": {
+            "title": "Securing Caite",
+            "publisher": 11,
+            "authors": [
+                13
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 13,
+        "fields": {
+            "title": "Nine Perfect Strangers",
+            "publisher": 12,
+            "authors": [
+                14
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 14,
+        "fields": {
+            "title": "A Soldier's Return",
+            "publisher": 13,
+            "authors": [
+                15
+            ]
+        }
+    },
+    {
+        "model": "api.book",
+        "pk": 15,
+        "fields": {
+            "title": "The New Iberia Blues",
+            "publisher": 14,
+            "authors": [
+                16
+            ]
+        }
+    }
+]
