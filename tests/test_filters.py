@@ -23,6 +23,25 @@ class TestFilterSet(FilterSet):
 
 
 class FilterSetTestCase(TestCase):
+    def test_parse_filters(self):
+        query = {
+            "filter[fieldname][gte]": 10,
+            "filter[foo][bar]": "foobar",
+            "invalid": "filter",
+        }
+        translated_data = TestFilterSet.parse_filters(query)
+        self.assertDictEqual(
+            translated_data, {"fieldname__gte": 10, "foo__bar": "foobar"}
+        )
+
+    def test_parse_filter_field(self):
+        field = TestFilterSet.parse_filter_field("filter[fieldname][gte]")
+        self.assertEqual(field, "fieldname__gte")
+
+    def test_parse_filter_field_invalid(self):
+        field = TestFilterSet.parse_filter_field("filter_fieldname")
+        self.assertIsNone(field)
+
     def test_init(self):
         factory = APIRequestFactory()
         request = factory.get("/tests/?filter[id]=1&filter[name][contains]=foobar")

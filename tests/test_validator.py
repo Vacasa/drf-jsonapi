@@ -414,6 +414,20 @@ class TestJsonApiValidator(unittest.TestCase):
         )
 
     @tag("resource_identifier_object")
+    def test_validate_resource_identifier_objects(self):
+        test_resource_identifier = [{
+            "type": "test_type",
+            "id": "test_id",
+            "meta": "test_meta",
+        }]
+        self.assertEqual(
+            [],
+            self.validator._validate_resource_identifier_objects(
+                test_resource_identifier
+            ),
+        )
+
+    @tag("resource_identifier_object")
     def test_validate_resource_identifier_object(self):
         """
         http://jsonapi.org/format/#document-resource-identifier-objects
@@ -653,6 +667,11 @@ class TestJsonApiValidator(unittest.TestCase):
         )
 
     @tag("resource_linkage")
+    def test_validate_resource_linkage(self):
+        errors = self.validator._validate_resource_linkage({"foo": "bar"})
+        self.assertTrue(len(errors))
+
+    @tag("resource_linkage")
     def test_validate_resource_linkage_passes_with_none(self):
         self.assertEqual([], self.validator._validate_resource_linkage(None))
 
@@ -668,6 +687,10 @@ class TestJsonApiValidator(unittest.TestCase):
     @tag("url")
     def test_validate_url_passes_with_good_url(self):
         self.assertEqual([], self.validator._validate_url("http://testserver"))
+
+    @tag("url")
+    def test_validate_url_None(self):
+        self.assertEqual([], self.validator._validate_url(None))
 
     @tag("url")
     def test_validate_url_fails_with_bad_url(self):

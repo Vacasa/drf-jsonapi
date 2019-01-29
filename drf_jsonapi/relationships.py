@@ -150,7 +150,7 @@ class RelationshipHandler:
             meta = {
                 "count": paginator.count,
                 "has_next": False,
-                "has_previous": page_number == paginator.count + 1,
+                "has_previous": page_number == paginator.num_pages + 1,
                 "page_size": paginator.per_page,
                 "page": int(page_number),
                 "num_pages": paginator.num_pages,

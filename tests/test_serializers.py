@@ -95,6 +95,22 @@ class ErrorSerializerTestCase(TestCase):
             },
         )
 
+    def test_to_representation_no_status_or_detail(self):
+        self.error.status_code = None
+        self.error.detail = None
+        serializer = ErrorSerializer(self.error)
+        self.assertDictEqual(
+            serializer.data,
+            {
+                "id": self.error.id,
+                "links": self.error.links,
+                "code": self.error.code,
+                "title": self.error.title,
+                "source": self.error.source,
+                "meta": self.error.meta,
+            },
+        )
+
 
 class ResourceListSerializerTestCase(TestCase):
 
@@ -144,6 +160,9 @@ class ResourceSerializerTestCase(TestCase):
                 "created_at": "1981-11-26T03:24:00",
             },
         }
+
+    def test_define_relationships(self):
+        self.assertDictEqual(ResourceSerializer.define_relationships(), {})
 
     def test_save(self):
         serializer = self.serializer_class(data=self.test_request)
@@ -202,7 +221,8 @@ class ResourceSerializerTestCase(TestCase):
                     ),
                 },
                 "relationships": {
-                    "related_things": {"links": {"self": "http://testserver/"}}
+                    "related_things": {"links": {"self": "http://testserver/"}},
+                    "empty_things": {"links": {"self": "http://testserver/"}},
                 },
             },
         )
@@ -218,9 +238,20 @@ class ResourceSerializerTestCase(TestCase):
         with self.assertRaises(Error):
             mocks.TestResourceSerializer(self.resource, include=["foobar"])
 
-    def test_empty_relationship(self):
+    def test_no_includes(self):
         serializer = mocks.TestResourceSerializer(self.resource, include=["", None])
         self.assertNotIn("data", serializer.data["relationships"])
+
+    def test_get_relationships_empty(self):
+        serializer = mocks.TestResourceSerializer(
+            self.resource, include=["empty_things"], page_size=10
+        )
+        data = serializer.data
+        self.assertIn("relationships", data)
+        self.assertDictEqual(
+            data["relationships"]["empty_things"],
+            {"links": {"self": "http://testserver/"}, "data": []},
+        )
 
     def test_get_relationships(self):
         serializer = mocks.TestResourceSerializer(
@@ -229,17 +260,25 @@ class ResourceSerializerTestCase(TestCase):
         data = serializer.data
         self.assertIn("relationships", data)
         self.assertDictEqual(
-            data["relationships"],
+            data["relationships"]["related_things"],
             {
-                "related_things": {
-                    "links": {"self": "http://testserver/"},
-                    "data": [
-                        {"type": "test_resource", "id": 5},
-                        {"type": "test_resource", "id": 6},
-                    ],
-                }
+                "links": {"self": "http://testserver/"},
+                "data": [
+                    {"type": "test_resource", "id": 5},
+                    {"type": "test_resource", "id": 6},
+                ],
             },
         )
+
+    def test_no_relationships(self):
+        class TestSerializer(mocks.TestResourceSerializer):
+            @staticmethod
+            def define_relationships():
+                return {}
+
+        serializer = TestSerializer(self.resource, page_size=10)
+        data = serializer.data
+        self.assertNotIn("relationships", data)
 
     def test_get_relationships_with_pagination(self):
         factory = APIRequestFactory()
@@ -253,23 +292,21 @@ class ResourceSerializerTestCase(TestCase):
         data = serializer.data
         self.assertIn("relationships", data)
         self.assertDictEqual(
-            data["relationships"],
+            data["relationships"]["related_things"],
             {
-                "related_things": {
-                    "links": {"self": "http://testserver/"},
-                    "data": [
-                        {"type": "test_resource", "id": 5},
-                        {"type": "test_resource", "id": 6},
-                    ],
-                    "meta": {
-                        "count": 2,
-                        "has_next": False,
-                        "has_previous": False,
-                        "page_size": 5,
-                        "page": 1,
-                        "num_pages": 1,
-                    },
-                }
+                "links": {"self": "http://testserver/"},
+                "data": [
+                    {"type": "test_resource", "id": 5},
+                    {"type": "test_resource", "id": 6},
+                ],
+                "meta": {
+                    "count": 2,
+                    "has_next": False,
+                    "has_previous": False,
+                    "page_size": 5,
+                    "page": 1,
+                    "num_pages": 1,
+                },
             },
         )
 
@@ -301,7 +338,7 @@ class ResourceSerializerTestCase(TestCase):
         included = serializer.included
         self.assertEqual(len(included), 2)
 
-    def test_apply_sparse_fielset(self):
+    def test_apply_sparse_fieldset(self):
         serializer = mocks.TestResourceSerializer(
             self.resource, only_fields={"test_resource": ["name"]}
         )
@@ -316,7 +353,8 @@ class ResourceSerializerTestCase(TestCase):
                 },
                 "attributes": {"name": self.resource.name},
                 "relationships": {
-                    "related_things": {"links": {"self": "http://testserver/"}}
+                    "related_things": {"links": {"self": "http://testserver/"}},
+                    "empty_things": {"links": {"self": "http://testserver/"}},
                 },
             },
         )

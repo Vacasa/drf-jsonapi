@@ -173,13 +173,9 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             default_schema = self.serializer_to_schema(default_schema) or ""
 
         if default_schema and self.is_list():
-            default_schema = openapi.Schema(
-                type=openapi.TYPE_ARRAY, items=default_schema
+            default_schema = self.get_paginated_response(
+                openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
             )
-            if self.should_page():
-                default_schema = (
-                    self.get_paginated_response(default_schema) or default_schema
-                )
 
         return OrderedDict({str(default_status): default_schema})
 
@@ -220,17 +216,6 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         if self.method.lower() != "get":
             return False
         return is_list_view(self.path, self.method, self.view)
-
-    def should_page(self):
-        """
-        Determine if pagination should apply to this schema
-
-        :param drf_jsonapi.inspectors.SwaggerAutoSchema self: This object
-        :return: A boolean indicating if this schema should include pagination
-        :rtype: boolean
-        """
-
-        return self.is_list()
 
     def get_sort_parameters(self):
         """
@@ -289,9 +274,9 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         )
 
         if self.is_list():
-            relationships = getattr(serializer_class.Meta, "relationships", {})
+            relationships = serializer_class.define_relationships()
             for serializer_class in [
-                r.get_serializer_class() for r in relationships.values()
+                r.serializer_class for r in relationships.values()
             ]:
                 parameters[serializer_class.Meta.type] = openapi.Parameter(
                     name="fields[{}]".format(serializer_class.Meta.type),
@@ -322,7 +307,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
                 name="include",
                 in_="query",
                 type="string",
-                enum=list(getattr(serializer_class.Meta, "relationships", {}).keys()),
+                enum=list(serializer_class.define_relationships().keys()),
                 description="Multiple values may be separated by commas.",
             )
         ]
@@ -336,7 +321,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         :rtype: list[openapi.Parameter]
         """
 
-        if not self.should_page():
+        if not self.is_list():
             return []
 
         default_page_size = getattr(

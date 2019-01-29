@@ -107,20 +107,17 @@ class ResourceSerializer(serializers.Serializer):
         :param list fields: A list of fields that object properties will be limited to.
         """
 
-        # Validate the field list against Meta.fields
-        if hasattr(self.Meta, "fields"):
-            invalid_fields = set(fields).difference(self.Meta.fields)
-            if invalid_fields:
-                raise ParseError(
-                    "Invalid field(s) for fields[{}]: {}".format(
-                        self.Meta.type, ",".join(invalid_fields)
-                    )
+        # Validate the field list against available fields
+        invalid_fields = set(fields).difference(self.fields.keys())
+        if invalid_fields:
+            raise ParseError(
+                "Invalid field(s) for fields[{}]: {}".format(
+                    self.Meta.type, ",".join(invalid_fields)
                 )
+            )
 
         # Drop any fields that are not specified in the `fields` argument.
-        allowed = set(fields)
-        existing = set(self.fields)
-        for field_name in existing - allowed:
+        for field_name in set(self.fields) - set(fields):
             self.fields.pop(field_name)
 
     def run_validation(self, data=empty):
@@ -222,36 +219,34 @@ class ResourceSerializer(serializers.Serializer):
         serializer_class = handler.serializer_class
         related = handler.get_related(instance, request)
 
-        if related:
-
-            if handler.many:
-                if request:
-                    page_number = request.GET.get(
-                        "page[{}][number]".format(relation), 1
-                    )
-                    page_size = request.GET.get("page[{}][size]".format(relation), None)
-                else:
-                    page_size = None
-                if page_size:
-                    related, data["meta"] = handler.apply_pagination(
-                        related, page_size, page_number
-                    )
-
-            data["data"] = resource_identifier(serializer_class)(
-                related, many=handler.many, context={"request": request}
-            ).data
-
-            related_serializer = serializer_class(
-                related,
-                many=handler.many,
-                only_fields=self.only_fields,
-                include=self.include_tree.get(relation, []),
-                context={"request": request},
-            )
-            self.included += listify(related_serializer.data)
-            self.included += related_serializer.included
-        else:
+        if not related:
             data["data"] = [] if handler.many else None
+            return data
+
+        if handler.many:
+            if request:
+                page_number = request.GET.get("page[{}][number]".format(relation), 1)
+                page_size = request.GET.get("page[{}][size]".format(relation), None)
+            else:
+                page_size = None
+            if page_size:
+                related, data["meta"] = handler.apply_pagination(
+                    related, page_size, page_number
+                )
+
+        data["data"] = resource_identifier(serializer_class)(
+            related, many=handler.many, context={"request": request}
+        ).data
+
+        related_serializer = serializer_class(
+            related,
+            many=handler.many,
+            only_fields=self.only_fields,
+            include=self.include_tree.get(relation, []),
+            context={"request": request},
+        )
+        self.included += listify(related_serializer.data)
+        self.included += related_serializer.included
 
         return data
 

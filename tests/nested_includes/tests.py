@@ -11,7 +11,7 @@ class NestedIncludesTestCase(TestCase):
         self.leaf = Leaf.objects.create(name="Leaf", branch=self.branch)
 
     def test_trunks_include_leaves(self):
-        response = self.client.get("/trunks?include=branches.leaves")
+        response = self.client.get("/trunks?include=branches,branches.leaves")
         self.assertEqual(
             len(response.data["data"][0]["relationships"]["branches"]["data"]), 1
         )

@@ -145,6 +145,28 @@ class MixinsTestCase(TestCase):
         response.render()
         self.assertEqual(response.status_code, 400)
 
+    def test_create_mixin_read_only_relationship_to_one(self):
+        factory = APIRequestFactory()
+        request = factory.post(
+            "/test_resources",
+            {
+                "data": {
+                    "type": "test_model_resource",
+                    "attributes": {"name": "Test Resource"},
+                    "relationships": {
+                        "read_only_thing": {
+                            "data": {"type": "test_resource", "id": "5"}
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        view = TestViewSet.as_view({"post": "create"})
+        response = view(request)
+        response.render()
+        self.assertEqual(response.status_code, 400)
+
     def test_create_mixin_invalid(self):
         factory = APIRequestFactory()
         request = factory.post(
@@ -380,7 +402,7 @@ class RelationshipRetrieveMixinTestCase(TestCase):
         factory = APIRequestFactory()
         request = factory.get("/test_resources/1/relationships/related_things")
         view = self.TestManyView.as_view({"get": "relationship_retrieve"})
-        response = view(request, 1, "related_thing")
+        response = view(request, 1, "related_things")
         self.assertEqual(response.status_code, 200)
 
     def test_list_mixin_empty(self):

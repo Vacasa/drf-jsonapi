@@ -48,50 +48,14 @@ class ListMixin:
 
 
 class ProcessRelationshipsMixin:
-    def process_to_one_relationships(self, relationship_data, resource, request):
-        to_one_relationship_data = {}
-
+    def process_relationships(self, relationship_data, resource, request, many=None):
         for relation, data in relationship_data.items():
             handler = self.get_relationship_handler(relation)
-            if handler.read_only:
-                raise Error(
-                    detail="{} is a read-only relationship".format(relation),
-                    source={"pointer": "data/relationships/{}".format(relation)},
-                )
-            if not handler.many:
-                to_one_relationship_data[relation] = data
 
-        if to_one_relationship_data:
-            resource = self.process_relationships(
-                to_one_relationship_data, resource, request
-            )
+            # Skip relationships that don't match many
+            if many != handler.many and many is not None:
+                continue
 
-        return resource
-
-    def process_to_many_relationships(self, relationship_data, resource, request):
-        to_one_relationship_data = {}
-
-        for relation, data in relationship_data.items():
-            handler = self.get_relationship_handler(relation)
-            if handler.read_only:
-                raise Error(
-                    detail="{} is a read-only relationship".format(relation),
-                    source={"pointer": "data/relationships/{}".format(relation)},
-                )
-            if handler.many:
-                to_one_relationship_data[relation] = data
-
-        if to_one_relationship_data:
-            resource = self.process_relationships(
-                to_one_relationship_data, resource, request
-            )
-
-        return resource
-
-    def process_relationships(self, relationship_data, resource, request):
-        for relation, data in relationship_data.items():
-
-            handler = self.get_relationship_handler(relation)
             if handler.read_only:
                 raise Error(
                     detail="{} is a read-only relationship".format(relation),
@@ -131,16 +95,15 @@ class CreateMixin(ProcessRelationshipsMixin):
 
         # Check for relationships and process them
         if "relationships" in request.data["data"]:
-            resource = self.process_to_one_relationships(
-                request.data["data"]["relationships"], resource, request
+            resource = self.process_relationships(
+                request.data["data"]["relationships"], resource, request, many=False
             )
-
-        resource.save()
-
-        if "relationships" in request.data["data"]:
-            resource = self.process_to_many_relationships(
-                request.data["data"]["relationships"], resource, request
+            resource.save()
+            resource = self.process_relationships(
+                request.data["data"]["relationships"], resource, request, many=True
             )
+        else:
+            resource.save()
 
         serializer.instance = resource
         self.document.instance.data = serializer.data

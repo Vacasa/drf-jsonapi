@@ -19,7 +19,6 @@ class TestManyRelationshipHandler(RelationshipHandler):
     many = True
 
     def get_related(self, resource, request):
-        del request
         return [
             TestResource(
                 pk=5, name="Related Thing 1", count=5, created_at=timezone.now()
@@ -41,6 +40,11 @@ class TestManyRelationshipHandler(RelationshipHandler):
     def get_links(self, resource, links, request):
         links = {"self": "http://testserver/"}
         return links
+
+
+class TestManyEmptyRelationshipHandler(TestManyRelationshipHandler):
+    def get_related(self, resource, request):
+        return []
 
 
 class TestOneRelationshipHandler(RelationshipHandler):
@@ -67,7 +71,10 @@ class TestResourceSerializer(ResourceSerializer):
 
     @staticmethod
     def define_relationships():
-        return {"related_things": TestManyRelationshipHandler(TestResourceSerializer)}
+        return {
+            "related_things": TestManyRelationshipHandler(TestResourceSerializer),
+            "empty_things": TestManyEmptyRelationshipHandler(TestResourceSerializer),
+        }
 
     def create(self, validated_data):
         return TestResource(**validated_data)
@@ -77,7 +84,7 @@ class TestResourceSerializer(ResourceSerializer):
         meta["reverse_name"] = instance.name[::-1]
         return meta
 
-    def get_links(self, instance, request):
+    def get_links(self, instance, request=None):
         links = super().get_links(instance, request)
         links["self"] = "https://test.com/resources/{}".format(instance.pk)
         return links
@@ -107,6 +114,12 @@ class TestModelSerializer(ResourceModelSerializer):
             "related_things": TestManyRelationshipHandler(TestResourceSerializer),
             "related_thing": TestOneRelationshipHandler(TestResourceSerializer),
             "empty_thing": EmptyRelationshipHandler(TestResourceSerializer),
+            "read_only_thing": TestOneRelationshipHandler(
+                TestResourceSerializer, read_only=True
+            ),
+            "read_only_things": TestManyRelationshipHandler(
+                TestResourceSerializer, read_only=True
+            ),
         }
 
 

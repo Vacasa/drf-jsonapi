@@ -313,7 +313,7 @@ class JsonApiValidator:
 
         if not self._validate_resource_objects(
             data_list=data_element
-        ) or not self._validate_resource_identifier_objects(data_list=data_element):
+        ) or not self._validate_resource_identifier_objects(data_element):
             # If we get back [] from _validate_resource_objects OR from _validate_resource_identifier_objects,
             # we know that we have a list of resource_objects or a list of resource_identifier_objects,
             # which means we have a valid primary_data_element
@@ -465,22 +465,21 @@ class JsonApiValidator:
             return []
         return self._validate_resource_identifier_objects(data_dict)
 
-    def _validate_resource_identifier_objects(self, data_list):
+    def _validate_resource_identifier_objects(self, data):
         """
         http://jsonapi.org/format/#document-resource-identifier-objects
 
         :param JsonApiValidator self: This object
-        :param dict data_list: The document's list of resource identifier objects
+        :param dict data: The document's resource identifier object(s)
         :return: A list of validation messages
         :rtype: list
         """
-        if not isinstance(data_list, list):
-            data_list = [data_list]
-        for element in data_list:
-            ret = self._validate_resource_identifier_object(element)
-            if ret:
-                return ret
-        return []
+        errors = []
+        if not isinstance(data, list):
+            data = [data]
+        for element in data:
+            errors.extend(self._validate_resource_identifier_object(element))
+        return errors
 
     def _validate_resource_identifier_object(self, data_dict):
         """
@@ -545,7 +544,7 @@ class JsonApiValidator:
         :rtype: list
         """
 
-        if url is None or url == "None":
+        if url is None:
             return []
         try:
             self.url_validator(url)
