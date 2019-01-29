@@ -40,6 +40,7 @@ class ViewSetTestCase(TestCase):
 
     def test_get_queryset(self):
         viewset = TestViewSet()
+        viewset.request = None
         self.assertEqual(viewset.get_queryset(), viewset.collection)
 
     def test_initial(self):

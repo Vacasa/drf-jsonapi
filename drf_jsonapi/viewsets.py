@@ -47,9 +47,9 @@ class ViewSet(GenericViewSet):
         :return: A collection of model objects
         """
 
-        return self.get_collection()
+        return self.get_collection(self.request)
 
-    def get_collection(self, request=None):
+    def get_collection(self, request):
         """
         Re-evaluate a collection on each request
 
@@ -125,6 +125,13 @@ class ViewSet(GenericViewSet):
         # the request.
         self.errors = []
 
+    def get_allowed_includes(self):
+        return getattr(
+            self,
+            "allowed_includes",
+            self.serializer_class.define_relationships().keys(),
+        )
+
     def parse_include(self, request):
         """
         Populate include node, converting from a comma-separated string list to
@@ -140,12 +147,7 @@ class ViewSet(GenericViewSet):
 
         request.include = request.GET["include"].split(",")
 
-        allowed_includes = getattr(
-            self,
-            "allowed_includes",
-            self.serializer_class.define_relationships().keys(),
-        )
-        invalid_includes = list(set(request.include) - set(allowed_includes))
+        invalid_includes = list(set(request.include) - set(self.get_allowed_includes()))
         if invalid_includes:
             raise Error(
                 detail="The following are not valid includes: {}".format(

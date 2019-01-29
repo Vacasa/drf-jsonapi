@@ -56,7 +56,9 @@ class MixinsTestCase(TestCase):
 
     def test_retrieve_mixin(self):
         factory = APIRequestFactory()
-        request = factory.get("/test_resources/1")
+        request = factory.get(
+            "/test_resources/1", headers={"Accept": "application/vnd.api+json"}
+        )
         view = TestViewSet.as_view({"get": "retrieve"})
         response = view(request, pk=1)
         self.assertEqual(response.status_code, 200)

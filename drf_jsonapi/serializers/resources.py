@@ -21,6 +21,10 @@ class ResourceListSerializer(serializers.ListSerializer):
     """
 
     @property
+    def included_types(self):
+        return self.child.included_types
+
+    @property
     def included(self):
         """
         De-duplicate 'included' resources via dictionary comprehension
@@ -55,6 +59,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         include = kwargs.pop("include", [])
         only_fields = kwargs.pop("only_fields", None)
+        is_root = kwargs.pop("is_root", True)
         default_page_size = getattr(
             settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE
         )
@@ -65,7 +70,10 @@ class ResourceSerializer(serializers.Serializer):
 
         self.only_fields = only_fields
         self.page_size = page_size
+        self.is_root = is_root
         self.included = []
+        self.type = self.Meta.type
+        self.included_types = {self.type}
         super().__init__(*args, **kwargs)
 
         # We have to this AFTER super().__init__ so that self.fields is populated
@@ -97,6 +105,13 @@ class ResourceSerializer(serializers.Serializer):
             if branches:
                 include_tree[root].append(branches)
         return include_tree
+
+    def validate_sparse_fieldsets(self):
+        if not self.only_fields:
+            return
+        invalid_types = set(self.only_fields) - self.included_types
+        if invalid_types:
+            raise ParseError("Invalid resource type(s): {}".format(invalid_types))
 
     def apply_sparse_fieldset(self, fields=None):
         """
@@ -171,6 +186,10 @@ class ResourceSerializer(serializers.Serializer):
         if links:
             resource["links"] = links
 
+        # Handle late validations
+        if self.is_root:
+            self.validate_sparse_fieldsets()
+
         return resource
 
     def populate_relationships(self, instance):
@@ -244,9 +263,11 @@ class ResourceSerializer(serializers.Serializer):
             only_fields=self.only_fields,
             include=self.include_tree.get(relation, []),
             context={"request": request},
+            is_root=False,
         )
         self.included += listify(related_serializer.data)
         self.included += related_serializer.included
+        self.included_types.update(related_serializer.included_types)
 
         return data
 
