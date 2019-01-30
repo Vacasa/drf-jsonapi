@@ -296,7 +296,7 @@ class ResourceSerializer(serializers.Serializer):
         """
         return getattr(instance, self.get_id_field())
 
-    def get_meta(self, instance):
+    def get_meta(self, _instance):
         """
         Retrieve an empty meta dictionary
 
@@ -305,7 +305,6 @@ class ResourceSerializer(serializers.Serializer):
         :return: An empty dictionary
         :rtype: dict
         """
-        del instance
         return {}
 
     def get_links(self, instance, request=None):
