@@ -45,6 +45,16 @@ class ResourceSerializer(serializers.Serializer):
 
     @staticmethod
     def define_relationships():
+        """
+        This method is used to define relationships between resources. We have
+        to do it in a static method rather than directly in the Meta class to
+        avoid circular references.
+
+        This default implementation simply returns an empty dict. It's intented
+        for sub-classes to implement this static method and return a dict where
+        the key is the relationship name and the value is an instance of 
+        drf_jsonapi.relationships.RelationshipHandler
+        """
         return {}
 
     def __init__(self, *args, **kwargs):
