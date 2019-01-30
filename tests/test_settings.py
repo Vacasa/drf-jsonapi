@@ -2,6 +2,8 @@ import os
 
 SECRET_KEY = os.getenv("SECRET_KEY", "!INSECURE!")
 
+DEBUG = True
+
 PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 INSTALLED_APPS = [
     "django.contrib",

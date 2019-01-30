@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from rest_framework.viewsets import ViewSet
 
@@ -6,7 +6,6 @@ from drf_jsonapi.routers import Router
 
 from .serializers import TrunkSerializer
 from .views import LeafViewSet, TrunkViewSet
-from .models import Trunk, Branch, Leaf
 
 
 class RouterTestCase(TestCase):
@@ -63,6 +62,6 @@ class RouterTestCase(TestCase):
         router.include_format_suffixes = False
         router.register(LeafViewSet)
         urls = router.get_urls()
-        patterns = [url.pattern._regex for url in urls]
+        patterns = [url.pattern._regex for url in urls]  # noqa
         for pattern in patterns:
             self.assertNotIn(".(?P<format>[a-z0-9]+)", pattern)

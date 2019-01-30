@@ -1,10 +1,12 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from rest_framework.test import APIRequestFactory
 from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError
 
 from drf_jsonapi.viewsets import ViewSet
 from drf_jsonapi.filters import FilterSet
+from drf_jsonapi.response import Response
 from drf_jsonapi import mixins
 
 from .mocks import TestModel, TestModelSerializer
@@ -21,6 +23,7 @@ class TestFilterSet(FilterSet):
 
 
 class TestViewSet(
+    mixins.DebugMixin,
     mixins.ListMixin,
     mixins.CreateMixin,
     mixins.RetrieveMixin,
@@ -34,6 +37,29 @@ class TestViewSet(
     serializer_class = TestModelSerializer
     filter_class = TestFilterSet
     collection = TestModel.objects.none()
+
+
+class DebugMixinsTestCase(TestCase):
+    @override_settings(DEBUG=True)
+    def test_finalize_response(self):
+        factory = APIRequestFactory()
+        request = factory.get("/test_resources")
+        response = Response({"data": {}})
+        view = TestViewSet()
+        view.headers = {}
+        decorated_response = view.finalize_response(request, response)
+        self.assertIn("meta", decorated_response.data)
+        self.assertIn("num_queries", decorated_response.data["meta"])
+
+    @override_settings(DEBUG=False)
+    def test_finalize_response_debug_false(self):
+        factory = APIRequestFactory()
+        request = factory.get("/test_resources")
+        response = Response({"data": {}})
+        view = TestViewSet()
+        view.headers = {}
+        decorated_response = view.finalize_response(request, response)
+        self.assertNotIn("meta", decorated_response.data)
 
 
 class MixinsTestCase(TestCase):
