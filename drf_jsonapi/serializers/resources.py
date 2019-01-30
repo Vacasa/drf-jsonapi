@@ -52,7 +52,7 @@ class ResourceSerializer(serializers.Serializer):
 
         This default implementation simply returns an empty dict. It's intented
         for sub-classes to implement this static method and return a dict where
-        the key is the relationship name and the value is an instance of 
+        the key is the relationship name and the value is an instance of
         drf_jsonapi.relationships.RelationshipHandler
         """
         return {}
