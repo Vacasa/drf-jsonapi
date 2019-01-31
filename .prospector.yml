@@ -1,9 +1,7 @@
 strictness: medium
 pep8:
   full: true
-  disable:
-    - E203
-    - W503
+
 pylint:
   disable:
     - F0401
