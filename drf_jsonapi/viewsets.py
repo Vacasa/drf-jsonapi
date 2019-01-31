@@ -80,7 +80,7 @@ class ViewSet(GenericViewSet):
         """
         return get_object_or_404(
             self.get_collection(request).model,
-            **{self.serializer_class.get_id_field(): pk}
+            **{self.serializer_class.get_id_field(): pk},
         )
 
     def get_view_name(self):
