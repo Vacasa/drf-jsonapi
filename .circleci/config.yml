@@ -37,6 +37,19 @@ jobs:
             coverage xml
             ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
 
+      # TODO: Break these out into separate steps
+      - run:
+          name: Check Formatting
+          command: |
+            . venv/bin/activate
+            black --check --diff .
+
+      - run:
+          name: Lint
+          command: |
+            . venv/bin/activate
+            prospector
+
 workflows:
   version: 2
   builds:
