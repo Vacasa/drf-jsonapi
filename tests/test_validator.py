@@ -415,11 +415,9 @@ class TestJsonApiValidator(unittest.TestCase):
 
     @tag("resource_identifier_object")
     def test_validate_resource_identifier_objects(self):
-        test_resource_identifier = [{
-            "type": "test_type",
-            "id": "test_id",
-            "meta": "test_meta",
-        }]
+        test_resource_identifier = [
+            {"type": "test_type", "id": "test_id", "meta": "test_meta"}
+        ]
         self.assertEqual(
             [],
             self.validator._validate_resource_identifier_objects(
@@ -918,4 +916,3 @@ class TestJsonApiValidator(unittest.TestCase):
                     {"stuff{}".format(char): "things"}
                 ),
             )
-
