@@ -2,8 +2,8 @@ from drf_jsonapi.viewsets import ReadWriteViewSet
 from drf_jsonapi.mixins import DebugMixin
 
 from api.models import Publisher, Author, Book
-
 from api.serializers import PublisherSerializer, AuthorSerializer, BookSerializer
+from api.filters import BookFilterSet
 
 
 class PublisherViewSet(DebugMixin, ReadWriteViewSet):
@@ -31,6 +31,8 @@ class PublisherViewSet(DebugMixin, ReadWriteViewSet):
 class BookViewSet(DebugMixin, ReadWriteViewSet):
     serializer_class = BookSerializer
 
+    filter_class = BookFilterSet
+
     def get_collection(self, request):
         collection = Book.objects.all()
 
@@ -40,6 +42,9 @@ class BookViewSet(DebugMixin, ReadWriteViewSet):
         # See: https://docs.djangoproject.com/en/2.1/ref/models/querysets/#select-related
         if "publisher" in request.include:
             collection = collection.select_related("publisher")
+
+        if "authors" in request.include:
+            collection = collection.prefetch_related("authors")
 
         return collection
 
