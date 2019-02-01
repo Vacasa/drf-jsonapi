@@ -18,12 +18,11 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     install_requires=[
-        'django',
-        'djangorestframework',
-        'drf-nested-routers',
-        'django-filter',
-        'django-filters',
-        'drf-yasg',
+        'Django>=2.0.6',
+        'djangorestframework>=3.8.2',
+        'drf-nested-routers>=0.90.0',
+        'django-filter>=1.1.0',
+        'drf-yasg>=1.8.0',
     ],
     zip_safe=False
 )
