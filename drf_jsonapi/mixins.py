@@ -1,3 +1,4 @@
+from django.db import connection
 from django.conf import settings
 
 from rest_framework.exceptions import NotFound, MethodNotAllowed
@@ -8,6 +9,30 @@ from .response import Response
 from .serializers.utils import resource_identifier
 from .utils import listify
 from .objects import Error
+
+
+class DebugMixin:
+    """
+    This Mixin adds some debug output to each response about the DB queries
+    executed during the request.
+
+    NOTE: This only works if DEBUG is True. Has no effect otherwise, so it's safe to
+    use in Production.
+    """
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+
+        if not settings.DEBUG:
+            return response
+
+        response.data = response.data or {}
+
+        response.data["meta"] = response.data.get("meta", {})
+        response.data["meta"]["num_queries"] = len(connection.queries)
+        response.data["meta"]["queries"] = connection.queries
+
+        return response
 
 
 class ListMixin:

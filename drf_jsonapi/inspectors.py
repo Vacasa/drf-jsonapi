@@ -300,14 +300,12 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         if not self.is_list():
             return []
 
-        serializer_class = self.view.get_serializer_class()
-
         return [
             openapi.Parameter(
                 name="include",
                 in_="query",
                 type="string",
-                enum=list(serializer_class.define_relationships().keys()),
+                enum=list(self.view.get_allowed_includes()),
                 description="Multiple values may be separated by commas.",
             )
         ]

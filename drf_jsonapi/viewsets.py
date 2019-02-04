@@ -1,5 +1,4 @@
 import re
-from collections import defaultdict
 
 from django.conf import settings
 from django.db.models.query import QuerySet
@@ -12,12 +11,12 @@ from rest_framework.generics import get_object_or_404
 from . import defaults
 from .response import Response
 from .objects import Document
-from .serializers import DocumentSerializer, ErrorSerializer, resource_identifier
+from .serializers import DocumentSerializer, ErrorSerializer
 from . import mixins
 from . import inspectors
 from .objects import Error
 
-FIELD_PATTERN = re.compile("fields\[(.+)\]")
+FIELD_PATTERN = re.compile(r"fields\[(.+)\]")
 
 
 class ViewSet(GenericViewSet):
@@ -28,7 +27,6 @@ class ViewSet(GenericViewSet):
     ----------
     view_name_prefix = 'Privilege'
     lookup_field = "name"
-    lookup_value_regex = "[^\/]+"
     collection = Users.objects.all()
     serializer_class = UserSerializer
     """
@@ -82,7 +80,7 @@ class ViewSet(GenericViewSet):
         """
         return get_object_or_404(
             self.get_collection(request).model,
-            **{self.serializer_class.get_id_field(): pk}
+            **{self.serializer_class.get_id_field(): pk},
         )
 
     def get_view_name(self):
@@ -99,7 +97,7 @@ class ViewSet(GenericViewSet):
             name += " " + self.suffix
         return name
 
-    def initial(self, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
         """
         Initialize this Viewset, validating the request body and populating
         sparse fieldsets and includes.
@@ -107,7 +105,7 @@ class ViewSet(GenericViewSet):
         :param ViewSet self: This object
         """
 
-        super(ViewSet, self).initial(*args, **kwargs)
+        super(ViewSet, self).initial(request, *args, **kwargs)
 
         # Validate request bodies
         if self.request.method in self.validate_http_methods:

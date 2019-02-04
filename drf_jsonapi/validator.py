@@ -498,18 +498,16 @@ class JsonApiValidator:
             may_contain={"meta": "meta"},
         )
 
-    def _validate_meta(self, data_dict):
+    def _validate_meta(self, _data_dict):
         """
         http://jsonapi.org/format/#document-meta
         """
-        del data_dict
         return []
 
-    def _validate_links_object(self, data_dict, links_exist=False):
+    def _validate_links_object(self, data_dict):
         """
         http://jsonapi.org/format/#document-links
         """
-        del links_exist
         return self._validate_section(
             entity_name="Links Object",
             data_dict=data_dict,

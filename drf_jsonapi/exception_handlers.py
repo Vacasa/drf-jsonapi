@@ -55,7 +55,7 @@ class ExceptionHandler:
         return None
 
     @classmethod
-    def handle_error(cls, exc, context):
+    def handle_error(cls, exc, _context):
         """
         Retrieves a 400 error Response from an Error exception
 
@@ -65,13 +65,12 @@ class ExceptionHandler:
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-        del context
         doc = DocumentSerializer(Document())
         doc.instance.errors = [ErrorSerializer(exc).data]
         return Response(doc.data, status=getattr(exc, "status_code", 400))
 
     @classmethod
-    def handle_apiexception(cls, exc, context):
+    def handle_apiexception(cls, exc, _context):
         """
         Retrieves a 400 error Response from an APIException exception
 
@@ -81,7 +80,6 @@ class ExceptionHandler:
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-        del context
         doc = DocumentSerializer(Document())
 
         detail = getattr(exc, "detail", str(exc))
@@ -113,7 +111,7 @@ class ExceptionHandler:
         return cls.handle_apiexception(exc, context)
 
     @classmethod
-    def handle_invalidpage(cls, exc, context):
+    def handle_invalidpage(cls, exc, _context):
         """
         Retrieves a 400 error Response from an InvalidPage exception
 
@@ -123,7 +121,6 @@ class ExceptionHandler:
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-        del context
         doc = DocumentSerializer(Document())
         error = Error(
             source={"parameter": "page[number]"}, detail=str(exc), status_code=400

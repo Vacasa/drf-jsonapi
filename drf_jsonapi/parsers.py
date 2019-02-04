@@ -5,4 +5,5 @@ class JSONAPIParser(JSONParser):
     """
     Parses JSON-serialized data.
     """
-    media_type = 'application/vnd.api+json'
+
+    media_type = "application/vnd.api+json"
