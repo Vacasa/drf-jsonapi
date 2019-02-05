@@ -105,3 +105,7 @@ ENV/
 .DS_Store
 .vscode/
 /db.sqlite3
+
+# Editors
+.idea/
+.vscode/
