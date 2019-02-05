@@ -26,7 +26,6 @@ setup(
     install_requires=[
         "Django>=2.0.6",
         "djangorestframework>=3.8.2",
-        "drf-nested-routers>=0.90.0",
     ],
     extras_require=_EXTRAS,
     setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
