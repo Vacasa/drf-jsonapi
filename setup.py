@@ -5,6 +5,11 @@ def readme():
     with open("README.md") as f:
         return f.read()
 
+_EXTRAS = {
+  "yasg": ["drf-yasg==1.12.1"],
+  "filters": ["django-filter>=1.1.0"],
+}
+_EXTRAS["all"] = sorted([req for req_list in _EXTRAS.values() for req in req_list])
 
 setup(
     name="drf-jsonapi",
@@ -22,9 +27,8 @@ setup(
         "Django>=2.0.6",
         "djangorestframework>=3.8.2",
         "drf-nested-routers>=0.90.0",
-        "django-filter>=1.1.0",
-        "drf-yasg==1.12.1",
     ],
+    extras_require=_EXTRAS,
     setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
     zip_safe=False,
 )
