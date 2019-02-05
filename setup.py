@@ -19,9 +19,10 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=[
-        "django",
-        "djangorestframework",
-        "django-filter",
+        "Django>=2.0.6",
+        "djangorestframework>=3.8.2",
+        "drf-nested-routers>=0.90.0",
+        "django-filter>=1.1.0",
         "drf-yasg==1.12.1",
     ],
     setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
