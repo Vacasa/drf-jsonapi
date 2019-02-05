@@ -10,6 +10,8 @@ Welcome to drf-jsonapi's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   quickstart
+
 
 
 Indices and tables
