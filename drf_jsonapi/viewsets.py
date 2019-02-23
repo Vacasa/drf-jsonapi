@@ -13,7 +13,6 @@ from .response import Response
 from .objects import Document
 from .serializers import DocumentSerializer, ErrorSerializer
 from . import mixins
-from . import inspectors
 from .objects import Error
 
 FIELD_PATTERN = re.compile(r"fields\[(.+)\]")
@@ -31,7 +30,6 @@ class ViewSet(GenericViewSet):
     serializer_class = UserSerializer
     """
 
-    swagger_schema = inspectors.EntitySwaggerAutoSchema
     lookup_field = "pk"
     filter_class = None
     validate_http_methods = ["POST", "PUT", "PATCH"]
