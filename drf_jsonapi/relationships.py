@@ -1,3 +1,5 @@
+import pydoc
+
 from django.urls import reverse, NoReverseMatch
 from django.core.paginator import Paginator, EmptyPage
 
@@ -15,16 +17,35 @@ class RelationshipHandler:
     serializer_class = None
     related_field = None
     default_page_size = None
+    url_segment = None
 
     def __init__(
-        self, serializer_class, related_field=None, many=None, read_only=False
+        self,
+        serializer_class,
+        read_only=False,
+        many=False,
+        url_segment=None,
+        related_field=None,
     ):
+        """
+        :param [str, ResourceModelSerializer] serializer_class: a serializer class or a dotted string used to locate one
+        :param str related_field: The field used to lookup the relationship
+        :param bool many: Whether the relationship represents a "to-many" relationship
+        :param str url_segment: A url segement to use for the relationship in relationship URLs. Will default to relationship name if left unset
+        :param bool read_only: Whether to create write endpoints for this relationship
+        """
+
+        if isinstance(serializer_class, str):
+            located = pydoc.locate(serializer_class)
+            if not located:
+                raise ImportError("No module named '{}'".format(serializer_class))
+            serializer_class = located
+
         self.serializer_class = serializer_class
-        if related_field is not None:
-            self.related_field = related_field
-        if many is not None:
-            self.many = many
         self.read_only = read_only
+        self.many = self.many or many
+        self.url_segment = self.url_segment or url_segment
+        self.related_field = self.related_field or related_field
 
     def validate(self, data):
         """

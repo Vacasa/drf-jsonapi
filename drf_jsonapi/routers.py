@@ -28,7 +28,7 @@ class Router(DefaultRouter):
             routes.append(
                 Route(
                     url=r"^{{prefix}}/{{lookup}}/relationships/{}{{trailing_slash}}$".format(
-                        relationship
+                        handler.url_segment or relationship
                     ),
                     mapping=action_map,
                     name="{{basename}}-relationships-{}".format(relationship),

@@ -1,8 +1,11 @@
+import mock
+
 from django.test import TestCase, RequestFactory
 
 from drf_jsonapi.relationships import RelationshipHandler
 from drf_jsonapi.serializers import ResourceModelSerializer
 
+from .mocks import TestResourceSerializer
 from .models import TestModel
 
 
@@ -21,6 +24,17 @@ class RelationshipHandlerTestCase(TestCase):
         )
         self.assertEqual(handler.related_field, "related_things")
         self.assertEqual(handler.many, False)
+
+    @mock.patch(
+        "drf_jsonapi.relationships.pydoc.locate", return_value=TestResourceSerializer
+    )
+    def test_lookup_serializer_by_string(self, mock_serializer):
+        handler = RelationshipHandler("tests.mocks.TestResourceSerializer")
+        self.assertEqual(handler.serializer_class, mock_serializer.return_value)
+
+    def test_lookup_serializer_by_string_cannot_be_resolved(self):
+        with self.assertRaises(ImportError):
+            RelationshipHandler("fake.not_here.Serializer")
 
     def test_apply_pagination(self):
         related = list(range(20))

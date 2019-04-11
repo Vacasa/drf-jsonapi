@@ -246,7 +246,7 @@ class RelationshipCreateMixin:
 
     def relationship_create(self, request, pk, relationship):
         # get the relationship handler
-        handler = self.get_relationship_handler(self.relationship)
+        handler = self.get_relationship_handler(relationship)
         serializer_class = handler.serializer_class
 
         if not handler.many:
@@ -278,7 +278,7 @@ class RelationshipUpdateMixin:
         resource = self.get_resource(request, pk)
 
         # get the relationship handler
-        handler = self.get_relationship_handler(self.relationship)
+        handler = self.get_relationship_handler(relationship)
         serializer_class = handler.serializer_class
 
         data = request.data["data"]
@@ -300,7 +300,7 @@ class RelationshipDestroyMixin:
 
     def relationship_destroy(self, request, pk, relationship):
         # get the relationship handler
-        handler = self.get_relationship_handler(self.relationship)
+        handler = self.get_relationship_handler(relationship)
         serializer_class = handler.serializer_class
 
         if not handler.many:

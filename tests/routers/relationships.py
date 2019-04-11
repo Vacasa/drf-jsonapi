@@ -1,6 +1,14 @@
 from drf_jsonapi.relationships import RelationshipHandler
 
 
+class TrunkRootRelationshipHandler(RelationshipHandler):
+    many = True
+    url_segment = "tree-roots"
+
+    def get_related(self, resource, request):
+        return resource.roots.all().order_by("id")
+
+
 class TrunkBranchesHandler(RelationshipHandler):
     many = True
 

@@ -1,8 +1,16 @@
 from drf_jsonapi.serializers import ResourceModelSerializer
 
-from .models import Trunk, Branch, Leaf
+from .models import Trunk, Branch, Leaf, Root
 
 from . import relationships
+
+
+class RootSerializer(ResourceModelSerializer):
+    class Meta:
+        model = Root
+        type = "root"
+        basename = "roots"
+        fields = (("name"),)
 
 
 class TrunkSerializer(ResourceModelSerializer):
@@ -14,7 +22,10 @@ class TrunkSerializer(ResourceModelSerializer):
 
     @staticmethod
     def define_relationships():
-        return {"branches": relationships.TrunkBranchesHandler(BranchSerializer)}
+        return {
+            "branches": relationships.TrunkBranchesHandler(BranchSerializer),
+            "roots": relationships.TrunkRootRelationshipHandler(RootSerializer),
+        }
 
 
 class BranchSerializer(ResourceModelSerializer):

@@ -49,6 +49,12 @@ class RouterTestCase(TestCase):
         urls = router.get_urls_for_viewset("prefix", EmptyView, "basename")
         self.assertEqual(urls, [])
 
+    def test_url_segment_kwarg_overrides_relationship_name(self):
+        router = Router(trailing_slash=False)
+        urls = router.get_urls_for_viewset("prefix", TrunkViewSet, "basename")
+        patterns = [url.pattern._regex for url in urls]  # noqa
+        self.assertIn("^prefix/(?P<pk>[^/.]+)/relationships/tree-roots$", patterns)
+
     def test_get_urls_no_root_view(self):
         router = Router(trailing_slash=False)
         router.include_root_view = False
