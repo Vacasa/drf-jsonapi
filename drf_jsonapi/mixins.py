@@ -1,7 +1,7 @@
 from django.db import connection
 from django.conf import settings
 
-from rest_framework.exceptions import NotFound, MethodNotAllowed
+from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError
 from rest_framework import status
 
 from . import defaults
@@ -77,6 +77,10 @@ class ProcessRelationshipsMixin:
         for relation, data in relationship_data.items():
             handler = self.get_relationship_handler(relation)
 
+            # Ensure required keyword data is present
+            if "data" not in data:
+                raise ParseError("Missing key `data` in relationship object")
+
             # Skip relationships that don't match many
             if many != handler.many and many is not None:
                 continue
@@ -86,6 +90,7 @@ class ProcessRelationshipsMixin:
                     detail="{} is a read-only relationship".format(relation),
                     source={"pointer": "data/relationships/{}".format(relation)},
                 )
+
             data = handler.validate(data["data"])
             related_resources = handler.serializer_class.from_identity(
                 data, many=handler.many
