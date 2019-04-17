@@ -1,4 +1,4 @@
-import pydoc
+import importlib
 
 from django.urls import reverse, NoReverseMatch
 from django.core.paginator import Paginator, EmptyPage
@@ -36,10 +36,10 @@ class RelationshipHandler:
         """
 
         if isinstance(serializer_class, str):
-            located = pydoc.locate(serializer_class)
-            if not located:
-                raise ImportError("No module named '{}'".format(serializer_class))
-            serializer_class = located
+            serializer_class_name = serializer_class.split(".").pop()
+            module_path = ".".join(serializer_class.split(".")[:-1])
+            serializer_module = importlib.import_module(module_path)
+            serializer_class = getattr(serializer_module, serializer_class_name)
 
         self.serializer_class = serializer_class
         self.read_only = read_only

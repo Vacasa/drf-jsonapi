@@ -26,11 +26,15 @@ class RelationshipHandlerTestCase(TestCase):
         self.assertEqual(handler.many, False)
 
     @mock.patch(
-        "drf_jsonapi.relationships.pydoc.locate", return_value=TestResourceSerializer
+        "drf_jsonapi.relationships.importlib.import_module",
+        return_value=mock.MagicMock(TestResourceSerializer=TestResourceSerializer),
     )
     def test_lookup_serializer_by_string(self, mock_serializer):
         handler = RelationshipHandler("tests.mocks.TestResourceSerializer")
-        self.assertEqual(handler.serializer_class, mock_serializer.return_value)
+        self.assertEqual(
+            handler.serializer_class,
+            mock_serializer.return_value.TestResourceSerializer,
+        )
 
     def test_lookup_serializer_by_string_cannot_be_resolved(self):
         with self.assertRaises(ImportError):
