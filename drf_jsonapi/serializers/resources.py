@@ -375,6 +375,8 @@ class ResourceSerializer(serializers.Serializer):
         """
         if not many:
             cls.validate_resource_type(data)
+            if "id" not in data:
+                raise ParseError("Missing `id` in resource object")
             return cls.get_object_by_id(data["id"])
 
         objects = []

@@ -195,6 +195,54 @@ class MixinsTestCase(TestCase):
         response.render()
         self.assertEqual(response.status_code, 400)
 
+    def test_create_missing_relationship_data_keyword(self):
+        factory = APIRequestFactory()
+        request = factory.post(
+            "/test_resources/1",
+            {
+                "data": {
+                    "type": "test_model_resource",
+                    "attributes": {"name": "Test Resource"},
+                    "relationships": {
+                        "related_things": {
+                            "invalid": [{"type": "test_resource", "id": "5"}]
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        view = TestViewSet.as_view({"post": "create"})
+        response = view(request)
+        response.render()
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data["detail"], "Missing key `data` in relationship object"
+        )
+
+    def test_create_missing_resource_obj_keyword_id(self):
+        factory = APIRequestFactory()
+        request = factory.post(
+            "/test_resources/1",
+            {
+                "data": {
+                    "type": "test_model_resource",
+                    "attributes": {"name": "Test Resource"},
+                    "relationships": {
+                        "related_things": {
+                            "data": [{"type": "test_resource", "pk": "5"}]
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        view = TestViewSet.as_view({"post": "create"})
+        response = view(request)
+        response.render()
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Missing `id` in resource object")
+
     def test_create_mixin_invalid(self):
         factory = APIRequestFactory()
         request = factory.post(
@@ -265,6 +313,56 @@ class MixinsTestCase(TestCase):
         response = view(request, pk=1)
         response.render()
         self.assertEqual(response.status_code, 400)
+
+    def test_partial_update_missing_relationship_data_keyword(self):
+        factory = APIRequestFactory()
+        request = factory.patch(
+            "/test_resources/1",
+            {
+                "data": {
+                    "type": "test_model_resource",
+                    "id": "1",
+                    "attributes": {"name": "Test Resource"},
+                    "relationships": {
+                        "related_things": {
+                            "invalid": [{"type": "test_resource", "id": "5"}]
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        view = TestViewSet.as_view({"patch": "partial_update"})
+        response = view(request, pk=1)
+        response.render()
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data["detail"], "Missing key `data` in relationship object"
+        )
+
+    def test_partial_update_missing_resource_obj_keyword_id(self):
+        factory = APIRequestFactory()
+        request = factory.patch(
+            "/test_resources/1",
+            {
+                "data": {
+                    "type": "test_model_resource",
+                    "id": "1",
+                    "attributes": {"name": "Test Resource"},
+                    "relationships": {
+                        "related_things": {
+                            "data": [{"type": "test_resource", "pk": "5"}]
+                        }
+                    },
+                }
+            },
+            format="json",
+        )
+        view = TestViewSet.as_view({"patch": "partial_update"})
+        response = view(request, pk=1)
+        response.render()
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Missing `id` in resource object")
 
     def test_destroy_mixin(self):
         factory = APIRequestFactory()
