@@ -4,44 +4,41 @@ from .models import Trunk, Branch, Leaf
 
 from . import relationships
 
-class TrunkSerializer(ResourceModelSerializer):
 
+class TrunkSerializer(ResourceModelSerializer):
     class Meta:
         model = Trunk
         type = "trunk"
-        base_path = "/trunks"
-        fields = (
-            'name',
-        )
-        relationships = {
-            "branches": relationships.TrunkBranchesHandler()
-        }
+        basename = "trunks"
+        fields = ("name",)
+
+    @staticmethod
+    def define_relationships():
+        return {"branches": relationships.TrunkBranchesHandler(BranchSerializer)}
 
 
 class BranchSerializer(ResourceModelSerializer):
-
     class Meta:
         model = Branch
         type = "branch"
-        base_path = "/branches"
-        fields = (
-            'name',
-        )
-        relationships = {
-            "leaves": relationships.BranchLeavesHandler(),
-            "trunk": relationships.BranchTrunkHandler()
+        basename = "branches"
+        fields = ("name",)
+
+    @staticmethod
+    def define_relationships():
+        return {
+            "leaves": relationships.BranchLeavesHandler(LeafSerializer),
+            "trunk": relationships.BranchTrunkHandler(TrunkSerializer),
         }
 
 
 class LeafSerializer(ResourceModelSerializer):
-
     class Meta:
         model = Leaf
         type = "leaf"
-        base_path = "/leafs"
-        fields = (
-            'name',
-        )
-        relationships = {
-            "branch": relationships.LeafBranchHandler()
-        }
+        basename = "leaves"
+        fields = ("name",)
+
+    @staticmethod
+    def define_relationships():
+        return {"branch": relationships.LeafBranchHandler(BranchSerializer)}

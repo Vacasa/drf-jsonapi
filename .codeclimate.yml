@@ -1,4 +1,8 @@
 version: "2"
+checks:
+  method-complexity:
+    config:
+      threshold: 8
 plugins:
   markdownlint:
     enabled: true
@@ -18,3 +22,4 @@ plugins:
 
 exclude_patterns:
 - "tests/"
+- "example/drf_jsonapi"

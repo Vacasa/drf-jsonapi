@@ -12,12 +12,11 @@ class JSONRenderer(renderers.JSONRenderer):
     ),
     """
 
-    media_type = 'application/vnd.api+json'
-    format = 'vnd.api+json'
+    media_type = "application/vnd.api+json"
+    format = "vnd.api+json"
 
 
 class BrowsableAPIRenderer(renderers.BrowsableAPIRenderer):
-
     def get_raw_data_form(self, data, view, method, request):
         """
         This is currently broken because of the way jsonapi requests are formatted

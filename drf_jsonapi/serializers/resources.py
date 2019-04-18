@@ -1,12 +1,15 @@
-from django.urls import resolve, Resolver404
+from django.urls import reverse, NoReverseMatch
 from django.conf import settings
+from django.db.models.query import QuerySet
 
 from rest_framework import serializers
 from rest_framework.serializers import LIST_SERIALIZER_KWARGS
 from rest_framework.exceptions import ParseError
+from rest_framework.fields import empty
 
 from .utils import resource_identifier
 
+from .. import defaults
 from ..objects import Error
 from ..utils import listify
 
@@ -18,6 +21,10 @@ class ResourceListSerializer(serializers.ListSerializer):
     """
 
     @property
+    def included_types(self):
+        return self.child.included_types
+
+    @property
     def included(self):
         """
         De-duplicate 'included' resources via dictionary comprehension
@@ -27,7 +34,7 @@ class ResourceListSerializer(serializers.ListSerializer):
         :rtype: dict_values
         """
 
-        return list({(x['type'], x['id']): x for x in self.child.included}.values())
+        return list({(x["type"], x["id"]): x for x in self.child.included}.values())
 
 
 class ResourceSerializer(serializers.Serializer):
@@ -35,6 +42,20 @@ class ResourceSerializer(serializers.Serializer):
     Handles the serialization/deserialization of JSON API resource objects
     See: http://jsonapi.org/format/#document-resource-objects
     """
+
+    @staticmethod
+    def define_relationships():
+        """
+        This method is used to define relationships between resources. We have
+        to do it in a static method rather than directly in the Meta class to
+        avoid circular references.
+
+        This default implementation simply returns an empty dict. It's intented
+        for sub-classes to implement this static method and return a dict where
+        the key is the relationship name and the value is an instance of
+        drf_jsonapi.relationships.RelationshipHandler
+        """
+        return {}
 
     def __init__(self, *args, **kwargs):
         """
@@ -46,21 +67,23 @@ class ResourceSerializer(serializers.Serializer):
         :param dict only_fields: Dictionary of fields to include in response
         :param int page_size: The number of resources to include on page
         """
+        include = kwargs.pop("include", [])
+        only_fields = kwargs.pop("only_fields", None)
+        is_root = kwargs.pop("is_root", True)
+        default_page_size = getattr(
+            settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE
+        )
+        page_size = kwargs.pop("page_size", default_page_size)
 
+        self.relationships = self.define_relationships()
+        self.validate_includes(include)
+
+        self.only_fields = only_fields
+        self.page_size = page_size
+        self.is_root = is_root
         self.included = []
-
-        self.validate_includes(kwargs.pop('include', []))
-
-        available_relationships = getattr(self.Meta, 'relationships', {}).keys()
-        invalid_includes = list(set(self.include) - set(available_relationships))
-        if invalid_includes:
-            raise Error(
-                detail="Invalid relationship(s): {}".format(", ".join(invalid_includes)),
-                source={'parameter': 'include'}
-            )
-
-        self.only_fields = kwargs.pop('only_fields', None)
-        self.page_size = kwargs.pop('page_size', settings.DEFAULT_PAGE_SIZE)
+        self.type = self.Meta.type
+        self.included_types = {self.type}
         super().__init__(*args, **kwargs)
 
         # We have to this AFTER super().__init__ so that self.fields is populated
@@ -68,19 +91,37 @@ class ResourceSerializer(serializers.Serializer):
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
 
     def validate_includes(self, includes):
-        # Validate Includes
+
+        self.include_tree = self._build_include_tree(includes)
+        self.include = list(self.include_tree.keys())
+
+        invalid_includes = list(set(self.include) - set(self.relationships.keys()))
+        if invalid_includes:
+            raise Error(
+                detail="Invalid relationship(s): {}".format(
+                    ", ".join(invalid_includes)
+                ),
+                source={"parameter": "include"},
+            )
+
+    def _build_include_tree(self, includes):
         include_tree = {}
         for include in list(filter(None, includes)):
-            parts = include.split('.')
+            parts = include.split(".")
             root = parts[0]
             if root not in include_tree:
                 include_tree[root] = []
-            branches = '.'.join(parts[1:])
+            branches = ".".join(parts[1:])
             if branches:
                 include_tree[root].append(branches)
+        return include_tree
 
-        self.include = list(include_tree.keys())
-        self.include_tree = include_tree
+    def validate_sparse_fieldsets(self):
+        if not self.only_fields:
+            return
+        invalid_types = set(self.only_fields) - self.included_types
+        if invalid_types:
+            raise ParseError("Invalid resource type(s): {}".format(invalid_types))
 
     def apply_sparse_fieldset(self, fields=None):
         """
@@ -91,25 +132,20 @@ class ResourceSerializer(serializers.Serializer):
         :param list fields: A list of fields that object properties will be limited to.
         """
 
-        # Validate the field list against Meta.fields
-        if hasattr(self.Meta, 'fields'):
-            invalid_fields = set(fields).difference(self.Meta.fields)
-            if invalid_fields:
-                raise ParseError("Invalid field(s) for fields[{}]: {}".format(
-                    self.Meta.type,
-                    ",".join(invalid_fields)
-                ))
+        # Validate the field list against available fields
+        invalid_fields = set(fields).difference(self.fields.keys())
+        if invalid_fields:
+            raise ParseError(
+                "Invalid field(s) for fields[{}]: {}".format(
+                    self.Meta.type, ",".join(invalid_fields)
+                )
+            )
 
         # Drop any fields that are not specified in the `fields` argument.
-        allowed = set(fields)
-        existing = set(self.fields)
-        for field_name in existing - allowed:
+        for field_name in set(self.fields) - set(fields):
             self.fields.pop(field_name)
 
-    def get_initial(self):
-        return {}
-
-    def run_validation(self, data):
+    def run_validation(self, data=empty):
         """
         Validates the resource object according to JSON API spec.
 
@@ -125,7 +161,7 @@ class ResourceSerializer(serializers.Serializer):
         # Extract just to attributes since this is what
         # the superclass is expecting
         try:
-            attributes = data['attributes']
+            attributes = data["attributes"]
         except KeyError:
             raise ParseError("Missing `attributes` in resource object")
         return super().run_validation(attributes)
@@ -139,45 +175,34 @@ class ResourceSerializer(serializers.Serializer):
         :return: A dictionary representing a JSON-API resource object
         :rtype: dict
         """
-        resource = {
-            'type': self.Meta.type,
-            'id': self.get_id(instance)
-        }
+        resource = {"type": self.Meta.type, "id": self.get_id(instance)}
 
         # Add Attributes
         data = super().to_representation(instance)
-        resource['attributes'] = data
+        resource["attributes"] = data
 
         # Add Relationships
-        relationships = self.get_relationships(instance)
+        relationships = self.populate_relationships(instance)
         if relationships:
-            resource['relationships'] = relationships
+            resource["relationships"] = relationships
 
         # Add Meta
         meta = self.get_meta(instance)
         if meta:
-            resource['meta'] = meta
+            resource["meta"] = meta
 
         # Add Links
-        links = self.get_links(instance)
+        links = self.get_links(instance, self._context.get("request"))
         if links:
-            resource['links'] = links
+            resource["links"] = links
+
+        # Handle late validations
+        if self.is_root:
+            self.validate_sparse_fieldsets()
 
         return resource
 
-    @property
-    def relationships(self):
-        """
-        Retrieve relationships from the Meta property of this object
-
-        :param serializer self: This object instance
-        :return: relationships node of this object's Meta property
-        :rtype: dict
-        """
-
-        return getattr(self.Meta, 'relationships', {})
-
-    def get_relationships(self, instance):
+    def populate_relationships(self, instance):
         """
         Retrieve a relationships dictionary from this object's relationships items
 
@@ -207,46 +232,58 @@ class ResourceSerializer(serializers.Serializer):
         :return: A dictionary of relationship data
         :rtype: dict
         """
-
+        request = self._context.get("request")
         data = {}
 
         # Build Links
-        links = handler.build_relationship_links(self, relation, instance, self._context.get('request', None))
+        links = handler.build_relationship_links(self, relation, instance, request)
         if links:
-            data['links'] = links
+            data["links"] = links
 
+        # If we aren't including this relationship bail here
         if relation not in self.include:
             return data
 
         # Add Resource Identifiers for linkage
-        serializer_class = handler.get_serializer_class()
-        try:
-            related = handler.get_related(instance, self._context.get('request', None))
-        except TypeError:
-            related = handler.get_related(instance)
+        serializer_class = handler.serializer_class
+        related = handler.get_related(instance, request)
 
-        if related:
-            if handler.many:
-                related, data['meta'] = handler.apply_pagination(related, self.page_size)
+        if not related:
+            data["data"] = [] if handler.many else None
+            return data
 
-            data['data'] = resource_identifier(serializer_class)(
-                related,
-                many=handler.many
-            ).data
+        if handler.many:
+            if request:
+                page_number = request.GET.get("page[{}][number]".format(relation), 1)
+                page_size = request.GET.get("page[{}][size]".format(relation), None)
+            else:
+                page_size = None
+            if page_size:
+                related, data["meta"] = handler.apply_pagination(
+                    related, page_size, page_number
+                )
 
-            related_serializer = serializer_class(
-                related,
-                many=handler.many,
-                only_fields=self.only_fields,
-                include=self.include_tree.get(relation, [])
-            )
+        data["data"] = resource_identifier(serializer_class)(
+            related, many=handler.many, context={"request": request}
+        ).data
 
-            self.included += listify(related_serializer.data)
-            self.included += related_serializer.included
-        else:
-            data['data'] = [] if handler.many else None
+        related_serializer = serializer_class(
+            related,
+            many=handler.many,
+            only_fields=self.only_fields,
+            include=self.include_tree.get(relation, []),
+            context={"request": request},
+            is_root=False,
+        )
+        self.included += listify(related_serializer.data)
+        self.included += related_serializer.included
+        self.included_types.update(related_serializer.included_types)
 
         return data
+
+    @classmethod
+    def get_id_field(cls):
+        return getattr(cls.Meta, "id_field", "pk")
 
     def get_id(self, instance):
         """
@@ -257,11 +294,9 @@ class ResourceSerializer(serializers.Serializer):
         :return: A primary key string
         :rtype: string
         """
+        return getattr(instance, self.get_id_field())
 
-        attr = getattr(self.Meta, 'id_field', 'pk')
-        return getattr(instance, attr)
-
-    def get_meta(self, instance):
+    def get_meta(self, _instance):
         """
         Retrieve an empty meta dictionary
 
@@ -270,10 +305,9 @@ class ResourceSerializer(serializers.Serializer):
         :return: An empty dictionary
         :rtype: dict
         """
-
         return {}
 
-    def get_links(self, instance):
+    def get_links(self, instance, request=None):
         """
         Retrieve a dictionary of links
 
@@ -284,19 +318,19 @@ class ResourceSerializer(serializers.Serializer):
         """
 
         links = {}
+        if not request:
+            return links
 
         # self
+        basename = getattr(self.Meta, "basename", self.Meta.type)
         try:
-            resolve("{}/{}".format(
-                self.Meta.base_path,
-                self.get_id(instance),
-            ))
-            links['self'] = "{}{}/{}".format(
-                settings.BASE_URL,
-                self.Meta.base_path,
-                self.get_id(instance)
+            links["self"] = request.build_absolute_uri(
+                reverse(
+                    "{}-detail".format(basename),
+                    kwargs={"pk": str(self.get_id(instance))},
+                )
             )
-        except Resolver404:
+        except NoReverseMatch:
             pass
 
         return links
@@ -316,35 +350,37 @@ class ResourceSerializer(serializers.Serializer):
         if not sort_param:
             return collection
 
-        sort_fields = filter(None, sort_param.split(','))
+        sort_fields = filter(None, sort_param.split(","))
 
         for field in list(sort_fields)[::-1]:
             reverse = False
-            if field[0] == '-':
+            if field[0] == "-":
                 field = field[1:]
                 reverse = True
-            collection = sorted(collection, key=lambda x: getattr(x, field), reverse=reverse)
+            collection = sorted(
+                collection, key=lambda x, f=field: getattr(x, f), reverse=reverse
+            )
 
         return collection
 
     @classmethod
     def from_identity(cls, data, many=False):
         """
-        Retrieve an object or list of objects from an ID
+        Retrieve an object or list of objects from an Identity Resource
 
         :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param data: A list of resource IDs or a single resource ID
         :param many: If data is a list
         :return: A model object
         """
+        if not many:
+            cls.validate_resource_type(data)
+            return cls.get_object_by_id(data["id"])
 
-        if many:
-            objects = []
-            for resource in data:
-                objects.append(cls.get_object_from_identity(resource))
-            return objects
-        else:
-            return cls.get_object_from_identity(data)
+        objects = []
+        for resource in data:
+            objects.append(cls.from_identity(resource))
+        return objects
 
     @classmethod
     def validate_resource_type(cls, data):
@@ -356,35 +392,32 @@ class ResourceSerializer(serializers.Serializer):
         :raises ParseError: if type not found or not specified
         """
 
-        if 'type' not in data:
+        if "type" not in data:
             raise ParseError("Missing `type` in resource object")
-        if 'type' in data and hasattr(cls, 'Meta') and hasattr(cls.Meta, 'type') and data['type'] != cls.Meta.type:
-            raise ParseError("Invalid `type`: '{}' (Did you mean '{}'?)".format(data['type'], cls.Meta.type))
+        if (
+            "type" in data
+            and hasattr(cls, "Meta")
+            and hasattr(cls.Meta, "type")
+            and data["type"] != cls.Meta.type
+        ):
+            raise ParseError(
+                "Invalid `type`: '{}' (Did you mean '{}'?)".format(
+                    data["type"], cls.Meta.type
+                )
+            )
 
     @classmethod
-    def get_object_from_identity(cls, data):
+    def get_object_by_id(cls, identifier):
         """
-        Retrieve a single object from an ID
-
-        :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
-        :param data: A single JSON-API data object
-        :return: An object, retrieved by ID
-        """
-
-        cls.validate_resource_type(data)
-        return cls.get_object_by_id(data['id'])
-
-    @classmethod
-    def get_object_by_id(cls, id):
-        """
-        Retrieve an object by ID
+        Retrieve an object by identifier
 
         :param drf_jsonapi.serializers.utils.resource_identifier.<locals>.ResourceIdentifier cls: A class object
         :param id: An ID string
         :raises NotImplementedError: This method is not implemented
         """
-
-        raise NotImplementedError("`get_object_by_id` is not implemented in {}".format(cls))
+        raise NotImplementedError(
+            "`get_object_by_id` is not implemented in {}".format(cls)
+        )
 
     @classmethod
     def many_init(cls, *args, **kwargs):
@@ -396,43 +429,41 @@ class ResourceSerializer(serializers.Serializer):
         """
 
         child_serializer = cls(*args, **kwargs)
-        list_kwargs = {
-            'child': child_serializer,
-        }
-        list_kwargs.update({
-            key: value for key, value in kwargs.items()
-            if key in LIST_SERIALIZER_KWARGS
-        })
-        meta = getattr(cls, 'Meta', None)
-        list_serializer_class = getattr(meta, 'list_serializer_class', ResourceListSerializer)
+        list_kwargs = {"child": child_serializer}
+        list_kwargs.update(
+            {
+                key: value
+                for key, value in kwargs.items()
+                if key in LIST_SERIALIZER_KWARGS
+            }
+        )
+        meta = getattr(cls, "Meta", None)
+        list_serializer_class = getattr(
+            meta, "list_serializer_class", ResourceListSerializer
+        )
 
         return list_serializer_class(*args, **list_kwargs)
 
 
 class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
-
     @classmethod
-    def get_object_by_id(cls, id):
+    def get_object_by_id(cls, identifier):
         """
-        Retrive a model object by its primary key
+        Retrive a model object by its id field
 
         :param rest_framework.serializers.SerializerMetaclass cls: A class object
         :param str id: A primary key string
         :throws Error: If an object cannot be found by the primary key
         :return: A model object
         """
-
+        id_field = cls.get_id_field()
         try:
-            return cls.Meta.model.objects.get(pk=id)
+            return cls.Meta.model.objects.get(**{id_field: identifier})
         except (cls.Meta.model.DoesNotExist) as e:
-            raise Error(
-                detail=str(e),
-                status_code=400,
-                meta={'id': id}
-            )
+            raise Error(detail=str(e), status_code=400, meta={"id": identifier})
 
     @classmethod
-    def sort(cls, sort_param=None, queryset=None):
+    def sort(cls, sort_param=None, collection: QuerySet = None) -> QuerySet:
         """
         Retrieve a sorted queryset
 
@@ -446,19 +477,21 @@ class ResourceModelSerializer(ResourceSerializer, serializers.ModelSerializer):
         # Assuming collection is a QuerySet
 
         if not sort_param:
-            return queryset
+            return collection
 
-        sort_fields = list(filter(None, sort_param.replace('.', '__').split(',')))
+        sort_fields = list(filter(None, sort_param.replace(".", "__").split(",")))
 
         # validate the sort fields actually exist in the model
-        field_names = getattr(cls.Meta, 'sort_fields', cls.Meta.fields)
-        field_names += ('id',)
-        test_fields = [field[1:] if field[0] in ('-', '+') else field for field in sort_fields]
+        field_names = getattr(cls.Meta, "sort_fields", cls.Meta.fields)
+        field_names += ("id",)
+        test_fields = [
+            field[1:] if field[0] in ("-", "+") else field for field in sort_fields
+        ]
         invalid_fields = set(test_fields).difference(field_names)
 
         if invalid_fields:
-            raise ParseError("Invalid field(s) for sort: {}".format(
-                ",".join(invalid_fields)
-            ))
+            raise ParseError(
+                "Invalid field(s) for sort: {}".format(",".join(invalid_fields))
+            )
 
-        return queryset.order_by(*sort_fields)
+        return collection.order_by(*sort_fields)

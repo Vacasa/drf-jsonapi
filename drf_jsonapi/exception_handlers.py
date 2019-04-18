@@ -1,8 +1,4 @@
-from django.core.paginator import EmptyPage, PageNotAnInteger
-from django.core.exceptions import FieldError, ValidationError as DjangoValidationError
-
 from rest_framework.views import exception_handler
-from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from .objects import Document, Error
@@ -13,7 +9,7 @@ def jsonapi_exception_handler(exc, context):
     return ExceptionHandler.handle(exc, context)
 
 
-class ExceptionHandler(object):
+class ExceptionHandler:
     """
     Converts various Exception types into JSON-API error reponses.
     This functionality requires an entry to the REST_FRAMEWORK settings
@@ -34,13 +30,13 @@ class ExceptionHandler(object):
         """
 
         # check for specific handlers for the exc class
-        handler_function_name = 'handle_{}'.format(exc.__class__.__name__)
+        handler_function_name = "handle_{}".format(exc.__class__.__name__.lower())
 
         if hasattr(cls, handler_function_name):
-                return getattr(cls, handler_function_name)(exc, context)
+            return getattr(cls, handler_function_name)(exc, context)
 
         for base_class in exc.__class__.__bases__:
-            handler_function_name = 'handle_{}'.format(base_class.__name__)
+            handler_function_name = "handle_{}".format(base_class.__name__.lower())
             if hasattr(cls, handler_function_name):
                 return getattr(cls, handler_function_name)(exc, context)
 
@@ -50,17 +46,16 @@ class ExceptionHandler(object):
         if response:
             doc = DocumentSerializer(Document())
             error = Error(
-                status_code=getattr(response, 'status_code', 500),
-                detail=response.data['detail']
+                status_code=getattr(response, "status_code", 500),
+                detail=response.data["detail"],
             )
             doc.instance.errors = [ErrorSerializer(error).data]
-            return Response(
-                doc.data,
-                status=getattr(response, 'status_code', 500)
-            )
+            return Response(doc.data, status=getattr(response, "status_code", 500))
+
+        return None
 
     @classmethod
-    def handle_Error(cls, exc, context):  # NOSONAR
+    def handle_error(cls, exc, _context):
         """
         Retrieves a 400 error Response from an Error exception
 
@@ -70,16 +65,12 @@ class ExceptionHandler(object):
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-
         doc = DocumentSerializer(Document())
         doc.instance.errors = [ErrorSerializer(exc).data]
-        return Response(
-            doc.data,
-            status=getattr(exc, 'status_code', 400)
-        )
+        return Response(doc.data, status=getattr(exc, "status_code", 400))
 
     @classmethod
-    def handle_APIException(cls, exc, context):  # NOSONAR
+    def handle_apiexception(cls, exc, _context):
         """
         Retrieves a 400 error Response from an APIException exception
 
@@ -89,31 +80,24 @@ class ExceptionHandler(object):
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-
         doc = DocumentSerializer(Document())
 
-        detail = getattr(exc, 'detail', str(exc))
-        status_code = getattr(exc, 'status_code', 400)
+        detail = getattr(exc, "detail", str(exc))
+        status_code = getattr(exc, "status_code", 400)
 
         if isinstance(detail, dict):
             # this is for cases where a ValidationError is thrown
             # which has a dict as the detail
             errors = Error.parse_validation_errors(detail)
             doc.instance.errors = ErrorSerializer(errors, many=True).data
-            return Response(
-                doc.data,
-                status=getattr(exc, 'status_code', 400)
-            )
-        else:
-            error = Error(detail=detail, status_code=status_code)
-            doc.instance.errors = [ErrorSerializer(error).data]
-            return Response(
-                doc.data,
-                status=status_code
-            )
+            return Response(doc.data, status=getattr(exc, "status_code", 400))
+
+        error = Error(detail=detail, status_code=status_code)
+        doc.instance.errors = [ErrorSerializer(error).data]
+        return Response(doc.data, status=status_code)
 
     @classmethod
-    def handle_ValidationError(cls, exc, context):  # NOSONAR
+    def handle_validationerror(cls, exc, context):
         """
         Retrieves a 400 error Response from an APIException exception
 
@@ -124,10 +108,10 @@ class ExceptionHandler(object):
         :rtype: rest_framework.response.Response
         """
 
-        return cls.handle_APIException(exc, context)
+        return cls.handle_apiexception(exc, context)
 
     @classmethod
-    def handle_InvalidPage(cls, exc, context):  # NOSONAR
+    def handle_invalidpage(cls, exc, _context):
         """
         Retrieves a 400 error Response from an InvalidPage exception
 
@@ -137,15 +121,9 @@ class ExceptionHandler(object):
         :return: A 400 error Response
         :rtype: rest_framework.response.Response
         """
-
         doc = DocumentSerializer(Document())
         error = Error(
-            source={'parameter': 'page[number]'},
-            detail=str(exc),
-            status_code=400
+            source={"parameter": "page[number]"}, detail=str(exc), status_code=400
         )
         doc.instance.errors = [ErrorSerializer(error).data]
-        return Response(
-            doc.data,
-            status=getattr(exc, 'status_code', 400)
-        )
+        return Response(doc.data, status=getattr(exc, "status_code", 400))

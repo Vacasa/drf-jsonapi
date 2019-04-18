@@ -1,11 +1,6 @@
-from pydoc import locate
 from collections import OrderedDict
 
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
-
-from ..utils import listify
-from ..objects import Error
 
 
 class DocumentSerializer(serializers.Serializer):
@@ -29,21 +24,21 @@ class DocumentSerializer(serializers.Serializer):
         """
 
         data = OrderedDict()
-        data['data'] = instance.data
+        data["data"] = instance.data
 
         if instance.errors:
             # If errors exist we need to get rid of `data` key
             # See: http://jsonapi.org/format/#document-top-level
-            del(data['data'])
-            data['errors'] = instance.errors
+            del (data["data"])
+            data["errors"] = instance.errors
         if instance.jsonapi:
-            data['jsonapi'] = instance.jsonapi
+            data["jsonapi"] = instance.jsonapi
         if instance.links:
-            data['links'] = instance.links
+            data["links"] = instance.links
         if instance.included:
-            data['included'] = instance.included
+            data["included"] = instance.included
         if instance.meta:
-            data['meta'] = instance.meta
+            data["meta"] = instance.meta
 
         return data
 
@@ -69,22 +64,22 @@ class ErrorSerializer(serializers.Serializer):
         data = OrderedDict()
 
         if instance.id:
-            data['id'] = instance.id
+            data["id"] = instance.id
         if instance.links:
-            data['links'] = instance.links
+            data["links"] = instance.links
         if instance.status_code:
             # status should be a string
             # See: http://jsonapi.org/format/#error-objects
-            data['status'] = str(instance.status_code)
+            data["status"] = str(instance.status_code)
         if instance.code:
-            data['code'] = instance.code
+            data["code"] = instance.code
         if instance.title:
-            data['title'] = instance.title
+            data["title"] = instance.title
         if instance.detail:
-            data['detail'] = instance.detail
+            data["detail"] = instance.detail
         if instance.source:
-            data['source'] = instance.source
+            data["source"] = instance.source
         if instance.meta:
-            data['meta'] = instance.meta
+            data["meta"] = instance.meta
 
         return data

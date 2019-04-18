@@ -1,13 +1,12 @@
-from pydoc import locate
+import importlib
 
-from django.conf import settings
-from django.urls import resolve, Resolver404
-from django.core.paginator import Paginator
+from django.urls import reverse, NoReverseMatch
+from django.core.paginator import Paginator, EmptyPage
 
 from rest_framework.exceptions import ParseError
 
 
-class RelationshipHandler(object):
+class RelationshipHandler:
     """
     Validates relationship requests, and builds response dictionaries.  This class
     is meant to be overridden by inheritance.  Some methods are not implemented here.
@@ -17,6 +16,36 @@ class RelationshipHandler(object):
     many = False
     serializer_class = None
     related_field = None
+    default_page_size = None
+    url_segment = None
+
+    def __init__(
+        self,
+        serializer_class,
+        read_only=False,
+        many=False,
+        url_segment=None,
+        related_field=None,
+    ):
+        """
+        :param [str, ResourceModelSerializer] serializer_class: a serializer class or a dotted string used to locate one
+        :param str related_field: The field used to lookup the relationship
+        :param bool many: Whether the relationship represents a "to-many" relationship
+        :param str url_segment: A url segement to use for the relationship in relationship URLs. Will default to relationship name if left unset
+        :param bool read_only: Whether to create write endpoints for this relationship
+        """
+
+        if isinstance(serializer_class, str):
+            serializer_class_name = serializer_class.split(".").pop()
+            module_path = ".".join(serializer_class.split(".")[:-1])
+            serializer_module = importlib.import_module(module_path)
+            serializer_class = getattr(serializer_module, serializer_class_name)
+
+        self.serializer_class = serializer_class
+        self.read_only = read_only
+        self.many = self.many or many
+        self.url_segment = self.url_segment or url_segment
+        self.related_field = self.related_field or related_field
 
     def validate(self, data):
         """
@@ -31,19 +60,23 @@ class RelationshipHandler(object):
         """
 
         if self.many and not isinstance(data, list):
-            raise ParseError('The top-level "data" element must be an array of resource identifiers or an empty array.')
+            raise ParseError(
+                'The top-level "data" element must be an array of resource identifiers or an empty array.'
+            )
 
         if not self.many and not (isinstance(data, dict) or data is None):
-            raise ParseError('The top-level "data" element must be a single resource object or null')
+            raise ParseError(
+                'The top-level "data" element must be a single resource object or null'
+            )
 
         return data
 
-    def build_relationship_links(self, base_serializer, relation, resource, request=None):
+    def build_relationship_links(self, base_serializer, relation, resource, request):
         """
         Builds relationship links for a JSON-API response
 
         :param RelationshipHandler self: This object
-        :param serializer base_serializer: A model serlializer
+        :param serializer base_serializer: A model serializer
         :param string relation: The name of a relationship
         :param model resource: The model for the relationship "parent"
         :param django.http.HttpRequest request: The request being processed. May hold information
@@ -54,52 +87,24 @@ class RelationshipHandler(object):
 
         links = {}
 
-        args = (
-            settings.BASE_URL,
-            base_serializer.Meta.base_path,
-            base_serializer.get_id(resource),
-            relation
-        )
+        basename = getattr(base_serializer.Meta, "basename", base_serializer.Meta.type)
 
-        # self
-        try:
-            resolve("{}/{}/relationships/{}".format(*args[1:]))
-            links['self'] = "{}{}/{}/relationships/{}".format(*args)
-        except Resolver404:
-            pass
-
-        # related
-        try:
-            resolve("{}/{}/{}".format(*args[1:]))
-            links['related'] = "{}{}/{}/{}".format(*args)
-        except Resolver404:
-            pass
+        if request:
+            try:
+                path = reverse(
+                    "{}-relationships-{}".format(basename, relation),
+                    kwargs={"pk": base_serializer.get_id(resource)},
+                )
+                links["self"] = request.build_absolute_uri(path)
+            except NoReverseMatch:
+                pass
 
         # Allow overrides
-        links = self.get_links(resource, links)
+        links = self.get_links(resource, links, request)
 
         return links
 
-    def get_serializer_class(self):
-        """
-        Retrieve a serializer class
-
-        :param RelationshipsHandler self: This object
-        :return serializer_class:
-        :rtype: type
-        :raises NotImplementedError
-        :raises ImportError
-        """
-        if isinstance(self.serializer_class, str):
-            serializer_class = locate(self.serializer_class)
-            if not serializer_class:
-                raise ImportError("Unable to import serializer class: {}".format(self.serializer_class))
-            return serializer_class
-        elif self.serializer_class:
-            return self.serializer_class
-        raise NotImplementedError("`serializer_class` is missing or `get_serializer_class()` is not implemented in {}".format(self.__class__))
-
-    def get_links(self, resource, links, request=None):
+    def get_links(self, resource, links, request):
         """
         Retrieve links from given links attribute.
 
@@ -112,7 +117,7 @@ class RelationshipHandler(object):
 
         return links
 
-    def get_related(self, resource, request=None):
+    def get_related(self, resource, request):
         """
         Retrieve related resources
 
@@ -128,9 +133,13 @@ class RelationshipHandler(object):
             if self.many:
                 return related.all()
             return related
-        raise NotImplementedError("`related_field` is missing or `get_related` is not implemented in {}".format(self.__class__))
+        raise NotImplementedError(
+            "`related_field` is missing or `get_related` is not implemented in {}".format(
+                self.__class__
+            )
+        )
 
-    def apply_pagination(self, related, page_size):
+    def apply_pagination(self, related, page_size=None, page_number=1):
         """
         Builds a pagination metadata for a JSON-API response
 
@@ -142,21 +151,34 @@ class RelationshipHandler(object):
         :rtype: list
         """
 
+        page_size = page_size or self.default_page_size
+        page_number = int(page_number)
+
         paginator = Paginator(related, page_size)
-        page = paginator.page(1)
 
-        meta = {
-            'count': paginator.count,
-            'has_next': page.has_next(),
-            'has_previous': page.has_previous(),
-            'page_size': paginator.per_page,
-            'page': page.number,
-            'num_pages': paginator.num_pages
-        }
+        try:
+            page = paginator.page(page_number)
+            meta = {
+                "count": paginator.count,
+                "has_next": page.has_next(),
+                "has_previous": page.has_previous(),
+                "page_size": paginator.per_page,
+                "page": page.number,
+                "num_pages": paginator.num_pages,
+            }
+            return page.object_list, meta
+        except EmptyPage:
+            meta = {
+                "count": paginator.count,
+                "has_next": False,
+                "has_previous": page_number == paginator.num_pages + 1,
+                "page_size": paginator.per_page,
+                "page": int(page_number),
+                "num_pages": paginator.num_pages,
+            }
+            return [], meta
 
-        return page.object_list, meta
-
-    def add_related(self, resource, related, request=None):
+    def add_related(self, resource, related, request):
         """
         Add a related resource.
         NOTE: This currently only supports Many-to-Many relationships
@@ -169,15 +191,19 @@ class RelationshipHandler(object):
         :raises NotImplementedError:
         :raises TypeError:
         """
-        assert(self.many)
+        assert self.many
         if not self.related_field:
-            raise NotImplementedError("`related_field` is missing or `add_related` is not implemented in {}".format(self.__class__))
+            raise NotImplementedError(
+                "`related_field` is missing or `add_related` is not implemented in {}".format(
+                    self.__class__
+                )
+            )
         try:
             getattr(resource, self.related_field).add(*related)
-        except(TypeError):
+        except (TypeError):
             getattr(resource, self.related_field).add(related)
 
-    def set_related(self, resource, related, request=None):
+    def set_related(self, resource, related, request):
         """
         Set a related resource.
 
@@ -190,13 +216,15 @@ class RelationshipHandler(object):
         :raises NotImplementedError: As this method requires an override in the extending class
         """
         if not self.related_field:
-            raise NotImplementedError("`set_related` is not implemented in {}".format(self.__class__))
+            raise NotImplementedError(
+                "`set_related` is not implemented in {}".format(self.__class__)
+            )
         if self.many:
             getattr(resource, self.related_field).set(related)
         else:
             setattr(resource, self.related_field, related)
 
-    def remove_related(self, resource, related, request=None):
+    def remove_related(self, resource, related, request):
         """
         Remove a related resource.
 
@@ -208,10 +236,12 @@ class RelationshipHandler(object):
                 about pagination and/or User object useful for permissions.
         :raises NotImplementedError: As this method requires an override in the extending class
         """
-        assert(self.many)
+        assert self.many
         if not self.related_field:
-            raise NotImplementedError("`remove_related` is not implemented in {}".format(self.__class__))
+            raise NotImplementedError(
+                "`remove_related` is not implemented in {}".format(self.__class__)
+            )
         try:
             getattr(resource, self.related_field).remove(*related)
-        except(TypeError):
+        except (TypeError):
             getattr(resource, self.related_field).remove(related)

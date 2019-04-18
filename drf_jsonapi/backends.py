@@ -22,7 +22,7 @@ class DjangoFilterBackend(BaseClass):
         :returns: A list of CoreApi Field objects
         """
 
-        filter_class = getattr(view, 'filter_class', None)
+        filter_class = getattr(view, "filter_class", None)
         fields = []
 
         if not filter_class:
@@ -30,19 +30,21 @@ class DjangoFilterBackend(BaseClass):
 
         for field_name, field in filter_class.base_filters.items():
 
-            parts = field_name.split('__')
+            parts = field_name.split("__")
 
             if parts[-1] in LOOKUP_TYPES:
                 lookup = parts.pop()
-                field_name = "filter[{}][{}]".format('.'.join(parts), lookup)
+                field_name = "filter[{}][{}]".format(".".join(parts), lookup)
             else:
-                field_name = "filter[{}]".format('.'.join(parts))
+                field_name = "filter[{}]".format(".".join(parts))
 
-            fields.append(compat.coreapi.Field(
-                name=field_name,
-                required=field.extra['required'],
-                location='query',
-                schema=self.get_coreschema_field(field)
-            ))
+            fields.append(
+                compat.coreapi.Field(
+                    name=field_name,
+                    required=field.extra["required"],
+                    location="query",
+                    schema=self.get_coreschema_field(field),
+                )
+            )
 
         return fields

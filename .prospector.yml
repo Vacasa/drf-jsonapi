@@ -1,0 +1,10 @@
+strictness: medium
+pep8:
+  full: true
+
+pylint:
+  disable:
+    - F0401
+    - R0913
+uses:
+  - django

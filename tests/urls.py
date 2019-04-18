@@ -1,4 +1,3 @@
-import importlib
 from django.urls import path, re_path
 
 from drf_yasg.views import get_schema_view
@@ -6,12 +5,10 @@ from drf_yasg import openapi
 
 from rest_framework.permissions import AllowAny
 
-from .mocks import TestView, TestRelationshipViewSet
-
-from rest_framework_nested import routers
+from .mocks import TestView
 
 from drf_jsonapi.generators import OpenAPISchemaGenerator
-from drf_jsonapi.routers import RelationshipRouter
+from drf_jsonapi.routers import Router
 
 schema_view = get_schema_view(
     # TODO: Verify API info details
@@ -35,19 +32,6 @@ urlpatterns = [
     path("spec", schema_view.with_ui("redoc", cache_timeout=1), name="schema-redoc"),
 ]
 
-router = routers.DefaultRouter(trailing_slash=False)
-router.register("test_resources", TestView, base_name="test_resources")
+router = Router(trailing_slash=False)
+router.register(TestView)
 urlpatterns += router.urls
-
-test_related_router = RelationshipRouter(
-    router, "test_resources", lookup="test_resources", trailing_slash=False
-)
-test_related_router.register(
-    "relationships/related_things",
-    TestRelationshipViewSet,
-    base_name="test_resources-related_things"
-)
-
-urlpatterns += test_related_router.urls
-
-

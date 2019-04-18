@@ -20,7 +20,9 @@ class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):
         :rtype: dict
         """
 
-        enumerator = self.endpoint_enumerator_class(self._gen.patterns, self._gen.urlconf, request=request)
+        enumerator = self.endpoint_enumerator_class(
+            self._gen.patterns, self._gen.urlconf, request=request
+        )
         endpoints = enumerator.get_api_endpoints()
 
         view_paths = defaultdict(list)
@@ -29,7 +31,7 @@ class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):
         for path, method, callback in endpoints:
             view = self.create_view(callback, method, request)
             path = self._gen.coerce_path(path, method, view)
-            path = path_pattern.sub('{id}', path)
+            path = path_pattern.sub("{id}", path)
             view_paths[path].append((method, view))
             view_cls[path] = callback.cls
 
