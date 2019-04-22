@@ -195,6 +195,7 @@ class RelationshipHandler(object):
             getattr(resource, self.related_field).set(related)
         else:
             setattr(resource, self.related_field, related)
+            resource.save()
 
     def remove_related(self, resource, related, request=None):
         """
