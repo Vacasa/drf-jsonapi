@@ -398,10 +398,13 @@ class RelationshipPatchMixin(object):
         data = request.data['data']
         data = handler.validate(data)
 
-        related = serializer_class.from_identity(
-            request.data['data'],
-            many=handler.many
-        )
+        if data:
+            related = serializer_class.from_identity(
+                data,
+                many=handler.many
+            )
+        else:
+            related = None
 
         try:
             handler.set_related(resource, related, request)
