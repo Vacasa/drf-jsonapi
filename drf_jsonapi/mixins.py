@@ -1,7 +1,7 @@
 from django.db import connection
 from django.conf import settings
 
-from rest_framework.exceptions import NotFound, MethodNotAllowed
+from rest_framework.exceptions import NotFound, MethodNotAllowed, ParseError
 from rest_framework import status
 
 from . import defaults
@@ -76,6 +76,10 @@ class ProcessRelationshipsMixin:
     def process_relationships(self, relationship_data, resource, request, many=None):
         for relation, data in relationship_data.items():
             handler = self.get_relationship_handler(relation)
+
+            # Ensure required keyword data is present
+            if "data" not in data:
+                raise ParseError("Missing key `data` in relationship object")
 
             # Skip relationships that don't match many
             if many != handler.many and many is not None:
