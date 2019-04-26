@@ -1,3 +1,5 @@
+import mock
+
 from django.test import TestCase
 from django.db import models
 
@@ -23,6 +25,17 @@ class TestFilterSet(FilterSet):
 
 
 class FilterSetTestCase(TestCase):
+    def test_invalid_form_will_call_qs_none(self):
+        mock__qs = mock.MagicMock(none=mock.MagicMock())
+        filterset = TestFilterSet(
+            {"filter[id]": 1_234_567_890}, TestModel.objects.all()
+        )
+        filterset._form = mock.MagicMock(
+            is_valid=mock.MagicMock(return_value=False)
+        )  # noqa
+        filterset.filter_queryset(mock__qs)
+        mock__qs.none.assert_called_once()
+
     def test_parse_filters(self):
         query = {
             "filter[fieldname][gte]": 10,

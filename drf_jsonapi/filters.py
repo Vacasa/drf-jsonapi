@@ -57,7 +57,7 @@ class ParseFiltersMixin:
         return field if expr == "exact" else field + "__" + expr
 
 
-class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
+class FilterSet(ParseFiltersMixin, django_filters.rest_framework.FilterSet):
     """
     By default django_filters supports query params like `foobar__gt=5` to
     filter results where `foobar` is greater than 5. You can also drill into
@@ -113,6 +113,12 @@ class FilterSet(ParseFiltersMixin, django_filters.FilterSet):
             )
 
         return value
+
+    def filter_queryset(self, _qs):
+        """Return an empty list if the form can't validate"""
+        if not self.form.is_valid():
+            return _qs.none()
+        return super().filter_queryset(_qs)
 
     @property
     def collection(self):
