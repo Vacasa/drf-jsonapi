@@ -1,5 +1,6 @@
 import warnings
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.exceptions import NotFound, MethodNotAllowed
 from rest_framework import status
@@ -121,8 +122,8 @@ class ProcessRelationshipsMixin(object):
                 handler.set_related(resource, related_resources, request)
             except TypeError:
                 warnings.warn(
-                    """set_related() should except the request 
-                    as a third argument. This warning will be 
+                    """set_related() should except the request
+                    as a third argument. This warning will be
                     replaced with an exception in future versions.""",
                     DeprecationWarning
                 )
@@ -298,8 +299,8 @@ class RelationshipListMixin(object):
             related = handler.get_related(resource, request)
         except TypeError:
             warnings.warn(
-                """get_related() should except the request 
-                as a second argument. This warning will be 
+                """get_related() should except the request
+                as a second argument. This warning will be
                 replaced with an exception in future versions.""",
                 DeprecationWarning
             )
@@ -364,8 +365,8 @@ class RelationshipCreateMixin(object):
             handler.add_related(resource, related, request)
         except TypeError:
             warnings.warn(
-                """add_related() should except the request 
-                as a third argument. This warning will be 
+                """add_related() should except the request
+                as a third argument. This warning will be
                 replaced with an exception in future versions.""",
                 DeprecationWarning
             )
@@ -410,8 +411,8 @@ class RelationshipPatchMixin(object):
             handler.set_related(resource, related, request)
         except TypeError:
             warnings.warn(
-                """set_related() should except the request 
-                as a third argument. This warning will be 
+                """set_related() should except the request
+                as a third argument. This warning will be
                 replaced with an exception in future versions.""",
                 DeprecationWarning
             )
@@ -461,10 +462,12 @@ class RelationshipDeleteMixin(object):
 
         try:
             handler.remove_related(resource, related, request)
+        except ObjectDoesNotExist:
+            pass
         except TypeError:
             warnings.warn(
-                """remove_related() should except the request 
-                as a second argument. This warning will be 
+                """remove_related() should except the request
+                as a second argument. This warning will be
                 replaced with an exception in future versions.""",
                 DeprecationWarning
             )
