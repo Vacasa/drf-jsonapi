@@ -1,7 +1,7 @@
 import importlib
 
-from django.urls import reverse, NoReverseMatch
 from django.core.paginator import Paginator, EmptyPage
+from django.urls import resolve, reverse, NoReverseMatch
 
 from rest_framework.exceptions import ParseError
 
@@ -88,11 +88,12 @@ class RelationshipHandler:
         links = {}
 
         basename = getattr(base_serializer.Meta, "basename", base_serializer.Meta.type)
+        app_name = resolve(request.path).app_name
 
         if request:
             try:
                 path = reverse(
-                    "{}-relationships-{}".format(basename, relation),
+                    "{}:{}-relationships-{}".format(app_name, basename, relation),
                     kwargs={"pk": base_serializer.get_id(resource)},
                 )
                 links["self"] = request.build_absolute_uri(path)
