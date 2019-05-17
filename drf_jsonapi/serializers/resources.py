@@ -215,6 +215,9 @@ class ResourceSerializer(serializers.Serializer):
         relationships = {}
 
         for relation, handler in self.relationships.items():
+            # If this isn't the root serializer, explicitly set show data to False to prevent N+1 queries
+            if not self.is_root:
+                handler.show_data = False
             data = self.get_relationship_data(relation, handler, instance)
             if data:
                 relationships[relation] = data
@@ -240,18 +243,20 @@ class ResourceSerializer(serializers.Serializer):
         if links:
             data["links"] = links
 
-        # If we aren't including this relationship bail here
-        if relation not in self.include:
+        # If not configured to show data objects, and the relation was not passed as an include, bail here
+        if not handler.show_data and relation not in self.include:
             return data
 
         # Add Resource Identifiers for linkage
         serializer_class = handler.serializer_class
         related = handler.get_related(instance, request)
 
+        # Handle no relation cases
         if not related:
             data["data"] = [] if handler.many else None
             return data
 
+        # Add relationships`meta information
         if handler.many:
             if request:
                 page_number = request.GET.get("page[{}][number]".format(relation), 1)
@@ -263,9 +268,14 @@ class ResourceSerializer(serializers.Serializer):
                     related, page_size, page_number
                 )
 
+        # Add relationships data identifier objects
         data["data"] = resource_identifier(serializer_class)(
             related, many=handler.many, context={"request": request}
         ).data
+
+        # Code below this block is only relevant when includes are present
+        if relation not in self.include:
+            return data
 
         related_serializer = serializer_class(
             related,

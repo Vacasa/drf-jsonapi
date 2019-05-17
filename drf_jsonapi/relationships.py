@@ -26,6 +26,7 @@ class RelationshipHandler:
         many=False,
         url_segment=None,
         related_field=None,
+        show_data=False,
     ):
         """
         :param [str, ResourceModelSerializer] serializer_class: a serializer class or a dotted string used to locate one
@@ -33,6 +34,9 @@ class RelationshipHandler:
         :param bool many: Whether the relationship represents a "to-many" relationship
         :param str url_segment: A url segement to use for the relationship in relationship URLs. Will default to relationship name if left unset
         :param bool read_only: Whether to create write endpoints for this relationship
+        :param bool show_data: Configures whether or not relationship JSON will show a data object without an accompanying include
+
+        NOTE: If `show_data` is True, proactively select the relationship in the initial queryset to avoid N+1 queries
         """
 
         if isinstance(serializer_class, str):
@@ -42,6 +46,7 @@ class RelationshipHandler:
             serializer_class = getattr(serializer_module, serializer_class_name)
 
         self.serializer_class = serializer_class
+        self.show_data = show_data
         self.read_only = read_only
         self.many = self.many or many
         self.url_segment = self.url_segment or url_segment
