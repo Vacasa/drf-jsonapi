@@ -72,7 +72,9 @@ class TestResourceSerializer(ResourceSerializer):
     @staticmethod
     def define_relationships():
         return {
-            "related_things": TestManyRelationshipHandler(TestResourceSerializer),
+            "related_things": TestManyRelationshipHandler(
+                TestResourceSerializer, show_data=True
+            ),
             "empty_things": TestManyEmptyRelationshipHandler(TestResourceSerializer),
         }
 

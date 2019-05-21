@@ -40,6 +40,25 @@ class RelationshipHandlerTestCase(TestCase):
         with self.assertRaises(ImportError):
             RelationshipHandler("fake.not_here.Serializer")
 
+    @mock.patch(
+        "drf_jsonapi.relationships.reverse",
+        return_value="test_resources/1/relationships/related_things",
+    )
+    def test_build_relationship_links(self, mock_reverse):
+        resource = TestModel.objects.create()
+        request = RequestFactory().get("/test_resources/1")
+        TestModelSerializer.get_id = mock.MagicMock(return_value=1)
+        handler = RelationshipHandler(
+            TestModelSerializer, related_field="related_things", many=True
+        )
+        links = handler.build_relationship_links(
+            TestModelSerializer, "related_things", resource, request
+        )
+        self.assertDictEqual(
+            links,
+            {"self": f"http://testserver/test_resources/{mock_reverse.return_value}"},
+        )
+
     def test_apply_pagination(self):
         related = list(range(20))
         handler = RelationshipHandler(
