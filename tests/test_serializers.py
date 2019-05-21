@@ -209,7 +209,7 @@ class ResourceSerializerTestCase(TestCase):
 
     def test_to_representation(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource, context={"request": self.mock_request}
+            self.resource, context={"request": None}
         )
         self.assertDictEqual(
             serializer.data,
@@ -335,29 +335,21 @@ class ResourceSerializerTestCase(TestCase):
 
     def test_relationship_show_data_true_shows_data(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=["related_things"],
-            page_size=10,
-            context={"request": self.mock_request},
+            self.resource, include=["related_things"], page_size=10
         )
         relationship_data = serializer.data["relationships"]
         self.assertIn("data", relationship_data["related_things"])
 
     def test_relationship_show_data_false_does_not_show_data(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=["related_things"],
-            page_size=10,
-            context={"request": self.mock_request},
+            self.resource, include=["related_things"], page_size=10
         )
         relationship_data = serializer.data["relationships"]
         self.assertNotIn("data", relationship_data["empty_things"])
 
     def test_included_single(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=["related_things"],
-            context={"request": self.mock_request},
+            self.resource, include=["related_things"]
         )
         data = serializer.data
         del data
@@ -368,9 +360,7 @@ class ResourceSerializerTestCase(TestCase):
 
     def test_included_list(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            include=["related_things"],
-            context={"request": self.mock_request},
+            self.resource, include=["related_things"]
         )
         serializer.get_related_things = lambda x: [
             mocks.TestResource(
@@ -387,9 +377,7 @@ class ResourceSerializerTestCase(TestCase):
 
     def test_apply_sparse_fieldset(self):
         serializer = mocks.TestResourceSerializer(
-            self.resource,
-            only_fields={"test_resource": ["name"]},
-            context={"request": self.mock_request},
+            self.resource, only_fields={"test_resource": ["name"]}
         )
         self.assertDictEqual(
             serializer.data,
@@ -442,7 +430,6 @@ class ResourceSerializerTestCase(TestCase):
             ResourceSerializer.get_object_by_id("foobar")
 
     def test_sort(self):
-
         collection = [
             mocks.TestResource(id=5, count=1),
             mocks.TestResource(id=4, count=1),

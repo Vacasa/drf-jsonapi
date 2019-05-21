@@ -93,12 +93,12 @@ class RelationshipHandler:
         links = {}
 
         basename = getattr(base_serializer.Meta, "basename", base_serializer.Meta.type)
-        app_name = resolve(request.path).app_name
+        app_name = resolve(request.path).app_name + ":" if request else ""
 
         if request:
             try:
                 path = reverse(
-                    "{}:{}-relationships-{}".format(app_name, basename, relation),
+                    "{}{}-relationships-{}".format(app_name, basename, relation),
                     kwargs={"pk": base_serializer.get_id(resource)},
                 )
                 links["self"] = request.build_absolute_uri(path)
