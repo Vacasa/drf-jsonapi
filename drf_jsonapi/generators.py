@@ -1,4 +1,3 @@
-import re
 from collections import defaultdict
 from drf_yasg.generators import OpenAPISchemaGenerator as _OpenAPISchemaGenerator
 
