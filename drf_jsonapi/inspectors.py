@@ -63,7 +63,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
                 resource_type, self.relationship, actionValue
             ).title()
         else:
-           summary = "{} {}".format(resource_type, actionValue).title()
+            summary = "{} {}".format(resource_type, actionValue).title()
         return summary, description
 
     def get_tags(self, operation_keys):
@@ -172,7 +172,9 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             default_schema = self.serializer_to_schema(default_schema) or ""
 
         if default_schema and self.is_list():
-            default_schema = openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
+            default_schema = openapi.Schema(
+                type=openapi.TYPE_ARRAY, items=default_schema
+            )
 
         return OrderedDict({str(default_status): default_schema})
 
