@@ -1,9 +1,10 @@
 import itertools
+import logging
 import re
 from collections import OrderedDict
 
 from django.conf import settings
-from django.urls import resolve
+from django.urls import resolve, Resolver404
 
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.inspectors.base import call_view_method
@@ -38,8 +39,11 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
     def __init__(self, *args):
         super().__init__(*args)
-        self.match = resolve(self.path)
-        if "relationship" in self.match.kwargs:
+        try:
+            self.match = resolve(self.path)
+        except Resolver404:
+            pass
+        if hasattr(self, 'match') and "relationship" in self.match.kwargs:
             self.relationship = self.match.kwargs["relationship"]
             self.relationships = self.view.serializer_class.define_relationships()
         else:
@@ -57,14 +61,13 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         summary, description = super().get_summary_and_description()
         action = self.view.action
         resource_type = self.view.serializer_class.Meta.type
-
+        actionValue = ACTIONS.get(action, action)
         if self.relationship:
             summary = "{} {} {}".format(
-                resource_type, self.relationship, ACTIONS[action]
+                resource_type, self.relationship, actionValue
             ).title()
         else:
-            summary = "{} {}".format(resource_type, ACTIONS[action]).title()
-
+           summary = "{} {}".format(resource_type, actionValue).title()
         return summary, description
 
     def get_tags(self, operation_keys):
@@ -173,9 +176,7 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             default_schema = self.serializer_to_schema(default_schema) or ""
 
         if default_schema and self.is_list():
-            default_schema = self.get_paginated_response(
-                openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
-            )
+            default_schema = openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
 
         return OrderedDict({str(default_status): default_schema})
 
