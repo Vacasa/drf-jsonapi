@@ -39,11 +39,8 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
 
     def __init__(self, *args):
         super().__init__(*args)
-        try:
-            self.match = resolve(self.path)
-        except Resolver404:
-            pass
-        if hasattr(self, 'match') and "relationship" in self.match.kwargs:
+        self.match = resolve(self.path)
+        if "relationship" in self.match.kwargs:
             self.relationship = self.match.kwargs["relationship"]
             self.relationships = self.view.serializer_class.define_relationships()
         else:
