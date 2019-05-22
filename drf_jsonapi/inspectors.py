@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict
 
 from django.conf import settings
-from django.urls import resolve, Resolver404
+from django.urls import resolve
 
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.inspectors.base import call_view_method
