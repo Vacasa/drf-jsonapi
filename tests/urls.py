@@ -5,7 +5,7 @@ from drf_yasg import openapi
 
 from rest_framework.permissions import AllowAny
 
-from .mocks import TestView
+from .mocks import TestView, NonStandardViewSet
 
 from drf_jsonapi.generators import OpenAPISchemaGenerator
 from drf_jsonapi.routers import Router
@@ -35,3 +35,10 @@ urlpatterns = [
 router = Router(trailing_slash=False)
 router.register(TestView)
 urlpatterns += router.urls
+
+non_standard_endpoint = path(
+    "nonstandard/<uuid>",
+    NonStandardViewSet.as_view({"get": "get_item"})
+)
+
+urlpatterns += [non_standard_endpoint]
