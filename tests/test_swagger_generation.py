@@ -31,3 +31,6 @@ class EntitySwaggerAutoSchemaTestCase(TestCase):
 
     def test_non_standard_route(self):
         self.assertTrue("/nonstandard/{uuid}" in self.spec.paths)
+
+    def test_list_response_schemas_appear(self):
+        self.assertTrue('200' in self.spec.paths["/test_resources"]['get'].responses)
