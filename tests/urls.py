@@ -37,8 +37,7 @@ router.register(TestView)
 urlpatterns += router.urls
 
 non_standard_endpoint = path(
-    "nonstandard/<uuid>",
-    NonStandardViewSet.as_view({"get": "get_item"})
+    "nonstandard/<uuid>", NonStandardViewSet.as_view({"get": "get_item"})
 )
 
 urlpatterns += [non_standard_endpoint]

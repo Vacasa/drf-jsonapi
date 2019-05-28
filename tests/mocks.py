@@ -130,16 +130,17 @@ class TestView(ReadWriteViewSet):
     serializer_class = TestModelSerializer
     collection = []
 
+
 class NonStandardViewSet(ReadWriteViewSet):
     view_name_prefix = "Test Resource"
     serializer_class = TestModelSerializer
     collection = []
-    
+
     def get_item(self, request):
         return {
             "data": {
                 "type": "nonstandard",
                 "id": "97bc4158-2642-4a23-ab67-caf752cf0af1",
-                "attributes": {}
+                "attributes": {},
             }
         }
