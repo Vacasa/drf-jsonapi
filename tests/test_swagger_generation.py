@@ -28,3 +28,9 @@ class EntitySwaggerAutoSchemaTestCase(TestCase):
         names = [param.name for param in parameters]
         self.assertTrue("page[size]" in names)
         self.assertTrue("page[number]" in names)
+
+    def test_non_standard_route(self):
+        self.assertTrue("/nonstandard/{uuid}" in self.spec.paths)
+
+    def test_list_response_schemas_appear(self):
+        self.assertTrue("200" in self.spec.paths["/test_resources"]["get"].responses)

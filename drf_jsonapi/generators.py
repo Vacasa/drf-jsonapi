@@ -1,8 +1,5 @@
-import re
 from collections import defaultdict
 from drf_yasg.generators import OpenAPISchemaGenerator as _OpenAPISchemaGenerator
-
-path_pattern = re.compile(r"{\w+}")
 
 
 class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):
@@ -31,7 +28,6 @@ class OpenAPISchemaGenerator(_OpenAPISchemaGenerator):
         for path, method, callback in endpoints:
             view = self.create_view(callback, method, request)
             path = self._gen.coerce_path(path, method, view)
-            path = path_pattern.sub("{id}", path)
             view_paths[path].append((method, view))
             view_cls[path] = callback.cls
 

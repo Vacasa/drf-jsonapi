@@ -57,14 +57,13 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
         summary, description = super().get_summary_and_description()
         action = self.view.action
         resource_type = self.view.serializer_class.Meta.type
-
+        action_value = ACTIONS.get(action, action)
         if self.relationship:
             summary = "{} {} {}".format(
-                resource_type, self.relationship, ACTIONS[action]
+                resource_type, self.relationship, action_value
             ).title()
         else:
-            summary = "{} {}".format(resource_type, ACTIONS[action]).title()
-
+            summary = "{} {}".format(resource_type, action_value).title()
         return summary, description
 
     def get_tags(self, operation_keys):
@@ -173,8 +172,8 @@ class EntitySwaggerAutoSchema(SwaggerAutoSchema):
             default_schema = self.serializer_to_schema(default_schema) or ""
 
         if default_schema and self.is_list():
-            default_schema = self.get_paginated_response(
-                openapi.Schema(type=openapi.TYPE_ARRAY, items=default_schema)
+            default_schema = openapi.Schema(
+                type=openapi.TYPE_ARRAY, items=default_schema
             )
 
         return OrderedDict({str(default_status): default_schema})
