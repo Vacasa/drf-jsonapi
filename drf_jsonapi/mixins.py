@@ -11,6 +11,14 @@ from .utils import listify
 from .objects import Error
 
 
+def get_context(context):
+    if context is None:
+        context = {}
+    if not isinstance(context, dict):
+        raise TypeError("The argument `context` must be a dict instance")
+    return context
+
+
 class DebugMixin:
     """
     This Mixin adds some debug output to each response about the DB queries
@@ -40,7 +48,7 @@ class ListMixin:
     Override base view behavior: build a response for a list endpoint
     """
 
-    def list(self, request):
+    def list(self, request, context=None):
         collection = self.get_collection(request)
 
         # Sorting
@@ -63,7 +71,7 @@ class ListMixin:
                 "page[size]",
                 getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
             ),
-            context={"request": request},
+            context={"request": request, **get_context(context)},
         )
 
         self.document.instance.data = serializer.data
@@ -105,7 +113,7 @@ class CreateMixin(ProcessRelationshipsMixin):
     Override base view behavior for a create endpoint
     """
 
-    def create(self, request):
+    def create(self, request, context=None):
         serializer = self.serializer_class(
             data=request.data["data"],
             only_fields=request.fields,
@@ -114,7 +122,7 @@ class CreateMixin(ProcessRelationshipsMixin):
                 "page[size]",
                 getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
             ),
-            context={"request": request},
+            context={"request": request, **get_context(context)},
         )
 
         if not serializer.is_valid():
@@ -145,7 +153,7 @@ class RetrieveMixin:
     Override base view behavior for retrieve endpoints
     """
 
-    def retrieve(self, request, pk):
+    def retrieve(self, request, pk, context=None):
         resource = self.get_resource(request, pk)
 
         serializer = self.serializer_class(
@@ -156,7 +164,7 @@ class RetrieveMixin:
                 "page[size]",
                 getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
             ),
-            context={"request": request},
+            context={"request": request, **get_context(context)},
         )
 
         self.document.instance.data = serializer.data
@@ -170,7 +178,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
     Override base view behavior for partial update endpoints
     """
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, context=None, **kwargs):
         resource = self.get_resource(request, *args, **kwargs)
 
         serializer = self.serializer_class(
@@ -183,7 +191,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
                 "page[size]",
                 getattr(settings, "DEFAULT_PAGE_SIZE", defaults.DEFAULT_PAGE_SIZE),
             ),
-            context={"request": request},
+            context={"request": request, **get_context(context)},
         )
 
         if not serializer.is_valid():

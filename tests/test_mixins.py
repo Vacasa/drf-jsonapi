@@ -39,6 +39,20 @@ class TestViewSet(
     collection = TestModel.objects.none()
 
 
+class HelperMethodsTestCase(TestCase):
+    def test_get_context_context_is_none(self):
+        self.assertDictEqual(mixins.get_context(None), {})
+
+    def test_get_context_context_is_not_dict(self):
+        with self.assertRaisesMessage(
+            TypeError, "The argument `context` must be a dict instance"
+        ):
+            mixins.get_context([])
+
+    def test_get_context_context_is_dict(self):
+        self.assertDictEqual(mixins.get_context({"a": "b"}), {"a": "b"})
+
+
 class DebugMixinsTestCase(TestCase):
     @override_settings(DEBUG=True)
     def test_finalize_response(self):
