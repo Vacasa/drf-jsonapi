@@ -304,7 +304,8 @@ class ResourceSerializer(serializers.Serializer):
         :return: A primary key string
         :rtype: string
         """
-        return getattr(instance, self.get_id_field())
+        id_value = getattr(instance, self.get_id_field())
+        return str(id_value)
 
     def get_meta(self, _instance):
         """
