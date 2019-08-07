@@ -259,7 +259,8 @@ class ResourceSerializer(serializers.Serializer):
         """
 
         attr = getattr(self.Meta, 'id_field', 'pk')
-        return getattr(instance, attr)
+        id_value = getattr(instance, attr)
+        return str(id_value)
 
     def get_meta(self, instance):
         """
