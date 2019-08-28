@@ -197,8 +197,6 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
                 request.data["data"]["relationships"], resource, request
             )
 
-        resource.save()
-
         self.document.instance.data = serializer.data
 
         return Response(self.document.data)
