@@ -189,13 +189,13 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
         if not serializer.is_valid():
             return self.error_response(Error.parse_validation_errors(serializer.errors))
 
-        resource = serializer.save()
-
         # Check for relationships and process them
         if "relationships" in request.data["data"]:
             self.process_relationships(
                 request.data["data"]["relationships"], resource, request
             )
+
+        serializer.save()
 
         self.document.instance.data = serializer.data
 
