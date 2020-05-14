@@ -292,6 +292,9 @@ class RelationshipUpdateMixin:
 
         handler.set_related(resource, related, request)
 
+        if not handler.many:
+            resource.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
