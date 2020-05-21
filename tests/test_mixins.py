@@ -88,6 +88,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({"get": "retrieve"})
         response = view(request, pk=1)
         self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_create_mixin(self):
         factory = APIRequestFactory()
@@ -105,6 +106,7 @@ class MixinsTestCase(TestCase):
         response = view(request)
         response.render()
         self.assertEqual(response.status_code, 201)
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_create_mixin_with_relationships_to_many(self):
         factory = APIRequestFactory()
@@ -272,6 +274,7 @@ class MixinsTestCase(TestCase):
         response = view(request, pk=1)
         response.render()
         self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_partial_update_mixin_with_relationships(self):
         factory = APIRequestFactory()
@@ -370,6 +373,7 @@ class MixinsTestCase(TestCase):
         view = TestViewSet.as_view({"delete": "destroy"})
         response = view(request, pk=1)
         self.assertEqual(response.status_code, 204)
+        self.assertIsInstance(response.context["resource"], TestModel)
 
 
 class RelationshipCreateMixinTestCase(TestCase):
@@ -378,21 +382,22 @@ class RelationshipCreateMixinTestCase(TestCase):
         relationship = "related_things"
 
         def get_resource(self, request, pk):
-            return True
+            return TestModel()
 
     class TestOneView(mixins.RelationshipCreateMixin, ViewSet):
         serializer_class = TestModelSerializer
         relationship = "related_thing"
 
         def get_resource(self, request, pk):
-            return True
+            return TestModel()
 
     def test_create_valid(self):
         factory = APIRequestFactory()
         request = factory.post("/test_resources", {}, format="json")
         request.data = {"data": [{"type": "test_resource", "id": "test_id"}]}
         view = self.TestManyView()
-        view.relationship_create(request, 1, "related_things")
+        response = view.relationship_create(request, 1, "related_things")
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_create_to_many_invalid(self):
         factory = APIRequestFactory()
@@ -439,7 +444,8 @@ class RelationshipPatchMixinTestCase(TestCase):
         request = factory.patch("/test_resources", {}, format="json")
         request.data = {"data": {"type": "test_resource", "id": "test_id"}}
         view = self.TestOneView()
-        view.relationship_update(request, 1, "related_thing")
+        response = view.relationship_update(request, 1, "related_thing")
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_patch_one_invalid(self):
         factory = APIRequestFactory()
@@ -456,14 +462,14 @@ class RelationshipDeleteMixinTestCase(TestCase):
         relationship = "related_things"
 
         def get_resource(self, request, pk):
-            return True
+            return TestModel()
 
     class TestOneView(mixins.RelationshipDestroyMixin, ViewSet):
         serializer_class = TestModelSerializer
         relationship = "related_thing"
 
         def get_resource(self, request, pk):
-            return True
+            return TestModel()
 
     def test_destroy_to_one_invalid(self):
         factory = APIRequestFactory()
@@ -483,7 +489,8 @@ class RelationshipDeleteMixinTestCase(TestCase):
         )
         view = self.TestManyView()
         request.data = {"data": {"type": "test_resource", "id": "5"}}
-        view.relationship_destroy(request, 1, "related_things")
+        response = view.relationship_destroy(request, 1, "related_things")
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_destroy_to_many_valid_iterator(self):
         factory = APIRequestFactory()
@@ -523,6 +530,7 @@ class RelationshipRetrieveMixinTestCase(TestCase):
         view = self.TestOneView.as_view({"get": "relationship_retrieve"})
         response = view(request, 1, "related_thing")
         self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context["resource"], TestModel)
 
     def test_list_mixin_many(self):
         factory = APIRequestFactory()

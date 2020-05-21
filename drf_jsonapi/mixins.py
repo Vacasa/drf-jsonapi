@@ -69,7 +69,7 @@ class ListMixin:
         self.document.instance.data = serializer.data
         self.document.instance.included = serializer.included
 
-        return Response(self.document.data)
+        return Response(self.document.data, context={"collection": page})
 
 
 class ProcessRelationshipsMixin:
@@ -137,7 +137,11 @@ class CreateMixin(ProcessRelationshipsMixin):
         serializer.instance = resource
         self.document.instance.data = serializer.data
 
-        return Response(self.document.data, status=status.HTTP_201_CREATED)
+        return Response(
+            self.document.data,
+            status=status.HTTP_201_CREATED,
+            context={"resource": resource},
+        )
 
 
 class RetrieveMixin:
@@ -162,7 +166,7 @@ class RetrieveMixin:
         self.document.instance.data = serializer.data
         self.document.instance.included = serializer.included
 
-        return Response(self.document.data)
+        return Response(self.document.data, context={"resource": resource})
 
 
 class PartialUpdateMixin(ProcessRelationshipsMixin):
@@ -199,7 +203,7 @@ class PartialUpdateMixin(ProcessRelationshipsMixin):
 
         self.document.instance.data = serializer.data
 
-        return Response(self.document.data)
+        return Response(self.document.data, context={"resource": resource})
 
 
 class DestroyMixin:
@@ -208,10 +212,11 @@ class DestroyMixin:
     """
 
     def destroy(self, request, pk):
-        resource = self.get_resource(request, pk)
-        resource.delete()
+        resource = self.get_resource(request, pk).delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT, context={"resource": resource}
+        )
 
 
 class RelationshipRetrieveMixin:
@@ -238,7 +243,7 @@ class RelationshipRetrieveMixin:
         serializer = resource_identifier(serializer_class)(related, many=handler.many)
 
         self.document.instance.data = serializer.data
-        return Response(self.document.data)
+        return Response(self.document.data, context={"resource": resource})
 
 
 class RelationshipCreateMixin:
@@ -268,7 +273,9 @@ class RelationshipCreateMixin:
 
         handler.add_related(resource, related, request)
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT, context={"resource": resource}
+        )
 
 
 class RelationshipUpdateMixin:
@@ -295,7 +302,9 @@ class RelationshipUpdateMixin:
         if not handler.many:
             resource.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT, context={"resource": resource}
+        )
 
 
 class RelationshipDestroyMixin:
@@ -325,4 +334,6 @@ class RelationshipDestroyMixin:
 
         handler.remove_related(resource, related, request)
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT, context={"resource": resource}
+        )
