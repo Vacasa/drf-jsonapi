@@ -36,3 +36,12 @@ class NestedIncludesTestCase(TestCase):
     def test_invalid_include(self):
         response = self.client.get("/leaves?include=foo.bar")
         self.assertEqual(response.status_code, 400)
+
+    def test_nested_sparse_fieldsets_no_members(self):
+        trunk = Trunk.objects.create(name="No relationships")
+        response = self.client.get(
+            "/trunks/{}?include=branches.leaves&fields[branch]=name&fields[leaf]=name".format(
+                trunk.pk
+            )
+        )
+        self.assertEqual(response.status_code, 200)
