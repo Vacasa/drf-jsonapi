@@ -83,7 +83,9 @@ class ResourceSerializer(serializers.Serializer):
         self.is_root = is_root
         self.included = []
         self.type = self.Meta.type
-        self.included_types = {self.type}
+        self.included_types = {self.type} | self._get_include_types(
+            self.include_tree, self.relationships
+        )
         super().__init__(*args, **kwargs)
 
         # We have to this AFTER super().__init__ so that self.fields is populated
@@ -91,7 +93,6 @@ class ResourceSerializer(serializers.Serializer):
             self.apply_sparse_fieldset(self.only_fields[self.Meta.type])
 
     def validate_includes(self, includes):
-
         self.include_tree = self._build_include_tree(includes)
         self.include = list(self.include_tree.keys())
 
@@ -115,6 +116,24 @@ class ResourceSerializer(serializers.Serializer):
             if branches:
                 include_tree[root].append(branches)
         return include_tree
+
+    def _get_include_types(self, include_tree, relationships):
+        """
+        Get the resource types of all includes
+
+        :param dict[str:, list] include_tree: A list includes and their nest includes
+        :param dict[str, RelationshipHandler] relationships: A dictionary of serializer relationships
+        """
+        include_types = set()
+        for key, value in include_tree.items():
+            serializer_class = relationships[key].serializer_class
+            include_types.update({serializer_class.Meta.type})
+            nested_include_tree = self._build_include_tree(value)
+            nested_relationships = serializer_class.define_relationships()
+            include_types.update(
+                self._get_include_types(nested_include_tree, nested_relationships)
+            )
+        return include_types
 
     def validate_sparse_fieldsets(self):
         if not self.only_fields:
@@ -287,7 +306,6 @@ class ResourceSerializer(serializers.Serializer):
         )
         self.included += listify(related_serializer.data)
         self.included += related_serializer.included
-        self.included_types.update(related_serializer.included_types)
 
         return data
 
