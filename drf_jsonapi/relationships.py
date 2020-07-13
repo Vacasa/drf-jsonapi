@@ -184,6 +184,40 @@ class RelationshipHandler:
             }
             return [], meta
 
+    def build_relationship_meta(self, base_serializer, relation, resource, request):
+        """
+        Builds relationship meta for a JSON-API response
+
+        :param RelationshipHandler self: This object
+        :param serializer base_serializer: A model serializer
+        :param string relation: The name of a relationship
+        :param model resource: The model for the relationship "parent"
+        :param django.http.HttpRequest request: The request being processed. May hold information
+                about pagination and/or User object useful for permissions.
+        :return: A meta dictionary
+        :rtype: dict
+        """
+
+        relationship_meta = {}
+
+        # Allow overrides
+        relationship_meta = self.get_relationship_meta(resource, relationship_meta, request)
+
+        return relationship_meta
+
+    def get_relationship_meta(self, resource, relationship_meta, request):
+        """
+        Retrieve meta from given relationship_meta attribute.
+
+        :param RelationshipsHandler self: This object
+        :param QuerySet resource: A model resource
+        :param dict relationship_meta:
+        :return relationship_meta:
+        :rtype: dict
+        """
+
+        return relationship_meta
+
     def add_related(self, resource, related, request):
         """
         Add a related resource.

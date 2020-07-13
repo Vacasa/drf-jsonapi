@@ -262,6 +262,11 @@ class ResourceSerializer(serializers.Serializer):
         if links:
             data["links"] = links
 
+        # Build relationship meta
+        relationship_meta = handler.build_relationship_meta(self, relation, instance, request)
+        if relationship_meta:
+            data["meta"] = relationship_meta
+
         # If not configured to show data objects, and the relation was not passed as an include, bail here
         if not handler.show_data and relation not in self.include:
             return data
