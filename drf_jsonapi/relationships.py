@@ -205,7 +205,6 @@ class RelationshipHandler:
             resource, relationship_meta, request
         )
 
-
         return relationship_meta
 
     def get_relationship_meta(self, resource, relationship_meta, request):

@@ -263,7 +263,9 @@ class ResourceSerializer(serializers.Serializer):
             data["links"] = links
 
         # Build relationship meta
-        relationship_meta = handler.build_relationship_meta(self, relation, instance, request)
+        relationship_meta = handler.build_relationship_meta(
+            self, relation, instance, request
+        )
         if relationship_meta:
             data["meta"] = relationship_meta
 
