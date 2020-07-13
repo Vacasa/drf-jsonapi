@@ -201,7 +201,10 @@ class RelationshipHandler:
         relationship_meta = {}
 
         # Allow overrides
-        relationship_meta = self.get_relationship_meta(resource, relationship_meta, request)
+        relationship_meta = self.get_relationship_meta(
+            resource, relationship_meta, request
+        )
+
 
         return relationship_meta
 
