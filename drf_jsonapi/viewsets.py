@@ -311,8 +311,6 @@ class ReadOnlyViewSet(
     Create a ViewSet for a read-only endpoint.
     """
 
-    pass
-
 
 class ReadWriteViewSet(
     mixins.ListMixin,
@@ -329,5 +327,3 @@ class ReadWriteViewSet(
     """
     Create a viewset for a readable and writeable endpoint.
     """
-
-    pass
