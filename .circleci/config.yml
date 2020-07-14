@@ -44,11 +44,11 @@ jobs:
             . venv/bin/activate
             black --check --diff .
 
-      # - run:
-      #    name: Lint
-      #    command: |
-      #      . venv/bin/activate
-      #      prospector
+      - run:
+          name: Lint
+          command: |
+            . venv/bin/activate
+            prospector
 
 workflows:
   version: 2
