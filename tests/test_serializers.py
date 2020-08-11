@@ -424,6 +424,7 @@ class ResourceSerializerTestCase(TestCase):
     def test_get_id(self):
         serializer = mocks.TestResourceSerializer(self.resource)
         self.assertEqual(serializer.get_id(serializer.instance), self.resource.pk)
+        self.assertIsInstance(serializer.get_id(serializer.instance), str)
 
     def test_get_object_by_id(self):
         with self.assertRaises(NotImplementedError):
