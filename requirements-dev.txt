@@ -4,7 +4,7 @@ chardet==3.0.4
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.1
-django==2.2.2
+django==2.2.21
 django-filter==2.0.0
 djangorestframework==3.9.3
 drf-yasg==1.12.1
